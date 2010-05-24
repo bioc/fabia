@@ -1,0 +1,51 @@
+\contentsline {section}{\numberline {1}Introduction}{4}{section.1}
+\contentsline {section}{\numberline {2}Getting Started: FABIA}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}Quick start : without outputs and plots}{4}{subsection.2.1}
+\contentsline {subsection}{\numberline {2.2}Test on Toy Data Set}{6}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Demos}{9}{subsection.2.3}
+\contentsline {section}{\numberline {3}The FABIA Model}{10}{section.3}
+\contentsline {subsection}{\numberline {3.1}Model Assumptions}{10}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Sparse Coding and Laplace Prior}{12}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Model Selection}{13}{subsection.3.3}
+\contentsline {subsubsection}{\numberline {3.3.1}Variational Approach for Sparse Factors}{13}{subsubsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.2}New Update Rules for Sparse Loadings}{13}{subsubsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.3}Extremely Sparse Priors}{14}{subsubsection.3.3.3}
+\contentsline {subsection}{\numberline {3.4}Data Preprocessing and Initialization}{14}{subsection.3.4}
+\contentsline {subsection}{\numberline {3.5}Information Content of Biclusters}{15}{subsection.3.5}
+\contentsline {subsection}{\numberline {3.6}Extracting Members of Biclusters}{16}{subsection.3.6}
+\contentsline {subsection}{\numberline {3.7}C implementation of FABIA}{16}{subsection.3.7}
+\contentsline {section}{\numberline {A}Class Factorization}{16}{section.A}
+\contentsline {section}{\numberline {B}Biclustering and Matrix Factorization Methods}{18}{section.B}
+\contentsline {subsection}{\numberline {B.1}fabi}{18}{subsection.B.1}
+\contentsline {subsection}{\numberline {B.2}fabia}{23}{subsection.B.2}
+\contentsline {subsection}{\numberline {B.3}fabiap}{30}{subsection.B.3}
+\contentsline {subsection}{\numberline {B.4}fabias}{38}{subsection.B.4}
+\contentsline {subsection}{\numberline {B.5}fabiasp}{46}{subsection.B.5}
+\contentsline {subsection}{\numberline {B.6}mfsc}{51}{subsection.B.6}
+\contentsline {subsection}{\numberline {B.7}nmfdiv}{58}{subsection.B.7}
+\contentsline {subsection}{\numberline {B.8}nmfeu}{60}{subsection.B.8}
+\contentsline {subsection}{\numberline {B.9}nmfsc}{62}{subsection.B.9}
+\contentsline {section}{\numberline {C}Analyzing the Results of Biclustering / Matrix Factorization}{64}{section.C}
+\contentsline {subsection}{\numberline {C.1}plot}{64}{subsection.C.1}
+\contentsline {subsection}{\numberline {C.2}show}{68}{subsection.C.2}
+\contentsline {subsection}{\numberline {C.3}showSelected}{69}{subsection.C.3}
+\contentsline {subsection}{\numberline {C.4}summary}{70}{subsection.C.4}
+\contentsline {subsection}{\numberline {C.5}extractBic}{71}{subsection.C.5}
+\contentsline {subsection}{\numberline {C.6}extractPlot}{74}{subsection.C.6}
+\contentsline {subsection}{\numberline {C.7}plotBicluster}{77}{subsection.C.7}
+\contentsline {section}{\numberline {D}Data Generation Methods}{79}{section.D}
+\contentsline {subsection}{\numberline {D.1}makeFabiaData}{79}{subsection.D.1}
+\contentsline {subsection}{\numberline {D.2}makeFabiaDataPos}{81}{subsection.D.2}
+\contentsline {subsection}{\numberline {D.3}makeFabiaDataBlocks}{82}{subsection.D.3}
+\contentsline {subsection}{\numberline {D.4}makeFabiaDataBlocksPos}{84}{subsection.D.4}
+\contentsline {section}{\numberline {E}Utilities}{86}{section.E}
+\contentsline {subsection}{\numberline {E.1}fabiaVersion}{86}{subsection.E.1}
+\contentsline {subsection}{\numberline {E.2}matrixImagePlot}{86}{subsection.E.2}
+\contentsline {subsection}{\numberline {E.3}projFuncPos}{87}{subsection.E.3}
+\contentsline {subsection}{\numberline {E.4}projFunc}{88}{subsection.E.4}
+\contentsline {subsection}{\numberline {E.5}estimateMode}{89}{subsection.E.5}
+\contentsline {subsection}{\numberline {E.6}eqscplotLoc}{90}{subsection.E.6}
+\contentsline {section}{\numberline {F}Demo Data Sets from {\texttt {fabiaData}}}{91}{section.F}
+\contentsline {subsection}{\numberline {F.1}Breast\_A}{91}{subsection.F.1}
+\contentsline {subsection}{\numberline {F.2}DLBCL\_B}{91}{subsection.F.2}
+\contentsline {subsection}{\numberline {F.3}Multi\_A}{92}{subsection.F.3}

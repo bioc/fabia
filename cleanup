@@ -1,0 +1,8 @@
+rm -f confdefs.h config.log config.status
+rm -f src/Makevars
+rm -f src/*.o src/*.so
+rm -f RcppSrc/*.o RcppSrc/*.a
+rm -f inst/doc/*.aux inst/doc/*.log inst/doc/*.tex
+find . -name \*~ -exec rm {} \;
+find . -name \*bak -exec rm {} \;
+

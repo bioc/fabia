@@ -1,0 +1,24 @@
+# Project: fabia
+# 
+# SEPP 
+
+
+OBJ = fabia.o
+LINKOBJ  = fabia.o $(RES)
+DLLLIBS = -s -L../RcppSrc -lRcpp -L"$(RHOME)/bin/i386" -L"$(RHOME)/bin/x64" -L"$(RHOME)/bin" -lR --no-export-all-symbols --add-stdcall-alias
+BIN  = fabia.dll
+CXXFLAGS = -I../RcppSrc -I"$(RHOME)/include" -Wall -O2 -DBUILDING_DLL=1
+RM = rm -f
+
+.PHONY: all clean
+
+all: fabia.dll
+
+clean:
+	${RM} $(LINKOBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	$(CXX) -shared $(LINKOBJ) $(DLLLIBS) -o $(BIN)
+
+fabia.o: fabiac.cpp
+	$(CXX) -c fabiac.cpp -o fabia.o $(CXXFLAGS)

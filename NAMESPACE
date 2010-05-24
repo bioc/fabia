@@ -1,0 +1,44 @@
+useDynLib(fabia)
+
+import("methods")
+
+importFrom("graphics", "axis", "barplot", "box", "boxplot", "image",
+           "layout", "lines", "par", "plot", "points", "rect",
+           "smoothScatter", "symbols", "text")
+
+importFrom("grDevices", "colorRampPalette", "dev.interactive",
+           "devAskNewPage", "rainbow", "rgb", "x11")
+
+importFrom("stats", "kmeans", "median", "quantile", "rnorm", "runif")
+
+importFrom("utils", "demo", "packageDescription")
+
+export("fabia",
+       "fabias",
+       "fabiap",
+       "mfsc",
+       "fabiasp",
+       "fabi",
+       "projFunc",
+       "projFuncPos",
+       "estimateMode",
+       "nmfsc",
+       "nmfeu",
+       "nmfdiv",
+       "matrixImagePlot",
+       "plotBicluster",
+       "extractPlot",
+       "extractBic",
+       "makeFabiaData",
+       "makeFabiaDataBlocks",
+       "makeFabiaDataPos",
+       "makeFabiaDataBlocksPos",
+       "fabiaDemo",
+       "fabiaVersion")
+
+exportClasses("Factorization")
+
+exportMethods("plot",
+       "summary",
+       "show",
+       "showSelected")
