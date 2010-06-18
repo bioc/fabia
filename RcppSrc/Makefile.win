@@ -2,14 +2,15 @@
 #
 # SEPP
 
+include $(R_HOME)/etc$(R_ARCH)/Makeconf
 
 SRC = Rcpp.cpp
 OBJ = Rcpp.o
 LINKOBJ  = Rcpp.o $(RES)
-DLLLIBS = -s -L"$(RHOME)/bin/i386" -L"$(RHOME)/bin/x64" -L"$(RHOME)/bin" -lR --no-export-all-symbols --add-stdcall-alias
+DLLLIBS = -s -L"$(RHOME)/$(IMPDIR)" -lR --no-export-all-symbols --add-stdcall-alias
 LIB  = libRcpp.a
 CXXFLAGS = -I"$(RHOME)/include" -I"$(RHOME)/src/include" $(CPPFLAGS) -Wall -O2
-RM = rm -f
+
 
 .PHONY: all all-before all-after clean clean-custom
 
@@ -22,6 +23,6 @@ $(OBJ): $(SRC)
 	$(CXX) -c $(SRC) -o $(OBJ) $(CXXFLAGS)
 	
 $(LIB): $(LINKOBJ)
-	ar r $(LIB) $(OBJ)
-	ranlib $(LIB)
-	rm $(OBJ)
+	$(AR) r $(LIB) $(OBJ)
+	$(RANLIB) $(LIB)
+	$(RM) $(OBJ)

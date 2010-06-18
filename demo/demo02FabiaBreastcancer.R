@@ -29,7 +29,7 @@ data(Breast_A)
 X <- as.matrix(XBreast)
 
 
-resBreast1 <- fabia(X,5,0.1,400,1.0,1.0)
+resBreast1 <- fabia(X,5,0.1,400)
 
 rBreast1 <- extractPlot(resBreast1,ti="FABIA Breast cancer(Veer)")
 

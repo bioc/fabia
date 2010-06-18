@@ -8,9 +8,9 @@ LIB = libRcpp.a
 all: $(LIB)
 
 clean:
-	rm -f $(OBJ) $(LIB)
+	$(RM) $(OBJ) $(LIB)
 
 $(OBJ): $(SRC)
 
 $(LIB): $(OBJ)
-	ar crs $(LIB) $(OBJ)
+	$(AR) crs $(LIB) $(OBJ)

@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabi(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,center=2,norm=1)
+fabi(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1)
 
 }
 \arguments{
@@ -15,8 +15,8 @@ fabi(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,center=2,norm=1)
   \item{p}{number of hidden factors = number of biclusters; default = 5.}
   \item{alpha}{sparseness loadings (0.1-1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
-  \item{spl}{sparseness prior loadings (0.5 - 4.0); default = 1.0.}
-  \item{spz}{sparseness factors (0.5-4.0); default = 1.0.}
+  \item{spl}{sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).}
+  \item{spz}{sparseness factors (0.5-2.0); default = 0.5 (Laplace).}
   \item{center}{data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.}
   \item{norm}{data normalization: 1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
@@ -123,7 +123,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 Y <- dat[[2]]
 
-resEx <- fabi(X,3,0.1,20,1.0,1.0)
+resEx <- fabi(X,3,0.1,20)
 
 
 \dontrun{
@@ -139,7 +139,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabi(X,13,0.1,200,1.0,1.0)
+resToy <- fabi(X,13,0.1,200)
 
 rToy <- extractPlot(resToy,ti="FABI",Y=Y)
 
@@ -161,7 +161,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast <- fabi(X,5,0.1,200,1.0,1.0)
+resBreast <- fabi(X,5,0.1,200)
 
 rBreast <- extractPlot(resBreast,ti="FABI Breast cancer(Veer)")
 
@@ -189,7 +189,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti <- fabi(X,5,0.1,200,1.0,1.0)
+resMulti <- fabi(X,5,0.1,200)
 
 rMulti <- extractPlot(resMulti,ti="FABI Multiple tissues(Su)")
 
@@ -219,7 +219,7 @@ data(DLBCL_B)
 X <- as.matrix(XDLBCL)
 
 
-resDLBCL <- fabi(X,5,0.1,200,1.0,1.0)
+resDLBCL <- fabi(X,5,0.1,200)
 
 rDLBCL <- extractPlot(resDLBCL,ti="FABI Lymphoma(Rosenwald)")
 

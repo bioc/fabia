@@ -80,7 +80,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,20,1.0,1.0)
+resEx <- fabia(X,3,0.1,20)
 
 rEx <- extractBic(resEx)
 
@@ -100,7 +100,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200,1.0,1.0)
+resToy <- fabia(X,13,0.1,200)
 
 
 
@@ -126,7 +126,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast <- fabia(X,5,0.1,200,1.0,1.0)
+resBreast <- fabia(X,5,0.1,200)
 
 rBreast <- extractBic(resBreast)
 

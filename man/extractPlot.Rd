@@ -124,7 +124,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.3,20,1.0,1.0)
+resEx <- fabia(X,3,0.3,20)
 
 rEx <- extractPlot(resEx,ti="FABIA",Y=Y)
 
@@ -143,7 +143,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200,1.0,1.0)
+resToy <- fabia(X,13,0.1,200)
 
 rToy <- extractPlot(resToy,ti="FABIA",Y=Y)
 
@@ -165,7 +165,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast <- fabia(X,5,0.1,200,1.0,1.0)
+resBreast <- fabia(X,5,0.1,200)
 
 rBreast <- extractPlot(resBreast,ti="FABIA Breast cancer(Veer)")
 

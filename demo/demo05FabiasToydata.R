@@ -36,7 +36,7 @@ groups <- gclab
 
 #### FABIAS
 
-resToy2 <- fabias(X,13,0.6,400,1.0)
+resToy2 <- fabias(X,13,0.6,400)
 
 rToy2 <- extractPlot(resToy2,ti="FABIAS",Y=Y)
 

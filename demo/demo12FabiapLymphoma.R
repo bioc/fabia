@@ -32,7 +32,7 @@ data(DLBCL_B)
 X <- as.matrix(XDLBCL)
 
 
-resDLBCL3 <- fabiap(X,5,0.1,400,1.0,1.0,0.6,0.6)
+resDLBCL3 <- fabiap(X,5,0.1,400)
 
 rDLBCL3 <- extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
 raDLBCL3 <- extractBic(resDLBCL3)

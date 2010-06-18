@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabiasp(X,p=5,alpha=0.6,cyc=500,spz=1.0,center=2,norm=1)
+fabiasp(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1)
 
 }
 \arguments{
@@ -15,7 +15,7 @@ fabiasp(X,p=5,alpha=0.6,cyc=500,spz=1.0,center=2,norm=1)
   \item{p}{number of hidden factors = number of biclusters; default = 5.}
   \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
-  \item{spz}{sparseness factors (0.5 - 4.0); default = 1.0.}
+  \item{spz}{sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).}
   \item{center}{data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.}
   \item{norm}{data normalization:   1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
@@ -124,7 +124,7 @@ Y <- dat[[2]]
 
 
 
-resEx <- fabiasp(X,3,0.6,50,1.0)
+resEx <- fabiasp(X,3,0.6,50)
 
 
 \dontrun{
@@ -140,7 +140,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabiasp(X,13,0.6,200,1.0)
+resToy <- fabiasp(X,13,0.6,200)
 
 rToy <- extractPlot(resToy,"ti=FABIASP",Y=Y)
 
@@ -164,7 +164,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast <- fabiasp(X,5,0.6,200,1.0)
+resBreast <- fabiasp(X,5,0.6,200)
 
 rBreast <- extractPlot(resBreast,ti="FABIASP Breast cancer(Veer)")
 
@@ -192,7 +192,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti <- fabiasp(X,5,0.6,200,1.0)
+resMulti <- fabiasp(X,5,0.6,200)
 
 rMulti <- extractPlot(resMulti,"ti=FABIASP Multiple tissues(Su)")
 
@@ -222,7 +222,7 @@ data(DLBCL_B)
 X <- as.matrix(XDLBCL)
 
 
-resDLBCL <- fabiasp(X,5,0.6,200,1.0)
+resDLBCL <- fabiasp(X,5,0.6,200)
 
 rDLBCL <- extractPlot(resDLBCL,ti="FABIASP Lymphoma(Rosenwald)")
 

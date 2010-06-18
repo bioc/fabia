@@ -29,7 +29,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti1 <- fabia(X,5,0.1,300,1.0,1.0)
+resMulti1 <- fabia(X,5,0.1,300)
 
 rMulti1 <- extractPlot(resMulti1,ti="FABIA Multiple tissues(Su)")
 

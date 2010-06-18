@@ -28,4 +28,4 @@ URL: http://www.bioinf.jku.at/software/fabia/fabia.html
 biocViews: Bioinformatics, Statistics, Microarray, DifferentialExpression,
         MultipleComparisons, Clustering, Visualization
 LazyLoad: yes
-
+Packaged: 2010-04-26 15:18:49 UTC; bodenhof
