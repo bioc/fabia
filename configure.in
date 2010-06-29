@@ -6,7 +6,10 @@ dnl the CC and CFLAGS variables control configure tests, and they need to
 dnl be the same as what will be used when the package is built. There is
 dnl no need to place these flags in Makevars, and if no configure tests are
 dnl done they are not needed here (see "Writing R Extensions" manual).
-: ${R_HOME=`R RHOME`}
+: ${R_HOME}
+if test -z "${R_HOME}"; then
+   R_HOME=`R RHOME`		
+fi
 if test -z "${R_HOME}"; then
     echo "Could not determine R home directory"
     exit 1
