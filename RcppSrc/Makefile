@@ -5,12 +5,15 @@ LIB = libRcpp.a
 
 .PHONY: all
 
-all: $(LIB)
-
-clean:
-	$(RM) $(OBJ) $(LIB)
-
-$(OBJ): $(SRC)
+all: distclean $(LIB) clean
 
 $(LIB): $(OBJ)
 	$(AR) crs $(LIB) $(OBJ)
+
+$(OBJ): $(SRC)
+
+clean:
+	$(RM) $(OBJ)
+
+distclean:
+	$(RM) $(OBJ) $(LIB)

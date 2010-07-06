@@ -17,21 +17,24 @@
 include ${R_HOME}/etc${R_ARCH}/Makeconf
 
 
-OBJ = fabia.o
-LINKOBJ  = fabia.o $(RES)
+SRC = fabiac.cpp
+LINKOBJ  = fabia.o
 DLLLIBS = -s -L../RcppSrc -lRcpp  -L"${R_HOME}/$(IMPDIR)"  -lR --no-export-all-symbols --add-stdcall-alias
 BIN  = fabia.dll
 CXXFLAGS = -I../RcppSrc -I"${R_HOME}/include" -Wall -O2 -DBUILDING_DLL=1
 
 .PHONY: all clean
 
-all: fabia.dll
-
-clean:
-	${RM} $(LINKOBJ) $(BIN)
+all: distclean $(BIN) clean
 
 $(BIN): $(LINKOBJ)
 	$(CXX) -shared $(LINKOBJ) $(DLLLIBS) -o $(BIN)
 
-fabia.o: fabiac.cpp
-	$(CXX) -c fabiac.cpp -o fabia.o $(CXXFLAGS)
+$(LINKOBJ): $(SRC)
+	$(CXX) -c $(SRC) -o $(LINKOBJ) $(CXXFLAGS)
+
+clean:
+	${RM} $(LINKOBJ) *.a *.o *.so
+
+distclean:
+	${RM} $(LINKOBJ) $(BIN) *.a *.o *.so *.dll

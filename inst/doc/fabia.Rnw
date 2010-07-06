@@ -440,7 +440,7 @@ are similar if one is a multiple of the other, that is
 the angle between them is zero or as realization of random variables their
 correlation coefficient is one.
 \begin{figure}[!t]
-\centerline{\includegraphics[width=0.9\textwidth]{vectors_1}}
+\centerline{\includegraphics[width=0.9\textwidth]{./figures/vectors_1}}
 \caption{The outer product  $\la \ \z^T$ of two sparse vectors
 results in a matrix with a bicluster. Note, that the non-zero
 entries in the vectors are adjacent to each other for visualization
@@ -597,8 +597,8 @@ for the Laplace distribution large values are more likely than for a
 Gaussian.
 \begin{figure}
 \begin{center}
-\includegraphics[width=0.45\textwidth]{fabia-lap1}
-\includegraphics[width=0.45\textwidth]{fabia-lap2}
+\includegraphics[width=0.45\textwidth]{./figures/fabia-lap1}
+\includegraphics[width=0.45\textwidth]{./figures/fabia-lap2}
 \end{center}
 \caption{Left: The mode of a Laplace (red, solid) vs. a Gaussian
   (dashed, blue) distribution. Right:

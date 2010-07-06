@@ -25,12 +25,9 @@ LIB  = libRcpp.a
 CXXFLAGS = -I"${R_HOME}/include" -I"${R_HOME}/src/include" $(CPPFLAGS) -Wall -O2
 
 
-.PHONY: all all-before all-after clean clean-custom
+.PHONY: all clean
 
-all: all-before libRcpp.a all-after
-
-clean: clean-custom
-	${RM} $(LINKOBJ) $(LIB)
+all: distclean libRcpp.a clean
 
 $(OBJ): $(SRC)
 	$(CXX) -c $(SRC) -o $(OBJ) $(CXXFLAGS)
@@ -39,3 +36,9 @@ $(LIB): $(LINKOBJ)
 	${AR} r $(LIB) $(OBJ)
 	${RANLIB} $(LIB)
 	${RM} $(OBJ)
+
+clean:
+	${RM} $(LINKOBJ)
+
+distclean:
+	${RM} $(LINKOBJ) $(LIB)
