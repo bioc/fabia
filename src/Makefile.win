@@ -19,9 +19,9 @@ include ${R_HOME}/etc${R_ARCH}/Makeconf
 
 SRC = fabiac.cpp
 LINKOBJ  = fabia.o
-DLLLIBS = -s -L../RcppSrc -lRcpp  -L"${R_HOME}/$(IMPDIR)"  -lR --no-export-all-symbols --add-stdcall-alias
+DLLLIBS = -L../RcppSrc -lRcpp  -L"${R_HOME}/$(IMPDIR)"  -lR 
 BIN  = fabia.dll
-CXXFLAGS = -I../RcppSrc -I"${R_HOME}/include" -Wall -O2 -DBUILDING_DLL=1
+CXXFLAGS = -I../RcppSrc -I"${R_HOME}/include" -Wall -O2
 
 .PHONY: all clean
 

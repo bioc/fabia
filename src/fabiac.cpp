@@ -190,7 +190,7 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 		}
 	    }
 
-
+	    //forward substitution L*T=I gives T = L^-1
 	    for (i1=0;i1<K;i1++) 
 		for (i2=0;i2<=i1;i2++){
 		    s = (i1==i2 ? 1.0 : 0.0);
@@ -199,6 +199,7 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 		}
 
 
+	    //backwared substitution L*A=T gives A = L^-2
 	    for (i1=K-1;i1>=0;i1--) 
 		for (i2=0;i2<=i1;i2++){
 		    s = (i1<i2 ? 0.0 : ichol[i2][i1]);
@@ -267,6 +268,7 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 	    }
 	}
 
+	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) 
 	    for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
@@ -274,6 +276,7 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 		ichol[i2][i1]= s/sum2[i1][i1];
 	    }
 
+	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) 
 	    for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
@@ -433,12 +436,14 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 	    }
 	}
 
+	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
 		for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
 		ichol[i2][i1]= s/tLPsiL[i1][i1];
 	    }
 
+	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) 
 	    for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
@@ -684,6 +689,7 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 	    }
 
 
+	    //forward substitution L*T=I gives T = L^-1
 	    for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		    s = (i1==i2 ? 1.0 : 0.0);
 		    for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
@@ -691,6 +697,7 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 		}
 
 
+	    //backwared substitution L*A=T gives A = L^-2
 	    for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
 		    s = (i1<i2 ? 0.0 : ichol[i2][i1]);
 		    for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
@@ -759,12 +766,14 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 	    }
 	}
 
+	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
 		for (i3=i1-1;i3>=i2;i3--) s -= sum2[i1][i3]*ichol[i2][i3];
 		ichol[i2][i1]= s/sum2[i1][i1];
 	    }
 
+	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
 		for (i3=i1+1;i3<K;i3++) s -= sum2[i3][i1]*ichol[i2][i3];
@@ -976,12 +985,14 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 	    }
 	}
 
+	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
 		for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
 		ichol[i2][i1]= s/tLPsiL[i1][i1];
 	    }
 
+	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
 		for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
