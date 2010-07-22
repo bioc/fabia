@@ -1,9 +1,9 @@
 % -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
-%setwd("c:/sepp/work/fabia/fabia_10/fabia/inst/doc")
-%Sweave("fabia.Rnw")
-%tools::texi2dvi("fabia.tex",pdf=TRUE)
-%Stangle("fabia.Rnw")
-%source("fabia.R")
+%\VignetteIndexEntry{FABIA: Manual for the R package}
+%\VignetteDepends{fabia}
+%\VignettePackage{fabia}
+%\VignetteKeywords{fabia, fabiaData, biclustering, factor analysis, sparse coding, non-negative matrix factorization, latent variables, Laplace distribution, EM algorithm, multivariate analysis}
+
 
 
 \documentclass[article]{bioinf}
@@ -11,12 +11,10 @@
 \usepackage{amsmath,amssymb}
 \usepackage{bm}
 \usepackage{natbib}
-\usepackage{url}
-\usepackage{rotating}
+\usepackage{hyperref}
 
 \usepackage{fabia_defs}
 
-\usepackage{hyperref}
 
 \hypersetup{colorlinks=false,
    pdfborder=0 0 0,
@@ -35,10 +33,6 @@ Linz\\Altenberger Str. 69, 4040 Linz, Austria\\
 
 \usepackage[noae]{Sweave}
 
-%\VignetteIndexEntry{FABIA: Manual for the R package}
-%\VignetteDepends{fabia}
-%\VignettePackage{fabia}
-%\VignetteKeywords{fabia, fabiaData, biclustering, factor analysis, sparse coding, non-negative matrix factorization, latent variables, Laplace distribution, EM algorithm, multivariate analysis}
 
 \SweaveOpts{eps=FALSE}
 
@@ -100,7 +94,7 @@ format then you can try out the following steps to extract biclusters.
 
 \noindent
 Examples with outputs and plot can be found at
-\href{http://www.bioinf.jku.at/software/fabia/fabia.html}{http://www.bioinf.jku.at/software/fabia/fabia.html}).
+\href{http://www.bioinf.jku.at/software/fabia/fabia.html}{http://www.bioinf.jku.at/software/fabia/fabia.html}.
 
 
 
@@ -5035,8 +5029,8 @@ Plotting of a matrix.
   The color scale is based on the highest and lowest values in the
   matrix.
 
-  Program has been obtained by
- \url{http://www.phaget4.org/R/matrixImagePlot.R}
+  Program has been obtained at
+ \href{http://www.phaget4.org/R/matrixImagePlot.R}{http://www.phaget4.org/R/matrixImagePlot.R}
 
 
 
@@ -5351,7 +5345,7 @@ Microarray data set of van't Veer breast cancer.
   Microarray data from Broad
   Institute ``Cancer Program Data Sets'' which
   was produced by \citep{Veer:02}
-  (\url{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
+  (\href{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi}{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
   Array S54 was removed because it is an
   outlier.
 
@@ -5378,7 +5372,7 @@ Microarray data set of Rosenwald diffuse large-B-cell lymphoma.
  Microarray data from Broad
   Institute ``Cancer Program Data Sets'' which
   was produced by \citep{Rosenwald:02}
-  (\url{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
+  (\href{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi}{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
 
   Goal was to predict the survival after chemotherapy
 
@@ -5406,8 +5400,8 @@ Microarray data set of Su on different mammalian tissue types.
  Microarray data from Broad
   Institute ``Cancer Program Data Sets'' which
   was produced by \citep{Su:02}
-  (\url{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
-
+  (\href{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi}{http://www.brxsoadinstitute.org/cgi-bin/cancer/datasets.cgi})
+s
 
   Gene expression from human and mouse samples across a diverse array
   of tissues, organs, and cell lines have been profiled.

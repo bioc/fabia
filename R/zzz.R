@@ -42,7 +42,7 @@
     version <- packageDescription("fabia",fields="Version")
     packageStartupMessage( "Citation: S. Hochreiter et al.,","\n",
       "FABIA: Factor Analysis for Bicluster Acquisition,","\n",
-      "Bioinformatics, doi:10.1093/bioinformatics/btq227, 2010.","\n",
+      "Bioinformatics 26(12):1520-1527, 2010.","\n",
       "BibTex: enter 'toBibtex(citation(\"fabia\"))'","\n\n",
       "Homepage: http://www.bioinf.jku.at/software/fabia/fabia.html","\n\n",
       "FABIA Package Version ", version, "\n")
