@@ -232,7 +232,7 @@ CDLBCL%*%rDLBCL$pmZ
 \references{
   S. Hochreiter et al.,
   \sQuote{FABIA: Factor Analysis for Bicluster Acquisition},
-  Bioinformatics, doi:10.1093/bioinformatics/btq227, 2010.
+  Bioinformatics 26(12):1520-1527, 2010.
   http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq227
   
   Mark Girolami,

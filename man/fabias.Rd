@@ -365,7 +365,7 @@ plot(resDLBCL2,dim=c(4,5),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
 \references{
   S. Hochreiter et al.,
   \sQuote{FABIA: Factor Analysis for Bicluster Acquisition},
-  Bioinformatics, doi:10.1093/bioinformatics/btq227, 2010.
+  Bioinformatics 26(12):1520-1527, 2010.
   http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq227
   
   Mark Girolami,
