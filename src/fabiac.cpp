@@ -1055,8 +1055,4 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
      }
 
 
-int main() {
-
-}
-
 
