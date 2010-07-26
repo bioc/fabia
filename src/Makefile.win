@@ -22,13 +22,14 @@ LINKOBJ  = fabia.o
 DLLLIBS = -L../RcppSrc -lRcpp  -L"${R_HOME}/$(IMPDIR)"  -lR 
 BIN  = fabia.dll
 CXXFLAGS = -I../RcppSrc -I"${R_HOME}/include" -Wall -O2
+CXXPICFLAGS =  -shared -s -static-libgcc
 
 .PHONY: all clean
 
 all: distclean $(BIN) clean
 
 $(BIN): $(LINKOBJ)
-	$(CXX) -shared $(LINKOBJ) $(DLLLIBS) -o $(BIN)
+	$(CXX) $(CXXPICFLAGS) $(LINKOBJ) $(DLLLIBS) -o $(BIN) 
 
 $(LINKOBJ): $(SRC)
 	$(CXX) -c $(SRC) -o $(LINKOBJ) $(CXXFLAGS)
