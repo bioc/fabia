@@ -25,7 +25,7 @@ License: LGPL (>= 2.1)
 Collate: AllClasses.R AllGenerics.R plot-methods.R show-methods.R
 	showSelected-methods.R summary-methods.R fabia.R zzz.R
 URL: http://www.bioinf.jku.at/software/fabia/fabia.html
-biocViews: Bioinformatics, Statistics, Microarray, DifferentialExpression,
+biocViews: Bioinformatics, Microarray, DifferentialExpression,
         MultipleComparisons, Clustering, Visualization
 LazyLoad: yes
 Packaged: 2010-04-26 15:18:49 UTC; bodenhof
