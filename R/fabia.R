@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,norm=1,scale=0.0,lap=1.0){
+fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -73,6 +73,12 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
        }
 
        message("   Constraint variational parameter -- lap: ", lap)
+       if ((nL>0)&&(nL<p)) {
+           message("   Number of biclusters per row ------- nL: ", nL)
+       } else {
+           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+       }
+
 
 
 
@@ -141,6 +147,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
 
 
 	cyc <- as.integer(cyc)
+	nL <- as.integer(nL)
 	alpha <- as.double(alpha)
 	p <- as.integer(p)
 	spz <- as.double(spz)
@@ -149,7 +156,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
 
 
 
-	res <- .Call("fabic", X,Psi,L,lapla,cyc ,alpha,eps,eps1,spl,spz,scale,lap,PACKAGE="fabia")
+	res <- .Call("fabic", X,Psi,L,lapla,cyc ,alpha,eps,eps1,spl,spz,scale,lap,nL,PACKAGE="fabia")
 
 
 
@@ -225,18 +232,6 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
         colnames(U) <- colna
 
 
-        if (avini[p+1]>1e-8) {
-
-            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
-
-            avini[1:p] <- avini[soo$ix]
-            nL <- nL[,soo$ix]
-            nZ <- nZ[soo$ix,]
-            M <- M[soo$ix,soo$ix]
-
-        }
-
-
 
 
         return(new('Factorization', parameters=list("fabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,center,lap),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
@@ -244,7 +239,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
 
 }
 
-fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2,norm=1,scale=0.0,lap=1.0){
+fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,sL=0.6,sZ=0.6,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -319,6 +314,11 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
        }
 
        message("   Constraint variational parameter -- lap: ", lap)
+       if ((nL>0)&&(nL<p)) {
+           message("   Number of biclusters per row ------- nL: ", nL)
+       } else {
+           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+       }
 
 
 
@@ -384,6 +384,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
 
 
 	cyc <- as.integer(cyc)
+	nL <- as.integer(nL)
 	alpha <- as.double(alpha)
 	p <- as.integer(p)
 	spz <- as.double(spz)
@@ -391,7 +392,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
 	lap <- as.double(lap)
 
 
-	res <- .Call("fabic", X,Psi,L,lapla,cyc,alpha,eps,eps1,spl,spz,scale,lap,PACKAGE="fabia")
+	res <- .Call("fabic", X,Psi,L,lapla,cyc,alpha,eps,eps1,spl,spz,scale,lap,nL,PACKAGE="fabia")
 
         rL <- res$L
         n <- nrow(rL)
@@ -487,25 +488,11 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
         colnames(U) <- colna
 
 
-
-        if (avini[p+1]>1e-8) {
-
-            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
-
-            avini[1:p] <- avini[soo$ix]
-            nL <- nL[,soo$ix]
-            nZ <- nZ[soo$ix,]
-            M <- M[soo$ix,soo$ix]
-
-        }
-
-
-
     return(new('Factorization', parameters=list("fabiap",cyc,alpha,spl,spz,p,sL,sZ,random,scale,norm,center,lap),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 }
 
-fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0){
+fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=1.0,random=1.0,center=2,norm=1,lap=1.0,nL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness low value because enforced by projFunc
@@ -571,7 +558,11 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
        }
 
        message("   Constraint variational parameter -- lap: ", lap)
-
+       if ((nL>0)&&(nL<p)) {
+           message("   Number of biclusters per row ------- nL: ", nL)
+       } else {
+           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+       }
 
 
        eps <- as.double(1e-3)
@@ -630,13 +621,14 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
 
 
 	cyc <- as.integer(cyc)
+	nL <- as.integer(nL)
 	alpha <- as.double(alpha)
 	p <- as.integer(p)
 	spz <- as.double(spz)
 	lap <- as.double(lap)
 
 
-	res <- .Call("fabics", X,Psi,L,lapla,cyc ,alpha,eps,spz,lap,PACKAGE="fabia")
+	res <- .Call("fabics", X,Psi,L,lapla,cyc ,alpha,eps,spz,lap,nL,PACKAGE="fabia")
 
 
        # INI call for biclusters
@@ -711,24 +703,13 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
         rownames(U) <- rowna
         colnames(U) <- colna
 
-        if (avini[p+1]>1e-8) {
-
-            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
-
-            avini[1:p] <- avini[soo$ix]
-            nL <- nL[,soo$ix]
-            nZ <- nZ[soo$ix,]
-            M <- M[soo$ix,soo$ix]
-
-        }
-
-    return(new('Factorization', parameters=list("fabias",cyc,alpha,NULL,spz,p,NULL,NULL,random,scale,norm,center,lap),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+         return(new('Factorization', parameters=list("fabias",cyc,alpha,NULL,spz,p,NULL,NULL,random,scale,norm,center,lap),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
 
 
-fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1){
+fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,center=2,norm=1){
 
         if (missing(X)) {
             stop("Data matrix X missing. Stopped.")
@@ -959,23 +940,12 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1){
         rownames(U) <- rowna
         colnames(U) <- colna
 
-        if (avini[p+1]>1e-8) {
-
-            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
-
-            avini[1:p] <- avini[soo$ix]
-            nL <- nL[,soo$ix]
-            nZ <- nZ[soo$ix,]
-            M <- M[soo$ix,soo$ix]
-
-        }
-
-        return(new('Factorization', parameters=list("fabi",cyc,alpha,spl,spz,p,NULL,NULL,NULL,scale,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
+      return(new('Factorization', parameters=list("fabi",cyc,alpha,spl,spz,p,NULL,NULL,NULL,scale,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
 
 }
 
 
-fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
+fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=1.0,center=2,norm=1){
 
 
          if (missing(X)) {
@@ -1221,19 +1191,8 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
         rownames(U) <- rowna
         colnames(U) <- colna
 
-         if (avini[p+1]>1e-8) {
 
-            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
-
-            avini[1:p] <- avini[soo$ix]
-            nL <- nL[,soo$ix]
-            nZ <- nZ[soo$ix,]
-            M <- M[soo$ix,soo$ix]
-
-        }
-
-
-         return(new('Factorization', parameters=list("fabiasp",cyc,alpha,NULL,spz,p,NULL,NULL,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
+return(new('Factorization', parameters=list("fabiasp",cyc,alpha,NULL,spz,p,NULL,NULL,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=nL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
 
 }
 
@@ -2112,29 +2071,7 @@ for (i in 1:cyc)
                 rownames(U) <- rowna
                 colnames(U) <- colna
 
-                for (i in 1:p){
-                    avini[i] <- sum(L[,i]^2)*sum(Z[i,]^2)
-                }
-                for (i in 1:l){
-                    xavini[i] <-  sum(L[i,]^2)
-                }
-
-                avini[p+1] <- sum(avini[1:p])
-                xavini[l+1] <- sum(xavini[1:l])
-
-
-                if (avini[p+1]>1e-8) {
-
-                    soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
-
-                    avini[1:p] <- avini[soo$ix]
-                    L <- L[,soo$ix]
-                    Z <- Z[soo$ix,]
-                    M <- M[soo$ix,soo$ix]
-
-                }
-
-                return(new('Factorization', parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+            return(new('Factorization', parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
             }
         }
 
@@ -2193,30 +2130,7 @@ for (i in 1:cyc)
                 rownames(U) <- rowna
                 colnames(U) <- colna
 
-                for (i in 1:p){
-                    avini[i] <- sum(L[,i]^2)*sum(Z[i,]^2)
-                }
-                for (i in 1:l){
-                    xavini[i] <-  sum(L[i,]^2)
-                }
-
-                avini[p+1] <- sum(avini[1:p])
-                xavini[l+1] <- sum(xavini[1:l])
-
-
-                if (avini[p+1]>1e-8) {
-
-                    soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
-
-                    avini[1:p] <- avini[soo$ix]
-                    L <- L[,soo$ix]
-                    Z <- Z[soo$ix,]
-                    M <- M[soo$ix,soo$ix]
-
-                }
-
-
-     return(new('Factorization', parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+                return(new('Factorization', parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
             }
 
 

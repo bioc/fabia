@@ -2,7 +2,7 @@
 #include <R_ext/Rdynload.h>
  
 
-RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP eps1S,SEXP splS,SEXP spzS,SEXP scaleS,SEXP lapS) {
+RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP eps1S,SEXP splS,SEXP spzS,SEXP scaleS,SEXP lapS,SEXP nLS) {
 
     RcppMatrix<double> xR(xS);
 
@@ -68,8 +68,10 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 
 
     RcppVector<int> cycR(cycS);
-
     int cyc = cycR(0);
+
+    RcppVector<int> nLR(nLS);
+    int nL = nLR(0);
 
 
     RcppVector<double> XXR(n);
@@ -190,7 +192,7 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 		}
 	    }
 
-	    //forward substitution L*T=I gives T = L^-1
+
 	    for (i1=0;i1<K;i1++) 
 		for (i2=0;i2<=i1;i2++){
 		    s = (i1==i2 ? 1.0 : 0.0);
@@ -199,7 +201,6 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 		}
 
 
-	    //backwared substitution L*A=T gives A = L^-2
 	    for (i1=K-1;i1>=0;i1--) 
 		for (i2=0;i2<=i1;i2++){
 		    s = (i1<i2 ? 0.0 : ichol[i2][i1]);
@@ -268,7 +269,6 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 	    }
 	}
 
-	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) 
 	    for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
@@ -276,7 +276,6 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 		ichol[i2][i1]= s/sum2[i1][i1];
 	    }
 
-	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) 
 	    for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
@@ -336,6 +335,42 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 	    }
 
 
+	}
+
+
+	if ((nL>0)&&(nL<K))
+	{
+
+	    for (i1=0;i1<n;i1++)
+	    {
+		for (i2 = 0; i2 < nL; i2++)
+		{
+		    e_ssxx_n[i2] = 0.0;
+		}
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    s=fabs(L[i1][i2]);
+		    if (s>e_ssxx_n[nL-1])
+		    {
+			i3=nL-1;
+			while ((i3>0)&&(s>e_ssxx_n[i3-1])) {
+			    e_ssxx_n[i3]=e_ssxx_n[i3-1];
+			    i3--;
+			}
+			e_ssxx_n[i3]=s;
+		    }
+		}
+		s=e_ssxx_n[nL-1];
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    if(s>fabs(L[i1][i2]))
+		    {
+			L[i1][i2]=0.0;
+		    }
+		}
+	
+
+	    }
 	}
 
 
@@ -436,14 +471,12 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 	    }
 	}
 
-	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
 		for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
 		ichol[i2][i1]= s/tLPsiL[i1][i1];
 	    }
 
-	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) 
 	    for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
@@ -499,7 +532,7 @@ RcppExport SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alp
 
 
 
-RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP spzS,SEXP lapS) {
+RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP spzS,SEXP lapS,SEXP nLS) {
 
 
 
@@ -559,9 +592,10 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 
 
     RcppVector<int> cycR(cycS);
-
     int cyc = cycR(0);
 
+    RcppVector<int> nLR(nLS);
+    int nL = nLR(0);
 
     RcppVector<double> XXR(n);
     RcppVector<double> vR(n);
@@ -689,7 +723,6 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 	    }
 
 
-	    //forward substitution L*T=I gives T = L^-1
 	    for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		    s = (i1==i2 ? 1.0 : 0.0);
 		    for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
@@ -697,7 +730,6 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 		}
 
 
-	    //backwared substitution L*A=T gives A = L^-2
 	    for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
 		    s = (i1<i2 ? 0.0 : ichol[i2][i1]);
 		    for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
@@ -766,14 +798,12 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 	    }
 	}
 
-	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
 		for (i3=i1-1;i3>=i2;i3--) s -= sum2[i1][i3]*ichol[i2][i3];
 		ichol[i2][i1]= s/sum2[i1][i1];
 	    }
 
-	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
 		for (i3=i1+1;i3<K;i3++) s -= sum2[i3][i1]*ichol[i2][i3];
@@ -931,6 +961,41 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 //----------
 
 
+	if ((nL>0)&&(nL<K))
+	{
+
+	    for (i1=0;i1<n;i1++)
+	    {
+		for (i2 = 0; i2 < nL; i2++)
+		{
+		    e_ssxx_n[i2] = 0.0;
+		}
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    s=fabs(L[i1][i2]);
+		    if (s>e_ssxx_n[nL-1])
+		    {
+			i3=nL-1;
+			while ((i3>0)&&(s>e_ssxx_n[i3-1])) {
+			    e_ssxx_n[i3]=e_ssxx_n[i3-1];
+			    i3--;
+			}
+			e_ssxx_n[i3]=s;
+		    }
+		}
+		s=e_ssxx_n[nL-1];
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    if(s>fabs(L[i1][i2]))
+		    {
+			L[i1][i2]=0.0;
+		    }
+		}
+	
+
+	    }
+	}
+
 
 
 
@@ -985,14 +1050,12 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 	    }
 	}
 
-	    //forward substitution L*T=I gives T = L^-1
 	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
 		s = (i1==i2 ? 1.0 : 0.0);
 		for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
 		ichol[i2][i1]= s/tLPsiL[i1][i1];
 	    }
 
-	    //backwared substitution L*A=T gives A = L^-2
 	for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
 		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
 		for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
@@ -1054,5 +1117,9 @@ RcppExport SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP al
 	 R_registerRoutines(info, NULL, callMethods, NULL, NULL);
      }
 
+
+int main() {
+
+}
 
 

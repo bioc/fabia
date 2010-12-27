@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0)
+fabias(X,p=5,alpha=0.6,cyc=500,spz=1.0,random=1.0,center=2,norm=1,lap=1.0,nL=0)
 
 }
 \arguments{
@@ -15,13 +15,15 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0)
   \item{p}{number of hidden factors = number of biclusters; default = 5.}
   \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
-  \item{spz}{sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).}
+  \item{spz}{sparseness factors (0.5 - 4.0); default = 1.0.}
   \item{random}{<=0: by SVD, >0: random initialization of loadings in
     [-random,random]; default = 1.0.}
   \item{center}{data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.}
   \item{norm}{data normalization:  1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
   \item{lap}{minimal value of the variational parameter; default = 1.0} 
+  \item{nL}{number of biclusters a row element can participate; default
+    = 0 (= no limit)} 
 }
 \details{
 
@@ -130,7 +132,7 @@ Y <- dat[[2]]
 
 
 
-resEx <- fabias(X,3,0.6,50)
+resEx <- fabias(X,3,0.6,50,1.0)
 
 
 \dontrun{
@@ -171,7 +173,7 @@ groups <- gclab
 
 #### FABIAS
 
-resToy2 <- fabias(X,13,0.6,400)
+resToy2 <- fabias(X,13,0.6,400,1.0)
 
 rToy2 <- extractPlot(resToy2,ti="FABIAS",Y=Y)
 
@@ -221,7 +223,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast2 <- fabias(X,5,0.6,300)
+resBreast2 <- fabias(X,5,0.6,300,1.0)
 
 rBreast2 <- extractPlot(resBreast2,ti="FABIAS Breast cancer(Veer)")
 
@@ -273,7 +275,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti2 <- fabias(X,5,0.6,300)
+resMulti2 <- fabias(X,5,0.6,300,1.0)
 
 rMulti2 <- extractPlot(resMulti2,ti="FABIAS Multiple tissues(Su)")
 
@@ -326,7 +328,7 @@ data(DLBCL_B)
 
 X <- as.matrix(XDLBCL)
 
-resDLBCL2 <- fabias(X,5,0.6,300)
+resDLBCL2 <- fabias(X,5,0.6,300,1.0)
 
 rDLBCL2 <- extractPlot(resDLBCL2,ti="FABIAS Lymphoma(Rosenwald)")
 
@@ -365,7 +367,7 @@ plot(resDLBCL2,dim=c(4,5),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
 \references{
   S. Hochreiter et al.,
   \sQuote{FABIA: Factor Analysis for Bicluster Acquisition},
-  Bioinformatics 26(12):1520-1527, 2010.
+  Bioinformatics, doi:10.1093/bioinformatics/btq227, 2010.
   http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq227
   
   Mark Girolami,

@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2,norm=1,scale=0.0,lap=1.0)
+fabiap(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,sL=0.6,sZ=0.6,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)
 
 }
 \arguments{
@@ -15,8 +15,8 @@ fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2
   \item{p}{number of hidden factors = number of biclusters; default = 5.}
   \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
-  \item{spl}{sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).}
-  \item{spz}{sparseness factors (0.5 - 2.0); default =  0.5 (Laplace).}
+  \item{spl}{sparseness prior loadings (0.5 - 4.0); default = 1.0.}
+  \item{spz}{sparseness factors (0.5 - 4.0); default = 1.0.}
   \item{sL}{final sparseness loadings; default = 0.6.}
   \item{sZ}{final sparseness factors; default = 0.6.}
   \item{random}{<=0: by SVD, >0: random initialization of loadings in
@@ -27,6 +27,8 @@ fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2
   \item{scale}{loading vectors are scaled in each iteration to the given
     variance. 0.0 indicates non scaling; default = 0.0.}
   \item{lap}{minimal value of the variational parameter; default = 1.0} 
+  \item{nL}{number of biclusters a row element can participate; default
+    = 0 (= no limit)} 
  }
 \details{
 
@@ -139,7 +141,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 Y <- dat[[2]]
 
-resEx <- fabiap(X,3,0.1,50)
+resEx <- fabiap(X,3,0.1,50,1.0,1.0,0.6,0.6)
 
 
 \dontrun{
@@ -181,7 +183,7 @@ groups <- gclab
 
 #### FABIAP
 
-resToy3 <- fabiap(X,13,0.1,400)
+resToy3 <- fabiap(X,13,0.1,400,1.0,1.0,0.6,0.6)
 
 rToy3 <- extractPlot(resToy3,ti="FABIAP",Y=Y)
 
@@ -231,7 +233,7 @@ data(Breast_A)
 X <- as.matrix(XBreast)
 
 
-resBreast3 <- fabiap(X,5,0.1,400)
+resBreast3 <- fabiap(X,5,0.1,400,1.0,1.0,0.6,0.6)
 
 rBreast3 <- extractPlot(resBreast3,ti="FABIAP Breast cancer(Veer)")
 
@@ -284,7 +286,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti3 <- fabiap(X,5,0.1,300)
+resMulti3 <- fabiap(X,5,0.1,300,1.0,1.0,0.6,0.6)
 
 rMulti3 <- extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
 
@@ -339,7 +341,7 @@ data(DLBCL_B)
 X <- as.matrix(XDLBCL)
 
 
-resDLBCL3 <- fabiap(X,5,0.1,400)
+resDLBCL3 <- fabiap(X,5,0.1,400,1.0,1.0,0.6,0.6)
 
 rDLBCL3 <- extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
 raDLBCL3 <- extractBic(resDLBCL3)
@@ -376,7 +378,7 @@ plot(resDLBCL3,dim=c(4,5),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
 \references{
   S. Hochreiter et al.,
   \sQuote{FABIA: Factor Analysis for Bicluster Acquisition},
-  Bioinformatics 26(12):1520-1527, 2010.
+  Bioinformatics, doi:10.1093/bioinformatics/btq227, 2010.
   http://bioinformatics.oxfordjournals.org/cgi/content/abstract/btq227
   
   Mark Girolami,

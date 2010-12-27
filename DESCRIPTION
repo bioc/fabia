@@ -1,7 +1,7 @@
 Package: fabia
 Title: FABIA: Factor Analysis for Bicluster Acquisition
-Version: 1.3.0
-Date: 2010-04-26
+Version: 1.3.1
+Date: 2010-12-27
 Author: Sepp Hochreiter <hochreit@bioinf.jku.at>
 Maintainer: Sepp Hochreiter <hochreit@bioinf.jku.at>
 Depends: R (>= 2.8.0), methods
@@ -25,7 +25,7 @@ License: LGPL (>= 2.1)
 Collate: AllClasses.R AllGenerics.R plot-methods.R show-methods.R
 	showSelected-methods.R summary-methods.R fabia.R zzz.R
 URL: http://www.bioinf.jku.at/software/fabia/fabia.html
-biocViews: Bioinformatics, Microarray, DifferentialExpression,
+biocViews: Bioinformatics, Statistics, Microarray, DifferentialExpression,
         MultipleComparisons, Clustering, Visualization
 LazyLoad: yes
-Packaged: 2010-04-26 15:18:49 UTC; bodenhof
+Packaged: 2010-12-17 10:26:47 UTC; hochreit
