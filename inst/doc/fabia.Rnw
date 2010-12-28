@@ -1,21 +1,20 @@
 % -*- mode: noweb; noweb-default-code-mode: R-mode; -*-
-%setwd("c:/sepp/work/fabia/fabia_10/fabia/inst/doc")
-%Sweave("fabia.Rnw")
-%tools::texi2dvi("fabia.tex",pdf=TRUE)
-%Stangle("fabia.Rnw")
-%source("fabia.R")
+%\VignetteIndexEntry{FABIA: Manual for the R package}
+%\VignetteDepends{fabia}
+%\VignettePackage{fabia}
+%\VignetteKeywords{fabia, fabiaData, biclustering, factor analysis, sparse coding, non-negative matrix factorization, latent variables, Laplace distribution, EM algorithm, multivariate analysis}
+
+
 
 \documentclass[article]{bioinf}
 
 \usepackage{amsmath,amssymb}
 \usepackage{bm}
 \usepackage{natbib}
-\usepackage{url}
-\usepackage{rotating}
+\usepackage{hyperref}
 
 \usepackage{fabia_defs}
 
-\usepackage{hyperref}
 
 \hypersetup{colorlinks=false,
    pdfborder=0 0 0,
@@ -34,10 +33,6 @@ Linz\\Altenberger Str. 69, 4040 Linz, Austria\\
 
 \usepackage[noae]{Sweave}
 
-%\VignetteIndexEntry{FABIA: Manual for the R package}
-%\VignetteDepends{fabia}
-%\VignettePackage{fabia}
-%\VignetteKeywords{fabia, fabiaData, biclustering, factor analysis, sparse coding, non-negative matrix factorization, latent variables, Laplace distribution, EM algorithm, multivariate analysis}
 
 \SweaveOpts{eps=FALSE}
 
@@ -99,7 +94,7 @@ format then you can try out the following steps to extract biclusters.
 
 \noindent
 Examples with outputs and plot can be found at
-\href{http://www.bioinf.jku.at/software/fabia/fabia.html}{http://www.bioinf.jku.at/software/fabia/fabia.html}).
+\href{http://www.bioinf.jku.at/software/fabia/fabia.html}{http://www.bioinf.jku.at/software/fabia/fabia.html}.
 
 
 
@@ -257,7 +252,7 @@ groups <- gclab
   to extract biclusters; 13 biclusters, sparseness 0.1 (Laplace),
   400 cycles:
 \begin{Sinput}
-R> resToy1 <- fabia(X,13,0.1,400,1.0,1.0)
+R> resToy1 <- fabia(X,13,0.1,400)
 \end{Sinput}
 \item Plot some results:
 \begin{Sinput}
@@ -319,7 +314,7 @@ R> plot(resToy1,dim=c(2,3),label.tol=0.1,col.group = groups,lab.size=0.6)
   to extract biclusters; 13 biclusters, sparseness 0.6 (projection),
   400 cycles:
 \begin{Sinput}
-R> resToy2 <- fabias(X,13,0.6,400,1.0)
+R> resToy2 <- fabias(X,13,0.6,400)
 \end{Sinput}
 \item  Plot some results:
 \begin{Sinput}
@@ -439,7 +434,7 @@ are similar if one is a multiple of the other, that is
 the angle between them is zero or as realization of random variables their
 correlation coefficient is one.
 \begin{figure}[!t]
-\centerline{\includegraphics[width=0.9\textwidth]{vectors_1}}
+\centerline{\includegraphics[width=0.9\textwidth]{./figures/vectors_1}}
 \caption{The outer product  $\la \ \z^T$ of two sparse vectors
 results in a matrix with a bicluster. Note, that the non-zero
 entries in the vectors are adjacent to each other for visualization
@@ -596,8 +591,8 @@ for the Laplace distribution large values are more likely than for a
 Gaussian.
 \begin{figure}
 \begin{center}
-\includegraphics[width=0.45\textwidth]{fabia-lap1}
-\includegraphics[width=0.45\textwidth]{fabia-lap2}
+\includegraphics[width=0.45\textwidth]{./figures/fabia-lap1}
+\includegraphics[width=0.45\textwidth]{./figures/fabia-lap2}
 \end{center}
 \caption{Left: The mode of a Laplace (red, solid) vs. a Gaussian
   (dashed, blue) distribution. Right:
@@ -1024,7 +1019,7 @@ Factor Analysis for Bicluster Acquisition: Laplace Prior (FABI) \citep{Hochreite
 \begin{enumerate}
 
 \item Usage:
-\texttt{fabi(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,center=2,norm=1)}
+\texttt{fabi(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1)}
 
 \item Arguments:
  \begin{itemize}
@@ -1032,8 +1027,8 @@ Factor Analysis for Bicluster Acquisition: Laplace Prior (FABI) \citep{Hochreite
   \item{p:} number of hidden factors = number of biclusters; default = 5.
   \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spl:} sparseness prior loadings (0.5 - 4.0): default = 1.0.
-  \item{spz:} sparseness factors (0.5 - 4.0); default = 1.0.
+  \item{spl:} sparseness prior loadings (0.5 - 2.0): default = 0.5 (Laplace).
+  \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{center:} data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.
   \item{norm:} data normalization:  1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.
@@ -1182,7 +1177,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <-  fabi(X,3,0.1,20,1.0,1.0)
+resEx <-  fabi(X,3,0.1,20)
 
 
 
@@ -1198,7 +1193,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabi(X,13,0.1,200,1.0,1.0)
+resToy <- fabi(X,13,0.1,200)
 
 rToy <- extractPlot(resToy,ti="FABI",Y=Y)
 
@@ -1221,7 +1216,7 @@ data(Breast_A)
 X <- as.matrix(XBreast)
 
 
-resBreast <- fabi(X,5,0.1,200,1.0,1.0)
+resBreast <- fabi(X,5,0.1,200)
 
 rBreast <- extractPlot(resBreast,ti="FABI Breast cancer(Veer)")
 
@@ -1249,7 +1244,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti <- fabi(X,5,0.1,200,1.0,1.0)
+resMulti <- fabi(X,5,0.1,200)
 
 rMulti <- extractPlot(resMulti,ti="FABI Multiple tissues(Su)")
 
@@ -1278,7 +1273,7 @@ data(DLBCL_B)
 X <- as.matrix(XDLBCL)
 
 
-resDLBCL <- fabi(X,5,0.1,200,1.0,1.0)
+resDLBCL <- fabi(X,5,0.1,200)
 
 rDLBCL <- extractPlot(resDLBCL,ti="FABI Lymphoma(Rosenwald)")
 
@@ -1298,8 +1293,8 @@ Factor Analysis for Bicluster Acquisition: Laplace Prior (FABIA) \citep{Hochreit
 C implementation of  \texttt{fabia}.
 
 \begin{enumerate}
-\item Usage:
-\texttt{fabia(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)}
+\item Usage: \verb+fabia(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,+\\
+\hspace*{6em}\verb+   center=2,norm=1,scale=0.0,lap=1.0,nL=0)+
 
 \item Arguments:
  \begin{itemize}
@@ -1307,8 +1302,8 @@ C implementation of  \texttt{fabia}.
   \item{p:} number of hidden factors = number of biclusters; default = 5.
   \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spl:} sparseness prior loadings (0.5 - 4.0); default = 1.0.
-  \item{spz:} sparseness factors (0.5 - 4.0); default = 1.0.
+  \item{spl:} sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).
+  \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{random} <=0: by SVD, >0: random initialization of loadings in
     [-random,random]; default = 1.0.
   \item{center:} data centering: 1 (mean), 2
@@ -1318,7 +1313,7 @@ C implementation of  \texttt{fabia}.
     variance. 0.0 indicates non scaling; default = 0.0.
   \item{lap:} minimal value of the variational parameter, default = 1.
   \item{nL:} number of biclusters a row element can participate; default
-    = 0 (= no limit)
+    = 0 (no limit)
  \end{itemize}
 
 \item Return values:
@@ -1460,7 +1455,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,50,1.0,1.0)
+resEx <- fabia(X,3,0.1,50)
 
 
 #-----------------
@@ -1502,7 +1497,7 @@ groups <- gclab
 
 #### FABIA
 
-resToy1 <- fabia(X,13,0.1,400,1.0,1.0)
+resToy1 <- fabia(X,13,0.1,400)
 
 rToy1 <- extractPlot(resToy1,ti="FABIA",Y=Y)
 
@@ -1554,7 +1549,7 @@ data(Breast_A)
 X <- as.matrix(XBreast)
 
 
-resBreast1 <- fabia(X,5,0.1,400,1.0,1.0)
+resBreast1 <- fabia(X,5,0.1,400)
 
 rBreast1 <- extractPlot(resBreast1,ti="FABIA Breast cancer(Veer)")
 
@@ -1610,7 +1605,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti1 <- fabia(X,5,0.1,300,1.0,1.0)
+resMulti1 <- fabia(X,5,0.1,300)
 
 rMulti1 <- extractPlot(resMulti1,ti="FABIA Multiple tissues(Su)")
 
@@ -1664,7 +1659,7 @@ data(DLBCL_B)
 
 X <- as.matrix(XDLBCL)
 
-resDLBCL1 <- fabia(X,5,0.1,400,1.0,1.0)
+resDLBCL1 <- fabia(X,5,0.1,400)
 
 rDLBCL1 <- extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
 
@@ -1707,7 +1702,7 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
 
 \begin{enumerate}
 
-\item Usage: \verb+fabiap(X,p=5,alpha=0.1,cyc=500,spl=1.0,spz=1.0,sL=0.6,sZ=0.6,+\\
+\item Usage: \verb+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,+\\
 \hspace*{6em}\verb+   random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)+
 
 \item Arguments:
@@ -1716,8 +1711,8 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
   \item{p:} number of hidden factors = number of biclusters; default = 5.
   \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spl:} sparseness prior loadings (0.5 - 4.0); default = 1.0.
-  \item{spz:} sparseness factors (0.5 - 4.0); default = 1.0.
+  \item{spl:} sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).
+  \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{sL:} final sparseness loadings; default = 0.6.
   \item{sZ:} final sparseness factors; default = 0.6.
   \item{random} <=0: by SVD, >0: random initialization of loadings in
@@ -1729,7 +1724,7 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
     variance. 0.0 indicates non scaling; default = 0.0.
   \item{lap:} minimal value of the variational parameter, default = 1.
   \item{nL:} number of biclusters a row element can participate; default
-    = 0 (= no limit)
+    = 0 (no limit)
 \end{itemize}
 
 \item  Return Values:
@@ -1889,7 +1884,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 Y <- dat[[2]]
 
-resEx <- fabiap(X,3,0.1,50,1.0,1.0,0.6,0.6)
+resEx <- fabiap(X,3,0.1,50)
 
 
 
@@ -1930,7 +1925,7 @@ groups <- gclab
 
 #### FABIAP
 
-resToy3 <- fabiap(X,13,0.1,400,1.0,1.0,0.6,0.6)
+resToy3 <- fabiap(X,13,0.1,400)
 
 rToy3 <- extractPlot(resToy3,ti="FABIAP",Y=Y)
 
@@ -1980,7 +1975,7 @@ data(Breast_A)
 X <- as.matrix(XBreast)
 
 
-resBreast3 <- fabiap(X,5,0.1,400,1.0,1.0,0.6,0.6)
+resBreast3 <- fabiap(X,5,0.1,400)
 
 rBreast3 <- extractPlot(resBreast3,ti="FABIAP Breast cancer(Veer)")
 
@@ -2033,7 +2028,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti3 <- fabiap(X,5,0.1,300,1.0,1.0,0.6,0.6)
+resMulti3 <- fabiap(X,5,0.1,300)
 
 rMulti3 <- extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
 
@@ -2088,7 +2083,7 @@ data(DLBCL_B)
 X <- as.matrix(XDLBCL)
 
 
-resDLBCL3 <- fabiap(X,5,0.1,400,1.0,1.0,0.6,0.6)
+resDLBCL3 <- fabiap(X,5,0.1,400)
 
 rDLBCL3 <- extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
 raDLBCL3 <- extractBic(resDLBCL3)
@@ -2133,8 +2128,8 @@ C implementation of  \texttt{fabias}.
 
 \begin{enumerate}
 
-\item  Usage:
-\texttt{fabias(X,p=5,alpha=0.6,cyc=500,spz=1.0,random=1.0,center=2,norm=1,lap=1.0,nL=0)}
+\item Usage: \verb+fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,+\\
+\hspace*{6em}\verb+   center=2,norm=1,lap=1.0,nL=0)+
 
 
 \item Arguments:
@@ -2143,7 +2138,7 @@ C implementation of  \texttt{fabias}.
   \item{p:} number of hidden factors = number of biclusters; default = 5.
   \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spz:} sparseness factors (0.5 - 4.0); default = 1.0.
+  \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{random} <=0: by SVD, >0: random initialization of loadings in
     [-random,random]; default = 1.0.
   \item{center:} data centering: 1 (mean), 2
@@ -2151,7 +2146,7 @@ C implementation of  \texttt{fabias}.
   \item{norm:} data normalization: 1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.
   \item{lap:} minimal value of the variational parameter, default = 1.
   \item{nL:} number of biclusters a row element can participate; default
-    = 0 (= no limit)
+    = 0 (no limit)
  \end{itemize}
 
 \item Return Values:
@@ -2317,7 +2312,7 @@ Y <- dat[[2]]
 
 
 
-resEx <- fabias(X,3,0.6,50,1.0)
+resEx <- fabias(X,3,0.6,50)
 
 
 #-----------------
@@ -2357,7 +2352,7 @@ groups <- gclab
 
 #### FABIAS
 
-resToy2 <- fabias(X,13,0.6,400,1.0)
+resToy2 <- fabias(X,13,0.6,400)
 
 rToy2 <- extractPlot(resToy2,ti="FABIAS",Y=Y)
 
@@ -2407,7 +2402,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast2 <- fabias(X,5,0.6,300,1.0)
+resBreast2 <- fabias(X,5,0.6,300)
 
 rBreast2 <- extractPlot(resBreast2,ti="FABIAS Breast cancer(Veer)")
 
@@ -2459,7 +2454,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti2 <- fabias(X,5,0.6,300,1.0)
+resMulti2 <- fabias(X,5,0.6,300)
 
 rMulti2 <- extractPlot(resMulti2,ti="FABIAS Multiple tissues(Su)")
 
@@ -2512,7 +2507,7 @@ data(DLBCL_B)
 
 X <- as.matrix(XDLBCL)
 
-resDLBCL2 <- fabias(X,5,0.6,300,1.0)
+resDLBCL2 <- fabias(X,5,0.6,300)
 
 rDLBCL2 <- extractPlot(resDLBCL2,ti="FABIAS Lymphoma(Rosenwald)")
 
@@ -2560,7 +2555,7 @@ Factor Analysis for Bicluster Acquisition: Sparseness Projection (FABIASP) \cite
 \begin{enumerate}
 
 \item  Usage:
-\texttt{fabiasp(X,p=5,alpha=0.6,cyc=500,spz=1.0,center=2,norm=1)}
+\texttt{fabiasp(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1)}
 
 \item Arguments:
   \begin{itemize}
@@ -2568,7 +2563,7 @@ Factor Analysis for Bicluster Acquisition: Sparseness Projection (FABIASP) \cite
   \item{p:} number of hidden factors = number of biclusters; default = 5.
   \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spz:} sparseness factors (0.5 - 4.0); default = 1.0.
+  \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{center:} data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.
   \item{norm:} data normalization: 1 (0.75-0.25 quantile), >1 (var=1),
@@ -2734,7 +2729,7 @@ Y <- dat[[2]]
 
 
 
-resEx <- fabiasp(X,3,0.6,50,1.0)
+resEx <- fabiasp(X,3,0.6,50)
 
 
 \dontrun{
@@ -2750,7 +2745,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabiasp(X,13,0.6,200,1.0)
+resToy <- fabiasp(X,13,0.6,200)
 
 rToy <- extractPlot(resToy,ti="FABIASP",Y=Y)
 
@@ -2773,7 +2768,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast <- fabiasp(X,5,0.6,200,1.0)
+resBreast <- fabiasp(X,5,0.6,200)
 
 rBreast <- extractPlot(resBreast,ti="FABIASP Breast cancer(Veer)")
 
@@ -2801,7 +2796,7 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti <- fabiasp(X,5,0.6,200,1.0)
+resMulti <- fabiasp(X,5,0.6,200)
 
 rMulti <- extractPlot(resMulti,"ti=FABIASP Multiple tissues(Su)")
 
@@ -2831,7 +2826,7 @@ data(DLBCL_B)
 X <- as.matrix(XDLBCL)
 
 
-resDLBCL <- fabiasp(X,5,0.6,200,1.0)
+resDLBCL <- fabiasp(X,5,0.6,200)
 
 rDLBCL <- extractPlot(resDLBCL,ti="FABIASP Lymphoma(Rosenwald)")
 
@@ -3778,7 +3773,7 @@ ZC <- dat[[3]]
 LC <- dat[[4]]
 
 
-resEx <- fabia(X,p,0.1,400,1.0,1.0)
+resEx <- fabia(X,p,0.1,400)
 
 
 gclab <- rep.int(0,l)
@@ -3878,7 +3873,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 
 
-resEx <- fabia(X,3,0.1,100,1.0,1.0)
+resEx <- fabia(X,3,0.1,100)
 
 show(resEx)
 
@@ -3951,7 +3946,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 
 
-resEx <- fabia(X,3,0.1,100,1.0,1.0)
+resEx <- fabia(X,3,0.1,100)
 
 showSelected(resEx,which=1)
 showSelected(resEx,which=2)
@@ -4022,7 +4017,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 
 
-resEx <- fabia(X,3,0.1,100,1.0,1.0)
+resEx <- fabia(X,3,0.1,100)
 
 summary(resEx)
 
@@ -4165,7 +4160,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,20,1.0,1.0)
+resEx <- fabia(X,3,0.1,20)
 
 rEx <- extractBic(resEx)
 
@@ -4186,7 +4181,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200,1.0,1.0)
+resToy <- fabia(X,13,0.1,200)
 
 rToy <- extractBic(resToy)
 
@@ -4215,7 +4210,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast <- fabia(X,5,0.1,200,1.0,1.0)
+resBreast <- fabia(X,5,0.1,200)
 
 rBreast <- extractBic(resBreast)
 
@@ -4340,7 +4335,7 @@ Y <- dat[[2]]
 
 
 
-resEx <- fabia(X,3,0.3,20,1.0,1.0)
+resEx <- fabia(X,3,0.3,20)
 
 rEx <- extractPlot(resEx,ti="FABIA",Y=Y)
 
@@ -4358,7 +4353,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200,1.0,1.0)
+resToy <- fabia(X,13,0.1,200)
 
 rToy <- extractPlot(resToy,ti="FABIA",Y=Y)
 
@@ -4382,7 +4377,7 @@ data(Breast_A)
 X <- as.matrix(XBreast)
 
 
-resBreast <- fabia(X,5,0.1,200,1.0,1.0)
+resBreast <- fabia(X,5,0.1,200)
 
 rBreast <- extractPlot(resBreast,ti="FABIA Breast cancer(Veer)")
 
@@ -4444,7 +4439,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,20,1.0,1.0)
+resEx <- fabia(X,3,0.1,20)
 
 rEx <- extractBic(resEx)
 
@@ -4464,7 +4459,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200,1.0,1.0)
+resToy <- fabia(X,13,0.1,200)
 
 
 
@@ -4490,7 +4485,7 @@ data(Breast_A)
 
 X <- as.matrix(XBreast)
 
-resBreast <- fabia(X,5,0.1,200,1.0,1.0)
+resBreast <- fabia(X,5,0.1,200)
 
 rBreast <- extractBic(resBreast)
 
@@ -5040,8 +5035,8 @@ Plotting of a matrix.
   The color scale is based on the highest and lowest values in the
   matrix.
 
-  Program has been obtained by
- \url{http://www.phaget4.org/R/myImagePlot.R}
+  Program has been obtained at
+ \href{http://www.phaget4.org/R/myImagePlot.R}{http://www.phaget4.org/R/myImagePlot.R}
 
 
 
@@ -5356,7 +5351,7 @@ Microarray data set of van't Veer breast cancer.
   Microarray data from Broad
   Institute ``Cancer Program Data Sets'' which
   was produced by \citep{Veer:02}
-  (\url{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
+  (\href{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi}{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
   Array S54 was removed because it is an
   outlier.
 
@@ -5383,7 +5378,7 @@ Microarray data set of Rosenwald diffuse large-B-cell lymphoma.
  Microarray data from Broad
   Institute ``Cancer Program Data Sets'' which
   was produced by \citep{Rosenwald:02}
-  (\url{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
+  (\href{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi}{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
 
   Goal was to predict the survival after chemotherapy
 
@@ -5411,8 +5406,8 @@ Microarray data set of Su on different mammalian tissue types.
  Microarray data from Broad
   Institute ``Cancer Program Data Sets'' which
   was produced by \citep{Su:02}
-  (\url{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi})
-
+  (\href{http://www.broadinstitute.org/cgi-bin/cancer/datasets.cgi}{http://www.brxsoadinstitute.org/cgi-bin/cancer/datasets.cgi})
+s
 
   Gene expression from human and mouse samples across a diverse array
   of tissues, organs, and cell lines have been profiled.
