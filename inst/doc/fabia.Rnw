@@ -5,7 +5,6 @@
 %Stangle("fabia.Rnw")
 %source("fabia.R")
 
-
 \documentclass[article]{bioinf}
 
 \usepackage{amsmath,amssymb}
@@ -5042,7 +5041,7 @@ Plotting of a matrix.
   matrix.
 
   Program has been obtained by
- \url{http://www.phaget4.org/R/matrixImagePlot.R}
+ \url{http://www.phaget4.org/R/myImagePlot.R}
 
 
 
