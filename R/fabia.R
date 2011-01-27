@@ -232,7 +232,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
         colnames(U) <- colna
 
 
-        if (avini[p+1]>1e-8) {
+        if ((avini[p+1]>1e-8)&&(p>1)) {
 
             soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
 
@@ -502,7 +502,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
 
 
 
-        if (avini[p+1]>1e-8) {
+        if ((avini[p+1]>1e-8)&&(p>1)) {
 
             soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
 
@@ -732,7 +732,7 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
         rownames(U) <- rowna
         colnames(U) <- colna
 
-        if (avini[p+1]>1e-8) {
+        if ((avini[p+1]>1e-8)&&(p>1)) {
 
             soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
 
@@ -980,7 +980,7 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1){
         rownames(U) <- rowna
         colnames(U) <- colna
 
-        if (avini[p+1]>1e-8) {
+        if ((avini[p+1]>1e-8)&&(p>1)) {
 
             soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
 
@@ -1242,7 +1242,7 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
         rownames(U) <- rowna
         colnames(U) <- colna
 
-         if (avini[p+1]>1e-8) {
+        if ((avini[p+1]>1e-8)&&(p>1)) {
 
             soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
 
