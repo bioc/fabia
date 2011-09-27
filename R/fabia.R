@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
+fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -44,6 +44,11 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
        message("   Initialization loadings--------- random: ",random," = interval")
        } else {
        message("   Initialization loadings--------- random: ",random," = SVD")
+      }
+       if (non_negative>0) {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = Yes")
+       } else {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = No")
       }
        if (center>0) {
             if (center<2) {
@@ -149,6 +154,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
 	alpha <- as.double(alpha)
+	non_negative <- as.integer(non_negative)
 	p <- as.integer(p)
 	spz <- as.double(spz)
 	scale <- as.double(scale)
@@ -156,9 +162,13 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
 
 
 
-	res <- .Call("fabic", X,Psi,L,lapla,cyc ,alpha,eps,eps1,spl,spz,scale,lap,nL,PACKAGE="fabia")
+	res <- .Call("fabic", X,Psi,L,lapla,cyc ,alpha,eps,eps1,spl,spz,scale,lap,nL,non_negative,PACKAGE="fabia")
 
 
+        if (is.null(res))
+        {
+            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+        }
 
 
         # INI call for biclusters
@@ -187,27 +197,24 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
         xavini <- as.vector(rep(0.0,(l+1)))
 
         idp <- diag(p)
-        ipsi <- 1/res$Psi
+        ppL <- crossprod(noL,(1/res$Psi)*noL)
+
 
         for (j in 1:l){
-                ppL <- crossprod(noL,ipsi*noL)
-                mat <- idp + ppL/res$lapla[j,]
-                ini[j,p+1] <- log(det(mat))
-
-                for (i in 1:p){
-                    ini[j,i] <- log(1+(1/res$lapla[j,i])*crossprod(noL[,i],ipsi*noL[,i]))
-                }
-            }
+            mat <- idp + ppL/res$lapla[j,]
+            ini[j,1:p] <- log(diag(mat))
+            s <- log(det(mat))
+            ini[j,p+1] <- s
+            xavini[j] <-s
+        }
         for (i in 1:p){
             avini[i] <- sum(ini[,i])
-        }
-        for (i in 1:l){
-            xavini[i] <- ini[i,p+1]
         }
 
         ss <- sum(ini[,p+1])
         xavini[l+1] <- ss
         avini[p+1] <- ss
+
 
         Lz=noL%*%nZ
 
@@ -246,12 +253,12 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,no
 
 
 
-        return(new('Factorization', parameters=list("fabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,center,lap,nL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+        return(new('Factorization', parameters=list("fabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,center,lap,nL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
 
-fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
+fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -298,6 +305,11 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
        } else {
        message("   Initialization loadings--------- random: ",random," = SVD")
        }
+       if (non_negative>0) {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = Yes")
+       } else {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = No")
+      }
        if (center>0) {
             if (center<2) {
        message("   Centering ---------------------- center: 1 = mean")
@@ -377,9 +389,17 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
 
         if (random>0) {
              L <- matrix(random*rnorm(n*p),nrow=n,ncol=p)
+             if (non_negative>0)
+             {
+                 L <- abs(L)
+             }
          } else {
              svd <- La.svd(X)
              L <- svd$u[,1:p]%*%diag(svd$d[1:p])
+             if (non_negative>0)
+             {
+                 L <- abs(L)
+             }
          }
 
 
@@ -399,13 +419,19 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
 	alpha <- as.double(alpha)
+	non_negative <- as.integer(non_negative)
 	p <- as.integer(p)
 	spz <- as.double(spz)
 	scale <- as.double(scale)
 	lap <- as.double(lap)
 
 
-	res <- .Call("fabic", X,Psi,L,lapla,cyc,alpha,eps,eps1,spl,spz,scale,lap,nL,PACKAGE="fabia")
+	res <- .Call("fabic", X,Psi,L,lapla,cyc,alpha,eps,eps1,spl,spz,scale,lap,nL,non_negative,PACKAGE="fabia")
+
+        if (is.null(res))
+        {
+            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+        }
 
         rL <- res$L
         n <- nrow(rL)
@@ -455,22 +481,18 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
         xavini <- as.vector(rep(0.0,(l+1)))
 
         idp <- diag(p)
-        ipsi <- 1/res$Psi
+        ppL <- crossprod(noL,(1/res$Psi)*noL)
+
 
         for (j in 1:l){
-                ppL <- crossprod(noL,ipsi*noL)
-                mat <- idp + ppL/res$lapla[j,]
-                ini[j,p+1] <- log(det(mat))
-
-                for (i in 1:p){
-                    ini[j,i] <- log(1+(1/res$lapla[j,i])*crossprod(noL[,i],ipsi*noL[,i]))
-                }
-            }
+            mat <- idp + ppL/res$lapla[j,]
+            ini[j,1:p] <- log(diag(mat))
+            s <- log(det(mat))
+            ini[j,p+1] <- s
+            xavini[j] <-s
+        }
         for (i in 1:p){
             avini[i] <- sum(ini[,i])
-        }
-        for (i in 1:l){
-            xavini[i] <- ini[i,p+1]
         }
 
         ss <- sum(ini[,p+1])
@@ -515,11 +537,11 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=
 
 
 
-    return(new('Factorization', parameters=list("fabiap",cyc,alpha,spl,spz,p,sL,sZ,random,scale,norm,center,lap,nL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+    return(new('Factorization', parameters=list("fabiap",cyc,alpha,spl,spz,p,sL,sZ,random,scale,norm,center,lap,nL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 }
 
-fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0,nL=0){
+fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness low value because enforced by projFunc
@@ -562,6 +584,11 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
        } else {
        message("   Initialization loadings--------- random: ",random," = SVD")
        }
+       if (non_negative>0) {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = Yes")
+       } else {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = No")
+      }
        if (center>0) {
             if (center<2) {
        message("   Centering ---------------------- center: 1 = mean")
@@ -636,9 +663,17 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
 
         if (random>0) {
              L <- matrix(random*rnorm(n*p),nrow=n,ncol=p)
+             if (non_negative>0)
+             {
+                 L <- abs(L)
+             }
          } else {
              svd <- La.svd(X)
              L <- svd$u[,1:p]%*%diag(svd$d[1:p])
+             if (non_negative>0)
+             {
+                 L <- abs(L)
+             }
          }
 
 
@@ -652,13 +687,18 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
 	alpha <- as.double(alpha)
+	non_negative <- as.integer(non_negative)
 	p <- as.integer(p)
 	spz <- as.double(spz)
 	lap <- as.double(lap)
 
 
-	res <- .Call("fabics", X,Psi,L,lapla,cyc ,alpha,eps,spz,lap,nL,PACKAGE="fabia")
+	res <- .Call("fabics", X,Psi,L,lapla,cyc ,alpha,eps,spz,lap,nL,non_negative,PACKAGE="fabia")
 
+        if (is.null(res))
+        {
+            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+        }
 
        # INI call for biclusters
 
@@ -688,22 +728,18 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
         xavini <- as.vector(rep(0.0,(l+1)))
 
         idp <- diag(p)
-        ipsi <- 1/res$Psi
+        ppL <- crossprod(noL,(1/res$Psi)*noL)
+
 
         for (j in 1:l){
-                ppL <- crossprod(noL,ipsi*noL)
-                mat <- idp + ppL/res$lapla[j,]
-                ini[j,p+1] <- log(det(mat))
-
-                for (i in 1:p){
-                    ini[j,i] <- log(1+(1/res$lapla[j,i])*crossprod(noL[,i],ipsi*noL[,i]))
-                }
-            }
+            mat <- idp + ppL/res$lapla[j,]
+            ini[j,1:p] <- log(diag(mat))
+            s <- log(det(mat))
+            ini[j,p+1] <- s
+            xavini[j] <-s
+        }
         for (i in 1:p){
             avini[i] <- sum(ini[,i])
-        }
-        for (i in 1:l){
-            xavini[i] <- ini[i,p+1]
         }
 
         ss <- sum(ini[,p+1])
@@ -743,13 +779,13 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,la
 
         }
 
-    return(new('Factorization', parameters=list("fabias",cyc,alpha,NULL,spz,p,NULL,NULL,random,scale,norm,center,lap,nL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+    return(new('Factorization', parameters=list("fabias",cyc,alpha,NULL,spz,p,NULL,NULL,random,scale,norm,center,lap,nL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
 
 
-fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1){
+fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0){
 
         if (missing(X)) {
             stop("Data matrix X missing. Stopped.")
@@ -871,38 +907,39 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1){
 
         L <- (0.5*XX^(.5))*nk_one
 	for (i in 1:cyc){
-                ipsi <- 1/Psi
-		LPsi<-diag(ipsi)%*%L
+		LPsi<-diag(1/Psi)%*%L
 		LPsiL<-crossprod(L,LPsi)
  		sum1<- nk_zero
 		sum2<- eps2*kk_one
  		for (j in 1:l){
-			tmp <- solve(LPsiL+diag(lapla[j,]))
+                        laj <- lapla[j,]
+			tmp <- chol2inv(chol(LPsiL+diag(laj)))
 			x_j <- as.vector(X[,j])
 			e_sx_n <- as.vector(tcrossprod(tmp,LPsi)%*%x_j)
 			#e_sx_n[which(e_sx_n<0)] <- 0
 			e_ssxx_n <-  tmp + tcrossprod(e_sx_n,e_sx_n)
 			sum1 <- sum1 +  tcrossprod(x_j,e_sx_n)
 			sum2 <- sum2 + e_ssxx_n
-			lapla[j,] <- (epsv+diag(e_ssxx_n))^(-spz)
-                        lapla[j,which( lapla[j,]<1.0)] <- 1.0
+			laj <- (epsv+diag(e_ssxx_n))^(-spz)
+                        laj[which(laj<lap)] <- lap
+                        lapla[j,] <- laj
 		}
 #                L <- (sum1 - alpha*sign(sum1))
 #                L[which(abs(sum1)<alpha)] <- 0
-                sll <- solve(sum2)
+                sll <- chol2inv(chol(sum2))
                 L <- sum1%*%sll
-                L <- L - alpha*Psi*sign(sum1)*abs(nk_one*eps+sum1)^{-spl}%*%sll
-                L[which(abs(L)<abs(alpha*Psi*abs(nk_one*eps+sum1)^{-spl})%*%sll)] <- 0
+                ddL <- alpha*Psi*sign(L)*abs(nk_one*eps+L)^{-spl}
+                L <- L - ddL
+                L[which(abs(L)<abs(ddL))] <- 0
 
                 Psi <- epsn+abs(XX - diag(tcrossprod(L,sum1)/n))
                 if (i %% 20==0) { print(i)}
 	}
 
-        ipsi <- 1/Psi
-        LPsi<-diag(ipsi)%*%L
+        LPsi<-diag(1/Psi)%*%L
         LPsiL<-crossprod(L,LPsi)
         for (j in 1:l){
-            tmp <- solve(LPsiL+diag(lapla[j,]))
+            tmp <- chol2inv(chol(LPsiL+diag(lapla[j,])))
             x_j <- as.vector(X[,j])
             e_sx_n <- as.vector(tcrossprod(tmp,LPsi)%*%x_j)
             E_SX_n[,j] <- e_sx_n
@@ -935,22 +972,17 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1){
         xavini <- as.vector(rep(0.0,(l+1)))
 
         idp <- diag(p)
-        ipsi <- 1/Psi
+        ppL <- crossprod(noL,(1/Psi)*noL)
 
         for (j in 1:l){
-                ppL <- crossprod(noL,ipsi*noL)
-                mat <- idp + ppL/lapla[j,]
-                ini[j,p+1] <- log(det(mat))
-
-                for (i in 1:p){
-                    ini[j,i] <- log(1+(1/lapla[j,i])*crossprod(noL[,i],ipsi*noL[,i]))
-                }
-            }
+            mat <- idp + ppL/lapla[j,]
+            ini[j,1:p] <- log(diag(mat))
+            s <- log(det(mat))
+            ini[j,p+1] <- s
+            xavini[j] <-s
+        }
         for (i in 1:p){
             avini[i] <- sum(ini[,i])
-        }
-        for (i in 1:l){
-            xavini[i] <- ini[i,p+1]
         }
 
         ss <- sum(ini[,p+1])
@@ -996,7 +1028,7 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1){
 }
 
 
-fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
+fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0){
 
 
          if (missing(X)) {
@@ -1110,7 +1142,6 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
         L1a <- sqrt(n)-(sqrt(n)-1)*alpha
 
 
-
         kvect <- as.vector(rep(1,p))
         nvect <- as.vector(rep(1,n))
         nk_one <- matrix(1,n,p)
@@ -1126,23 +1157,24 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
         L <- L/sqrt(sum(L*L))
 
 	for (i in 1:cyc){
-                ipsi <- 1/Psi
-		LPsi<-diag(ipsi)%*%L
+		LPsi<-diag(1/Psi)%*%L
 		LPsiL<-crossprod(L,LPsi)
  		sum1<- nk_zero
 		sum2<- eps2*kk_one
  		for (j in 1:l){
-			tmp <- solve(LPsiL+diag(lapla[j,]))
+                        laj <- lapla[j,]
+			tmp <- chol2inv(chol(LPsiL+diag(laj)))
 			x_j <- as.vector(X[,j])
 			e_sx_n <- as.vector(tcrossprod(tmp,LPsi)%*%x_j)
 			#e_sx_n[which(e_sx_n<0)] <- 0
 			e_ssxx_n <-  tmp + tcrossprod(e_sx_n,e_sx_n)
 			sum1 <- sum1 +  tcrossprod(x_j,e_sx_n)
 			sum2 <- sum2 + e_ssxx_n
-			lapla[j,] <- (epsv+diag(e_ssxx_n))^(-spz)
-                        lapla[j,which( lapla[j,]<1.0)] <- 1.0
+			laj <- (epsv+diag(e_ssxx_n))^(-spz)
+                        laj[which(laj<lap)] <- lap
+                        lapla[j,] <- laj
 		}
-                L <- sum1%*%solve(sum2)
+                L <- sum1%*%chol2inv(chol(sum2))
 
                 Psi <- epsn+abs(XX - diag(tcrossprod(L,sum1)/n))
 
@@ -1154,11 +1186,10 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
                 if (i %% 20==0) { print(i)}
 	}
 
-        ipsi <- 1/Psi
-        LPsi<-diag(ipsi)%*%L
+        LPsi<-diag(1/Psi)%*%L
         LPsiL<-crossprod(L,LPsi)
         for (j in 1:l){
-            tmp <- solve(LPsiL+diag(lapla[j,]))
+            tmp <- chol2inv(chol(LPsiL+diag(lapla[j,])))
             x_j <- as.vector(X[,j])
             e_sx_n <- as.vector(tcrossprod(tmp,LPsi)%*%x_j)
             E_SX_n[,j] <- e_sx_n
@@ -1197,23 +1228,19 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1){
         xavini <- as.vector(rep(0.0,(l+1)))
 
         idp <- diag(p)
-        ipsi <- 1/Psi
+        ppL <- crossprod(noL,(1/Psi)*noL)
 
         for (j in 1:l){
-                ppL <- crossprod(noL,ipsi*noL)
-                mat <- idp + ppL/lapla[j,]
-                ini[j,p+1] <- log(det(mat))
-
-                for (i in 1:p){
-                    ini[j,i] <- log(1+(1/lapla[j,i])*crossprod(noL[,i],ipsi*noL[,i]))
-                }
-            }
+            mat <- idp + ppL/lapla[j,]
+            ini[j,1:p] <- log(diag(mat))
+            s <- log(det(mat))
+            ini[j,p+1] <- s
+            xavini[j] <- s
+        }
         for (i in 1:p){
             avini[i] <- sum(ini[,i])
         }
-        for (i in 1:l){
-            xavini[i] <- ini[i,p+1]
-        }
+
 
         ss <- sum(ini[,p+1])
         xavini[l+1] <- ss
@@ -1424,7 +1451,6 @@ plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
         }
 
 
-
         x <- r$X
         if (!is.matrix(x)) {
             x <- as.matrix(x)
@@ -1442,6 +1468,9 @@ plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
             stop("Bicluster number is too large. Stopped.")
         }
 
+        if ((nrow(x)<2)||(ncol(x)<2)) {
+            stop("Data matrix X too small or missing. Stopped.")
+        }
 
 
      devAskNewPage(ask = FALSE)
@@ -2332,7 +2361,7 @@ projFunc <- function(s, k1, k2) {
 
 
 ##########################################################
-extractPlot <- function(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6,7,8)){
+extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6,7,8)){
 
         if (missing(fact)) {
             stop("Object fact of class Factorization is missing. Stopped.")
@@ -2361,11 +2390,20 @@ extractPlot <- function(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4
 
 
     X <- as.matrix(fact@X)
+
+    misX <- FALSE
+    if (!is.matrix(X)||(nrow(X)<2)||(ncol(X)<2)) {
+     showf[2] <- FALSE
+     showf[4] <- FALSE
+     showf[8] <- FALSE
+     misX <- TRUE
+    }
+
     noL <- as.matrix(fact@L)
     nZ <- as.matrix(fact@Z)
 
-    l=ncol(X)
-    n=nrow(X)
+    l=ncol(nZ)
+    n=nrow(noL)
 
 
     p <- ncol(noL)
@@ -2379,8 +2417,11 @@ extractPlot <- function(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4
 
     yll <- rep("",n)
 
-    yll[yl] <- rownames(X)[yl]
-
+    if (misX) {
+        yll[yl] <- as.character(yl)
+    } else {
+        yll[yl] <- rownames(X)[yl]
+    }
     LZ <- noL%*%nZ
 
     tt <- paste("(",as.character(n)," genes, ",as.character(l)," samples, ",as.character(p)," biclusters )")
@@ -2412,11 +2453,16 @@ extractPlot <- function(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4
 
 
 
-    hnzc <- kmeans(t(nZ),p)
+    hnzc <- kmeans(t(nZ),p, iter.max = 20, nstart = 10)
 
     hnzs <- sort(hnzc$cluster,index.return = TRUE)
 
-    xLabels <- colnames(X)
+    if (misX) {
+        xLabels <- as.character(1:l)
+    } else {
+        xLabels <- colnames(X)
+    }
+
     pmZ <- matrix(0,l,l)
     for (i in 1:l){
          pmZ[hnzs$ix[i],i] <- 1
@@ -2428,7 +2474,7 @@ extractPlot <- function(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4
 
 
 
-    hnLc <- kmeans(noL,p)
+    hnLc <- kmeans(noL,p, iter.max = 20, nstart = 10)
 
     hnLs <- sort(hnLc$cluster,index.return = TRUE)
 
@@ -2444,7 +2490,11 @@ extractPlot <- function(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4
     biclust <- cbind(biclustx,biclusty)
 
     pmL <- matrix(0,n,n)
-    yLabels <- rownames(X)
+    if (misX) {
+        yLabels <- as.character(1:n)
+    } else {
+        yLabels <- rownames(X)
+    }
     for (i in 1:n){
          pmL[i,hnLs$ix[i]] <- 1
          tmp <- yLabels[i]
@@ -2470,18 +2520,21 @@ extractPlot <- function(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4
         matrixImagePlot(reconstr,title=paste(ti,": reconstructed matrix sorted\n",tt,sep=""), yLabels= yll)
     }
 
-    reord <- pmL%*%as.matrix(X)%*%pmZ
+   if (!misX) {
+       reord <- pmL%*%as.matrix(X)%*%pmZ
+       rownames(reord) <- yLabels
+       colnames(reord) <- xLabels
 
-    rownames(reord) <- yLabels
-    colnames(reord) <- xLabels
+       if (showf[8]){
+           matrixImagePlot(reord,title=paste(ti,": original matrix sorted\n",tt,sep=""), yLabels= yll)
+       }
+   } else {
+       reord <- NULL
+   }
 
-     if (showf[8]){
-         matrixImagePlot(reord,title=paste(ti,": original matrix sorted\n",tt,sep=""), yLabels= yll)
-     }
+   devAskNewPage(ask = FALSE)
 
-    devAskNewPage(ask = FALSE)
-
-    return(list(biclust=biclust,pmZ=pmZ,pmL=pmL,L=noL,Z=nZ,Xord=reord))
+    return;
 
 }
 
@@ -2527,18 +2580,20 @@ extractBic <- function(fact,thresZ=0.5,thresL=NULL)
     biyn <- list()
     biynv <- list()
     biynn <- list()
-    if (is.null(rownames(X)))
+    if (is.null(rownames(X))||(length(rownames(X))<2))
     {
-        rownames(X) <- as.character(1:n)
+        gene_names <- as.character(1:n)
+    } else {
+        gene_names <- rownames(X)
     }
-    gene_names <- rownames(X)
     rownames(noL) <- gene_names
 
-    if (is.null(colnames(X)))
+    if (is.null(colnames(X))||(length(colnames(X))<2))
     {
-       colnames(X) <- as.character(1:l)
+       sample_names <- as.character(1:l)
+    } else {
+        sample_names <- colnames(X)
     }
-    sample_names <- colnames(X)
     colnames(nZ) <- sample_names
 
     if (is.null(thresL)) {
@@ -3253,5 +3308,246 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
+spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,samples=0){
+	## X - name of the data file
+	## cyc - maximum number of cycles
+        ## alpha - sparseness
+        ## p - factors
 
+        if (missing(X)) {
+            stop("Data file name missing. Stopped.")
+        }
+
+
+       message("Running sparse FABIA on a sparse matrix in file >",X,"<:")
+       message("   Number of biclusters ---------------- p: ",p)
+       message("   Sparseness factor --------------- alpha: ",alpha)
+       message("   Number of iterations -------------- cyc: ",cyc)
+       message("   Loading prior parameter ----------- spl: ",spl)
+       message("   Factor prior parameter ------------ spz: ",spz)
+        if (random>0) {
+       message("   Initialization loadings--------- random: ",random," = positive")
+       } else {
+       message("   Initialization loadings--------- random: ",random," = all values")
+      }
+        if (non_negative>0) {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = Yes")
+       } else {
+       message("   Nonnegative Loadings and Factors ------: ",non_negative," = No")
+      }
+       if (write_file>0) {
+       message("   Write results files -------------------: ",write_file, " = Yes")
+       } else {
+       message("   Write results files -------------------: ",write_file, " = No")
+      }
+        if (norm>0) {
+       message("   Scaling to variance one: --------- norm: ",norm," = Yes")
+           } else {
+       message("   Scaling -------------------------- norm: ",norm," = No")
+       }
+       if (scale>0) {
+       message("   Scaling loadings per iteration -- scale: ",scale," = to ", scale)
+       } else {
+       message("   Scaling loadings per iteration -- scale: ", scale," = No")
+       }
+
+       message("   Constraint variational parameter -- lap: ", lap)
+       if ((nL>0)&&(nL<p)) {
+           message("   Number of biclusters per row ------- nL: ", nL)
+       } else {
+           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+       }
+       if (samples[1]==0) {
+           message("   Number of Samples ------------- samples: ", samples, " = all samples")
+       } else {
+           message("   Number of Samples  ------------ samples: ", length(samples))
+       }
+
+
+
+
+
+        eps <- as.double(1e-3)
+        eps1 <- as.double(1e-10)
+        init_lapla <-  as.double(1.0)
+        init_psi <-  as.double(0.2)
+
+	samples <- as.integer(sort.int(as.integer(unique(samples))))
+	norm <- as.integer(norm)
+	cyc <- as.integer(cyc)
+	nL <- as.integer(nL)
+	alpha <- as.double(alpha)
+	non_negative <- as.integer(non_negative)
+        write_file<- as.integer(write_file)
+	p <- as.integer(p)
+	spz <- as.double(spz)
+	scale <- as.double(scale)
+	lap <- as.double(lap)
+
+
+
+	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,eps,eps1,samples,PACKAGE="fabia")
+
+        if (is.null(res))
+        {
+            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+        }
+
+        l=ncol(res$E_SX_n)
+        n=nrow(res$L)
+
+        eps <- as.double(1e-3)
+	nvect <- as.vector(rep(1,n))
+        epsn<-eps*nvect
+
+        iin <-  1.0/l
+
+        # INI call for biclusters
+
+
+        vz <- iin*apply(res$E_SX_n,1,function(x) sum(x^2))
+
+        vz <- sqrt(vz+1e-10)
+
+        ivz <- 1/vz
+
+        if(length(ivz)==1) {
+            nZ <- ivz*res$E_SX_n
+
+            noL <- vz*res$L
+        }
+        else {
+            nZ <- ivz*res$E_SX_n
+
+            noL <- t(vz*t(res$L))
+        }
+
+
+        ini <- matrix(0,l,(p+1))
+        avini <- as.vector(rep(0.0,(p+1)))
+        xavini <- as.vector(rep(0.0,(l+1)))
+
+        idp <- diag(p)
+        ppL <- crossprod(noL,(1/(res$Psi+epsn))*noL)
+
+
+        for (j in 1:l){
+            mat <- idp + ppL/res$lapla[j,]
+            ini[j,1:p] <- log(diag(mat))
+            s <- log(det(mat))
+            ini[j,p+1] <- s
+            xavini[j] <- s
+        }
+        for (i in 1:p){
+            avini[i] <- sum(ini[,i])
+        }
+
+        ss <- sum(ini[,p+1])
+        xavini[l+1] <- ss
+        avini[p+1] <- ss
+
+
+
+        if ((avini[p+1]>1e-8)&&(p>1)) {
+
+            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
+
+            avini[1:p] <- avini[soo$ix]
+            noL <- noL[,soo$ix]
+            nZ <- nZ[soo$ix,]
+
+        }
+
+
+
+
+        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,non_negative,write_file,init_lapla,init_psi),n=n,p1=p,p2=p,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+
+
+}
+
+
+readSpfabiaResult <- function(X){
+	## X - name of the data files
+
+        if (missing(X)) {
+            stop("Data file name missing. Stopped.")
+        }
+
+	res <- .Call("readSpfabicResult",X,PACKAGE="fabia")
+
+        l=ncol(res$E_SX_n)
+        n=nrow(res$L)
+
+        p=ncol(res$L)
+
+        iin <-  1.0/l
+
+        # INI call for biclusters
+
+
+        eps <- as.double(1e-3)
+	nvect <- as.vector(rep(1,n))
+        epsn<-eps*nvect
+
+        vz <- iin*apply(res$E_SX_n,1,function(x) sum(x^2))
+
+        vz <- sqrt(vz+1e-10)
+
+        ivz <- 1/vz
+
+        if(length(ivz)==1) {
+            nZ <- ivz*res$E_SX_n
+
+            noL <- vz*res$L
+        }
+        else {
+            nZ <- ivz*res$E_SX_n
+
+            noL <- t(vz*t(res$L))
+        }
+
+
+        ini <- matrix(0,l,(p+1))
+        avini <- as.vector(rep(0.0,(p+1)))
+        xavini <- as.vector(rep(0.0,(l+1)))
+
+        idp <- diag(p)
+        ppL <- crossprod(noL,(1/(res$Psi+epsn))*noL)
+
+
+        for (j in 1:l){
+            mat <- idp + ppL/res$lapla[j,]
+            ini[j,1:p] <- log(diag(mat))
+            s <- log(det(mat))
+            ini[j,p+1] <- s
+            xavini[j] <- s
+        }
+        for (i in 1:p){
+            avini[i] <- sum(ini[,i])
+        }
+
+        ss <- sum(ini[,p+1])
+        xavini[l+1] <- ss
+        avini[p+1] <- ss
+
+
+
+        if ((avini[p+1]>1e-8)&&(p>1)) {
+
+            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
+
+            avini[1:p] <- avini[soo$ix]
+            noL <- noL[,soo$ix]
+            nZ <- nZ[soo$ix,]
+
+        }
+
+
+
+
+        return(new('Factorization', parameters=list(),n=n,p1=p,p2=p,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+
+
+}
 

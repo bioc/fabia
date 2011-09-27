@@ -169,7 +169,7 @@ groups <- gclab
 
 resToy4 <- mfsc(X,13,100,0.6,0.6)
 
-rToy4 <- extractPlot(resToy4,ti="MFSC",Y=Y)
+extractPlot(resToy4,ti="MFSC",Y=Y)
 
 raToy4 <- extractBic(resToy4,thresZ=0.01,thresL=0.05)
 
@@ -218,7 +218,7 @@ X <- as.matrix(XBreast)
 
 resBreast4 <- mfsc(X,5,100,0.6,0.6)
 
-rBreast4 <- extractPlot(resBreast4,ti="MFSC Breast cancer(Veer)")
+extractPlot(resBreast4,ti="MFSC Breast cancer(Veer)")
 
 
 raBreast4 <- extractBic(resBreast4,thresZ=0.01,thresL=0.05)
@@ -272,7 +272,7 @@ X <- as.matrix(XMulti)
 
 resMulti4 <- mfsc(X,5,100,0.6,0.6)
 
-rMulti4 <- extractPlot(resMulti4,ti="MFSC Multiple tissues(Su)")
+extractPlot(resMulti4,ti="MFSC Multiple tissues(Su)")
 
 
 raMulti4 <- extractBic(resMulti4,thresZ=0.01,thresL=0.05)
@@ -328,7 +328,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL4 <- mfsc(X,5,100,0.6,0.6)
 
-rDLBCL4 <- extractPlot(resDLBCL4,ti="MFSC Lymphoma(Rosenwald)")
+extractPlot(resDLBCL4,ti="MFSC Lymphoma(Rosenwald)")
 
 raDLBCL4 <- extractBic(resDLBCL4,thresZ=0.01,thresL=0.05)
 

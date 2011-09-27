@@ -34,7 +34,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL3 <- fabiap(X,5,0.1,400)
 
-rDLBCL3 <- extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
+extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
 raDLBCL3 <- extractBic(resDLBCL3)
 
 if ((raDLBCL3$bic[[1]][1]>1) && (raDLBCL3$bic[[1]][2])>1) {

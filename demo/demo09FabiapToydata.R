@@ -36,9 +36,9 @@ groups <- gclab
 
 #### FABIAP
 
-resToy3 <- fabiap(X,13,0.1,400)
+resToy3 <- fabiap(X,13,0.01,400)
 
-rToy3 <- extractPlot(resToy3,ti="FABIAP",Y=Y)
+extractPlot(resToy3,ti="FABIAP",Y=Y)
 
 raToy3 <- extractBic(resToy3)
 

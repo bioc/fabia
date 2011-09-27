@@ -71,21 +71,13 @@ extractPlot(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6,7,8))
 
   Implementation in \R.
 }
-\value{
-  \item{biclust}{clusters of kmeans clustering.}
-  \item{pmZ}{permutation matrix of \eqn{Z} from kmeans clustering.}
-  \item{pmL}{permutation matrix of \eqn{L} from kmeans clustering.}
-  \item{L}{normalized loadings (left matrix).}
-  \item{Z}{normalized factors (right matrix).}
-  \item{Xord}{sorted original matrix according to kmeans on \eqn{Z} and
-  kmeans on \eqn{L}.}
-    }
 \seealso{
 \code{\link{fabia}},
 \code{\link{fabias}},
 \code{\link{fabiap}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},
+\code{\link{spfabia}},
 \code{\link{mfsc}},
 \code{\link{nmfdiv}},
 \code{\link{nmfeu}},
@@ -124,9 +116,9 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.3,20)
+resEx <- fabia(X,3,0.1,20)
 
-rEx <- extractPlot(resEx,ti="FABIA",Y=Y)
+extractPlot(resEx,ti="FABIA",Y=Y)
 
 
 
@@ -143,9 +135,9 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200)
+resToy <- fabia(X,13,0.01,200)
 
-rToy <- extractPlot(resToy,ti="FABIA",Y=Y)
+extractPlot(resToy,ti="FABIA",Y=Y)
 
 #---------------
 # DEMO2
@@ -167,7 +159,7 @@ X <- as.matrix(XBreast)
 
 resBreast <- fabia(X,5,0.1,200)
 
-rBreast <- extractPlot(resBreast,ti="FABIA Breast cancer(Veer)")
+extractPlot(resBreast,ti="FABIA Breast cancer(Veer)")
 
 #sorting of predefined labels
 CBreast%*%rBreast$pmZ

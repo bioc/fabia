@@ -7,16 +7,18 @@
 }
 \usage{
 
-fabia(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)
+fabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)
 
 }
 \arguments{
   \item{X}{the data matrix.}
   \item{p}{number of hidden factors = number of biclusters; default = 5.}
-  \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.1.}
+  \item{alpha}{sparseness loadings (0 - 1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
-  \item{spl}{sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).}
+  \item{spl}{sparseness prior loadings (0 - 2.0); default = 0 (Laplace).}
   \item{spz}{sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).}
+  \item{non_negative}{Non-negative factors and loadings if non_negative
+    > 0; default = 0.}
   \item{random}{<=0: by SVD, >0: random initialization of loadings in
     [-random,random]; default = 1.0.}
   \item{center}{data centering: 1 (mean), 2
@@ -62,7 +64,7 @@ fabia(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,norm=1,scale=0
   The update of the loadings includes an additive term which pushes the
   loadings toward zero (Gaussian prior leads to an multiplicative factor).
 
-  The code is implemented in C using the Rcpp package.
+  The code is implemented in C.
 
 }
 \value{
@@ -88,6 +90,8 @@ fabia(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,center=2,norm=1,scale=0
 \code{\link{fabia}},
 \code{\link{fabias}},
 \code{\link{fabiap}},
+\code{\link{spfabia}},
+\code{\link{readSpfabiaResult}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},
 \code{\link{mfsc}},
@@ -128,7 +132,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,50)
+resEx <- fabia(X,3,0.01,50)
 
 
 \dontrun{
@@ -171,9 +175,9 @@ groups <- gclab
 
 #### FABIA
 
-resToy1 <- fabia(X,13,0.1,400)
+resToy1 <- fabia(X,13,0.01,400)
 
-rToy1 <- extractPlot(resToy1,ti="FABIA",Y=Y)
+extractPlot(resToy1,ti="FABIA",Y=Y)
 
 raToy1 <- extractBic(resToy1)
 
@@ -225,7 +229,7 @@ X <- as.matrix(XBreast)
 
 resBreast1 <- fabia(X,5,0.1,400)
 
-rBreast1 <- extractPlot(resBreast1,ti="FABIA Breast cancer(Veer)")
+extractPlot(resBreast1,ti="FABIA Breast cancer(Veer)")
 
 
 raBreast1 <- extractBic(resBreast1)
@@ -279,9 +283,9 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti1 <- fabia(X,5,0.1,300)
+resMulti1 <- fabia(X,5,0.06,300,norm=2)
 
-rMulti1 <- extractPlot(resMulti1,ti="FABIA Multiple tissues(Su)")
+extractPlot(resMulti1,ti="FABIA Multiple tissues(Su)")
 
 raMulti1 <- extractBic(resMulti1)
 
@@ -333,9 +337,9 @@ data(DLBCL_B)
 
 X <- as.matrix(XDLBCL)
 
-resDLBCL1 <- fabia(X,5,0.1,400)
+resDLBCL1 <- fabia(X,5,0.1,400,norm=2)
 
-rDLBCL1 <- extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
+extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
 
 raDLBCL1 <- extractBic(resDLBCL1)
 

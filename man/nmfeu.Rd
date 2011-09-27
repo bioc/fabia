@@ -120,7 +120,7 @@ X <- abs(X)
 
 resToy <- nmfeu(X,13)
 
-rToy <- extractPlot(resToy,ti="NMFEU",Y=Y)
+extractPlot(resToy,ti="NMFEU",Y=Y)
 
 }
 }

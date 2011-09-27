@@ -145,7 +145,7 @@ X <- abs(X)
 
 resToy <- nmfsc(X,13,100,0.6,0.6)
 
-rToy <- extractPlot(resToy,ti="NMFSC",Y=Y)
+extractPlot(resToy,ti="NMFSC",Y=Y)
 
 }
 }

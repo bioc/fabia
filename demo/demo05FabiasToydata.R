@@ -38,7 +38,7 @@ groups <- gclab
 
 resToy2 <- fabias(X,13,0.6,400)
 
-rToy2 <- extractPlot(resToy2,ti="FABIAS",Y=Y)
+extractPlot(resToy2,ti="FABIAS",Y=Y)
 
 
 raToy2 <- extractBic(resToy2)

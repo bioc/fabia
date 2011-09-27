@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0,nL=0)
+fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0)
 
 }
 \arguments{
@@ -16,14 +16,16 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0,nL=0)
   \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
   \item{spz}{sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).}
+  \item{non_negative}{Non-negative factors and loadings if non_negative
+    > 0; default = 0.}
   \item{random}{<=0: by SVD, >0: random initialization of loadings in
     [-random,random]; default = 1.0.}
   \item{center}{data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.}
   \item{norm}{data normalization:  1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
-  \item{lap}{minimal value of the variational parameter; default = 1.0} 
+  \item{lap}{minimal value of the variational parameter; default = 1.0.} 
   \item{nL}{number of biclusters a row element can participate; default
-    = 0 (no limit)} 
+    = 0 (no limit).} 
 }
 \details{
 
@@ -64,7 +66,7 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0,nL=0)
   which relates the \eqn{l_1}-norm to the \eqn{l_2}-norm.
 
 
-  The code is implemented in C using the Rcpp package.
+  The code is implemented in C.
 
 }
 \value{
@@ -90,6 +92,7 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,center=2,norm=1,lap=1.0,nL=0)
 \code{\link{fabia}},
 \code{\link{fabias}},
 \code{\link{fabiap}},
+\code{\link{spfabia}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},
 \code{\link{mfsc}},
@@ -175,7 +178,7 @@ groups <- gclab
 
 resToy2 <- fabias(X,13,0.6,400)
 
-rToy2 <- extractPlot(resToy2,ti="FABIAS",Y=Y)
+extractPlot(resToy2,ti="FABIAS",Y=Y)
 
 
 raToy2 <- extractBic(resToy2)
@@ -225,7 +228,7 @@ X <- as.matrix(XBreast)
 
 resBreast2 <- fabias(X,5,0.6,300)
 
-rBreast2 <- extractPlot(resBreast2,ti="FABIAS Breast cancer(Veer)")
+extractPlot(resBreast2,ti="FABIAS Breast cancer(Veer)")
 
 
 raBreast2 <- extractBic(resBreast2)
@@ -277,7 +280,7 @@ X <- as.matrix(XMulti)
 
 resMulti2 <- fabias(X,5,0.6,300)
 
-rMulti2 <- extractPlot(resMulti2,ti="FABIAS Multiple tissues(Su)")
+extractPlot(resMulti2,ti="FABIAS Multiple tissues(Su)")
 
 raMulti2 <- extractBic(resMulti2)
 
@@ -330,7 +333,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL2 <- fabias(X,5,0.6,300)
 
-rDLBCL2 <- extractPlot(resDLBCL2,ti="FABIAS Lymphoma(Rosenwald)")
+extractPlot(resDLBCL2,ti="FABIAS Lymphoma(Rosenwald)")
 
 raDLBCL2 <- extractBic(resDLBCL2)
 

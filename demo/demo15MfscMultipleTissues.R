@@ -26,7 +26,7 @@ X <- as.matrix(XMulti)
 
 resMulti4 <- mfsc(X,5,100,0.6,0.6)
 
-rMulti4 <- extractPlot(resMulti4,ti="MFSC Multiple tissues(Su)")
+extractPlot(resMulti4,ti="MFSC Multiple tissues(Su)")
 
 
 raMulti4 <- extractBic(resMulti4,thresZ=0.01,thresL=0.05)

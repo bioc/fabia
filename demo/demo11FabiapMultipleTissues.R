@@ -24,9 +24,9 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti3 <- fabiap(X,5,0.1,300)
+resMulti3 <- fabiap(X,5,0.01,300)
 
-rMulti3 <- extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
+extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
 
 
 raMulti3 <- extractBic(resMulti3)

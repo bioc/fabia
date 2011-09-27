@@ -31,7 +31,7 @@ X <- as.matrix(XBreast)
 
 resBreast4 <- mfsc(X,5,100,0.6,0.6)
 
-rBreast4 <- extractPlot(resBreast4,ti="MFSC Breast cancer(Veer)")
+extractPlot(resBreast4,ti="MFSC Breast cancer(Veer)")
 
 
 raBreast4 <- extractBic(resBreast4,thresZ=0.01,thresL=0.05)

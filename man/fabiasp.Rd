@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabiasp(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1)
+fabiasp(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0)
 
 }
 \arguments{
@@ -19,6 +19,7 @@ fabiasp(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1)
   \item{center}{data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.}
   \item{norm}{data normalization:   1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
+  \item{lap}{minimal value of the variational parameter; default = 1.0.} 
 }
 \details{
 
@@ -83,6 +84,7 @@ fabiasp(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1)
 \code{\link{fabia}},
 \code{\link{fabias}},
 \code{\link{fabiap}},
+\code{\link{spfabia}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},
 \code{\link{mfsc}},
@@ -142,7 +144,7 @@ Y <- dat[[2]]
 
 resToy <- fabiasp(X,13,0.6,200)
 
-rToy <- extractPlot(resToy,"ti=FABIASP",Y=Y)
+extractPlot(resToy,"ti=FABIASP",Y=Y)
 
 #---------------
 # DEMO2
@@ -166,7 +168,7 @@ X <- as.matrix(XBreast)
 
 resBreast <- fabiasp(X,5,0.6,200)
 
-rBreast <- extractPlot(resBreast,ti="FABIASP Breast cancer(Veer)")
+extractPlot(resBreast,ti="FABIASP Breast cancer(Veer)")
 
 #sorting of predefined labels
 CBreast%*%rBreast$pmZ
@@ -194,7 +196,7 @@ X <- as.matrix(XMulti)
 
 resMulti <- fabiasp(X,5,0.6,200)
 
-rMulti <- extractPlot(resMulti,"ti=FABIASP Multiple tissues(Su)")
+extractPlot(resMulti,"ti=FABIASP Multiple tissues(Su)")
 
 #sorting of predefined labels
 CMulti%*%rMulti$pmZ
@@ -224,7 +226,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL <- fabiasp(X,5,0.6,200)
 
-rDLBCL <- extractPlot(resDLBCL,ti="FABIASP Lymphoma(Rosenwald)")
+extractPlot(resDLBCL,ti="FABIASP Lymphoma(Rosenwald)")
 
 #sorting of predefined labels
 CDLBCL%*%rDLBCL$pmZ

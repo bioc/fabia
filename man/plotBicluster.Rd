@@ -80,7 +80,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,20)
+resEx <- fabia(X,3,0.01,20)
 
 rEx <- extractBic(resEx)
 
@@ -100,7 +100,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200)
+resToy <- fabia(X,13,0.01,200)
 
 
 

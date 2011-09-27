@@ -16,6 +16,8 @@ importFrom("utils", "demo", "packageDescription")
 export("fabia",
        "fabias",
        "fabiap",
+       "spfabia",
+       "readSpfabiaResult",
        "mfsc",
        "fabiasp",
        "fabi",

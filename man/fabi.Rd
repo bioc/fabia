@@ -7,19 +7,20 @@
 }
 \usage{
 
-fabi(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1)
+fabi(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0)
 
 }
 \arguments{
   \item{X}{the data matrix.}
   \item{p}{number of hidden factors = number of biclusters; default = 5.}
-  \item{alpha}{sparseness loadings (0.1-1.0); default = 0.1.}
+  \item{alpha}{sparseness loadings (0-1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
-  \item{spl}{sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).}
+  \item{spl}{sparseness prior loadings (0 - 2.0); default = 0 (Laplace).}
   \item{spz}{sparseness factors (0.5-2.0); default = 0.5 (Laplace).}
   \item{center}{data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.}
   \item{norm}{data normalization: 1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
+  \item{lap}{minimal value of the variational parameter; default = 1.0.} 
 }
 \details{
 
@@ -84,6 +85,7 @@ fabi(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1)
 \code{\link{fabia}},
 \code{\link{fabias}},
 \code{\link{fabiap}},
+\code{\link{spfabia}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},
 \code{\link{mfsc}},
@@ -123,7 +125,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 Y <- dat[[2]]
 
-resEx <- fabi(X,3,0.1,20)
+resEx <- fabi(X,3,0.01,20)
 
 
 \dontrun{
@@ -139,9 +141,9 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabi(X,13,0.1,200)
+resToy <- fabi(X,13,0.01,200)
 
-rToy <- extractPlot(resToy,ti="FABI",Y=Y)
+extractPlot(resToy,ti="FABI",Y=Y)
 
 #---------------
 # DEMO2
@@ -163,7 +165,7 @@ X <- as.matrix(XBreast)
 
 resBreast <- fabi(X,5,0.1,200)
 
-rBreast <- extractPlot(resBreast,ti="FABI Breast cancer(Veer)")
+extractPlot(resBreast,ti="FABI Breast cancer(Veer)")
 
 #sorting of predefined labels
 CBreast%*%rBreast$pmZ
@@ -191,7 +193,7 @@ X <- as.matrix(XMulti)
 
 resMulti <- fabi(X,5,0.1,200)
 
-rMulti <- extractPlot(resMulti,ti="FABI Multiple tissues(Su)")
+extractPlot(resMulti,ti="FABI Multiple tissues(Su)")
 
 #sorting of predefined labels
 CMulti%*%rMulti$pmZ
@@ -221,7 +223,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL <- fabi(X,5,0.1,200)
 
-rDLBCL <- extractPlot(resDLBCL,ti="FABI Lymphoma(Rosenwald)")
+extractPlot(resDLBCL,ti="FABI Lymphoma(Rosenwald)")
 
 #sorting of predefined labels
 CDLBCL%*%rDLBCL$pmZ

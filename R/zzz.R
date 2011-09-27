@@ -10,7 +10,7 @@
             warning(sprintf("fabia vignette is missing, nothing is added to the menu bar"))
         }
         else {
-            vigMtrx = .readRDS(vigFile)
+            vigMtrx = readRDS(vigFile)
             vigs = file.path(chartr("\\", "/", .find.package("fabia")), "doc", vigMtrx[,
                 "PDF"])
             names(vigs) = vigMtrx[, "Title"]
@@ -38,7 +38,6 @@
       "|............................|                                          \n",
       "+----------------------------+                                          \n")
 
-    require(utils)
     version <- packageDescription("fabia",fields="Version")
     packageStartupMessage( "Citation: S. Hochreiter et al.,","\n",
       "FABIA: Factor Analysis for Bicluster Acquisition,","\n",

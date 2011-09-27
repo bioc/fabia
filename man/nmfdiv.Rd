@@ -119,7 +119,7 @@ X <- abs(X)
 
 resToy <- nmfdiv(X,13)
 
-rToy <- extractPlot(resToy,ti="NMFDIV",Y=Y)
+extractPlot(resToy,ti="NMFDIV",Y=Y)
 
 }
 }

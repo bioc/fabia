@@ -7,18 +7,20 @@
 }
 \usage{
 
-fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)
+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)
 
 }
 \arguments{
   \item{X}{the data matrix.}
   \item{p}{number of hidden factors = number of biclusters; default = 5.}
-  \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.1.}
+  \item{alpha}{sparseness loadings (0-1.0); default = 0.1.}
   \item{cyc}{number of iterations; default = 500.}
-  \item{spl}{sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).}
+  \item{spl}{sparseness prior loadings (0 - 2.0); default = 0 (Laplace).}
   \item{spz}{sparseness factors (0.5 - 2.0); default =  0.5 (Laplace).}
   \item{sL}{final sparseness loadings; default = 0.6.}
   \item{sZ}{final sparseness factors; default = 0.6.}
+  \item{non_negative}{Non-negative factors and loadings if non_negative
+    > 0; default = 0.}
   \item{random}{<=0: by SVD, >0: random initialization of loadings in
     [-random,random]; default = 1.0.}
   \item{center}{data centering: 1 (mean), 2
@@ -26,9 +28,9 @@ fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2
   \item{norm}{data normalization: 1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
   \item{scale}{loading vectors are scaled in each iteration to the given
     variance. 0.0 indicates non scaling; default = 0.0.}
-  \item{lap}{minimal value of the variational parameter; default = 1.0} 
+  \item{lap}{minimal value of the variational parameter; default = 1.0.} 
   \item{nL}{number of biclusters a row element can participate; default
-    = 0 (no limit)} 
+    = 0 (no limit).} 
  }
 \details{
 
@@ -75,8 +77,7 @@ fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2
   which relates the \eqn{l_1}-norm to the \eqn{l_2}-norm:
 
 
-  The code is implemented in C using the Rcpp package. The projection is
-  implemented in \R.
+  The code is implemented in C and the projection in \R.
 
 }
 \value{
@@ -102,6 +103,7 @@ fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,random=1.0,center=2
 \code{\link{fabia}},
 \code{\link{fabias}},
 \code{\link{fabiap}},
+\code{\link{spfabia}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},
 \code{\link{mfsc}},
@@ -185,7 +187,7 @@ groups <- gclab
 
 resToy3 <- fabiap(X,13,0.1,400)
 
-rToy3 <- extractPlot(resToy3,ti="FABIAP",Y=Y)
+extractPlot(resToy3,ti="FABIAP",Y=Y)
 
 raToy3 <- extractBic(resToy3)
 
@@ -235,7 +237,7 @@ X <- as.matrix(XBreast)
 
 resBreast3 <- fabiap(X,5,0.1,400)
 
-rBreast3 <- extractPlot(resBreast3,ti="FABIAP Breast cancer(Veer)")
+extractPlot(resBreast3,ti="FABIAP Breast cancer(Veer)")
 
 raBreast3 <- extractBic(resBreast3)
 
@@ -288,7 +290,7 @@ X <- as.matrix(XMulti)
 
 resMulti3 <- fabiap(X,5,0.1,300)
 
-rMulti3 <- extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
+extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
 
 
 raMulti3 <- extractBic(resMulti3)
@@ -343,7 +345,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL3 <- fabiap(X,5,0.1,400)
 
-rDLBCL3 <- extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
+extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
 raDLBCL3 <- extractBic(resDLBCL3)
 
 if ((raDLBCL3$bic[[1]][1]>1) && (raDLBCL3$bic[[1]][2])>1) {

@@ -126,9 +126,9 @@ R> library(fabia)
 R> X <- read.table("datafile.csv",header = TRUE, sep = ",")
 \end{Sinput}
 \item Select the model based on the data: 5 biclusters; sparseness
-  0.1; 500 cycles
+  0.01; 500 cycles
 \begin{Sinput}
-R> res <- fabia(X,5,0.1,500)
+R> res <- fabia(X,5,0.01,500)
 \end{Sinput}
 \item Give summary:
 \begin{Sinput}
@@ -140,7 +140,7 @@ R> show(res)
 \end{Sinput}
 \item Plot the factorization results:
 \begin{Sinput}
-R> rr <- extractPlot(res,ti="FABIA")
+R> extractPlot(res,ti="FABIA")
 \end{Sinput}
 \item Plot the result as a biplot:
 \begin{Sinput}
@@ -249,14 +249,14 @@ groups <- gclab
 \end{Sinput}
 
 \item {\bf \large FABIA:} perform  \Rfunction{fabia} (sparseness by Laplace prior)
-  to extract biclusters; 13 biclusters, sparseness 0.1 (Laplace),
+  to extract biclusters; 13 biclusters, sparseness 0.01 (Laplace),
   400 cycles:
 \begin{Sinput}
-R> resToy1 <- fabia(X,13,0.1,400)
+R> resToy1 <- fabia(X,13,0.01,400)
 \end{Sinput}
 \item Plot some results:
 \begin{Sinput}
-R> rToy1 <- extractPlot(resToy1,ti="FABIA",Y=Y)
+R> extractPlot(resToy1,ti="FABIA",Y=Y)
 \end{Sinput}
 \item Extract the biclusters:
 \begin{Sinput}
@@ -318,7 +318,7 @@ R> resToy2 <- fabias(X,13,0.6,400)
 \end{Sinput}
 \item  Plot some results:
 \begin{Sinput}
-R> rToy2 <- extractPlot(resToy2,ti="FABIAS",Y=Y)
+R> extractPlot(resToy2,ti="FABIAS",Y=Y)
 \end{Sinput}
 \item Extract the biclusters:
 \begin{Sinput}
@@ -905,15 +905,14 @@ biclustering problem.
 
 \subsection{C implementation of FABIA}
 
-The functions \Rfunction{fabia} and  \Rfunction{fabias} are
+The functions \Rfunction{fabia}, \Rfunction{fabias}, and \Rfunction{spfabia}
+are
 implemented in C. It turned out that these implementations are not
 only faster, but also more precise. Especially we use an efficient Cholesky
 decomposition to compute the inverse of positive definite matrices.
 Some \R functions for computing the inverse like  \Rfunction{solve}
 were inferior to that implementation.
 
-The interface between \R and C is realized by the package \Rpackage{Rcpp}
-\citep{Samperi:06}.
 
 \appendix
 
@@ -1019,15 +1018,15 @@ Factor Analysis for Bicluster Acquisition: Laplace Prior (FABI) \citep{Hochreite
 \begin{enumerate}
 
 \item Usage:
-\texttt{fabi(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,center=2,norm=1)}
+\texttt{fabi(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1)}
 
 \item Arguments:
  \begin{itemize}
   \item{X:} the data matrix.
   \item{p:} number of hidden factors = number of biclusters; default = 5.
-  \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
+  \item{alpha:} sparseness loadings (0 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spl:} sparseness prior loadings (0.5 - 2.0): default = 0.5 (Laplace).
+  \item{spl:} sparseness prior loadings (0 - 2.0): default = 0 (Laplace).
   \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{center:} data centering: 1 (mean), 2
     (median), > 2 (mode), 0 (no); default = 2.
@@ -1177,7 +1176,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <-  fabi(X,3,0.1,20)
+resEx <-  fabi(X,3,0.01,20)
 
 
 
@@ -1193,9 +1192,9 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabi(X,13,0.1,200)
+resToy <- fabi(X,13,0.01,200)
 
-rToy <- extractPlot(resToy,ti="FABI",Y=Y)
+extractPlot(resToy,ti="FABI",Y=Y)
 
 #---------------
 # DEMO2
@@ -1218,7 +1217,7 @@ X <- as.matrix(XBreast)
 
 resBreast <- fabi(X,5,0.1,200)
 
-rBreast <- extractPlot(resBreast,ti="FABI Breast cancer(Veer)")
+extractPlot(resBreast,ti="FABI Breast cancer(Veer)")
 
 #sorting of predefined labels
 CBreast%*%rBreast$pmZ
@@ -1244,9 +1243,9 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti <- fabi(X,5,0.1,200)
+resMulti <- fabi(X,5,0.01,200)
 
-rMulti <- extractPlot(resMulti,ti="FABI Multiple tissues(Su)")
+extractPlot(resMulti,ti="FABI Multiple tissues(Su)")
 
 #sorting of predefined labels
 CMulti%*%rMulti$pmZ
@@ -1275,7 +1274,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL <- fabi(X,5,0.1,200)
 
-rDLBCL <- extractPlot(resDLBCL,ti="FABI Lymphoma(Rosenwald)")
+extractPlot(resDLBCL,ti="FABI Lymphoma(Rosenwald)")
 
 #sorting of predefined labels
 CDLBCL%*%rDLBCL$pmZ
@@ -1293,16 +1292,16 @@ Factor Analysis for Bicluster Acquisition: Laplace Prior (FABIA) \citep{Hochreit
 C implementation of  \texttt{fabia}.
 
 \begin{enumerate}
-\item Usage: \verb+fabia(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,random=1.0,+\\
+\item Usage: \verb+fabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,random=1.0,+\\
 \hspace*{6em}\verb+   center=2,norm=1,scale=0.0,lap=1.0,nL=0)+
 
 \item Arguments:
  \begin{itemize}
   \item{X:} the data matrix.
   \item{p:} number of hidden factors = number of biclusters; default = 5.
-  \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
+  \item{alpha:} sparseness loadings (0 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spl:} sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).
+  \item{spl:} sparseness prior loadings (0 - 2.0); default = 0 (Laplace).
   \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{random} <=0: by SVD, >0: random initialization of loadings in
     [-random,random]; default = 1.0.
@@ -1432,7 +1431,7 @@ C implementation of  \texttt{fabia}.
   The update of the loadings includes an additive term which pushes the
   loadings toward zero (Gaussian prior leads to an multiplicative factor).
 
-  The code is implemented in C using the Rcpp package.
+  The code is implemented in C.
 
 
 
@@ -1455,7 +1454,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,50)
+resEx <- fabia(X,3,0.01,50)
 
 
 #-----------------
@@ -1497,9 +1496,9 @@ groups <- gclab
 
 #### FABIA
 
-resToy1 <- fabia(X,13,0.1,400)
+resToy1 <- fabia(X,13,0.01,400)
 
-rToy1 <- extractPlot(resToy1,ti="FABIA",Y=Y)
+extractPlot(resToy1,ti="FABIA",Y=Y)
 
 raToy1 <- extractBic(resToy1)
 
@@ -1551,7 +1550,7 @@ X <- as.matrix(XBreast)
 
 resBreast1 <- fabia(X,5,0.1,400)
 
-rBreast1 <- extractPlot(resBreast1,ti="FABIA Breast cancer(Veer)")
+extractPlot(resBreast1,ti="FABIA Breast cancer(Veer)")
 
 
 raBreast1 <- extractBic(resBreast1)
@@ -1605,9 +1604,9 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti1 <- fabia(X,5,0.1,300)
+resMulti1 <- fabia(X,5,0.06,300,norm=2)
 
-rMulti1 <- extractPlot(resMulti1,ti="FABIA Multiple tissues(Su)")
+extractPlot(resMulti1,ti="FABIA Multiple tissues(Su)")
 
 raMulti1 <- extractBic(resMulti1)
 
@@ -1659,9 +1658,9 @@ data(DLBCL_B)
 
 X <- as.matrix(XDLBCL)
 
-resDLBCL1 <- fabia(X,5,0.1,400)
+resDLBCL1 <- fabia(X,5,0.1,400,norm=2)
 
-rDLBCL1 <- extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
+extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
 
 raDLBCL1 <- extractBic(resDLBCL1)
 
@@ -1702,16 +1701,16 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
 
 \begin{enumerate}
 
-\item Usage: \verb+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0.5,spz=0.5,sL=0.6,sZ=0.6,+\\
+\item Usage: \verb+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,+\\
 \hspace*{6em}\verb+   random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)+
 
 \item Arguments:
  \begin{itemize}
   \item{X:} the data matrix.
   \item{p:} number of hidden factors = number of biclusters; default = 5.
-  \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
+  \item{alpha:} sparseness loadings (0 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
-  \item{spl:} sparseness prior loadings (0.5 - 2.0); default = 0.5 (Laplace).
+  \item{spl:} sparseness prior loadings (0 - 2.0); default = 0 (Laplace).
   \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{sL:} final sparseness loadings; default = 0.6.
   \item{sZ:} final sparseness factors; default = 0.6.
@@ -1859,8 +1858,7 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
   which relates the $l_1$-norm to the $l_2$-norm:
 
 
-  The code is implemented in C using the Rcpp package. The projection is
-  implemented in \R.
+  The code is implemented in C and t he projection in \R.
 
 
 
@@ -1884,7 +1882,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 Y <- dat[[2]]
 
-resEx <- fabiap(X,3,0.1,50)
+resEx <- fabiap(X,3,0.01,50)
 
 
 
@@ -1925,9 +1923,9 @@ groups <- gclab
 
 #### FABIAP
 
-resToy3 <- fabiap(X,13,0.1,400)
+resToy3 <- fabiap(X,13,0.01,400)
 
-rToy3 <- extractPlot(resToy3,ti="FABIAP",Y=Y)
+extractPlot(resToy3,ti="FABIAP",Y=Y)
 
 raToy3 <- extractBic(resToy3)
 
@@ -1977,7 +1975,7 @@ X <- as.matrix(XBreast)
 
 resBreast3 <- fabiap(X,5,0.1,400)
 
-rBreast3 <- extractPlot(resBreast3,ti="FABIAP Breast cancer(Veer)")
+extractPlot(resBreast3,ti="FABIAP Breast cancer(Veer)")
 
 raBreast3 <- extractBic(resBreast3)
 
@@ -2028,9 +2026,9 @@ data(Multi_A)
 
 X <- as.matrix(XMulti)
 
-resMulti3 <- fabiap(X,5,0.1,300)
+resMulti3 <- fabiap(X,5,0.01,300)
 
-rMulti3 <- extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
+extractPlot(resMulti3,ti="FABIAP Multiple tissues(Su)")
 
 
 raMulti3 <- extractBic(resMulti3)
@@ -2085,7 +2083,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL3 <- fabiap(X,5,0.1,400)
 
-rDLBCL3 <- extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
+extractPlot(resDLBCL3,ti="FABIAP Lymphoma(Rosenwald)")
 raDLBCL3 <- extractBic(resDLBCL3)
 
 if ((raDLBCL3$bic[[1]][1]>1) && (raDLBCL3$bic[[1]][2])>1) {
@@ -2136,7 +2134,7 @@ C implementation of  \texttt{fabias}.
  \begin{itemize}
   \item{X:} the data matrix.
   \item{p:} number of hidden factors = number of biclusters; default = 5.
-  \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
+  \item{alpha:} sparseness loadings (0 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
   \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{random} <=0: by SVD, >0: random initialization of loadings in
@@ -2285,7 +2283,7 @@ C implementation of  \texttt{fabias}.
 
 
 
-  The code is implemented in C using the Rcpp package.
+  The code is implemented in C.
 
 
 
@@ -2354,7 +2352,7 @@ groups <- gclab
 
 resToy2 <- fabias(X,13,0.6,400)
 
-rToy2 <- extractPlot(resToy2,ti="FABIAS",Y=Y)
+extractPlot(resToy2,ti="FABIAS",Y=Y)
 
 
 raToy2 <- extractBic(resToy2)
@@ -2404,7 +2402,7 @@ X <- as.matrix(XBreast)
 
 resBreast2 <- fabias(X,5,0.6,300)
 
-rBreast2 <- extractPlot(resBreast2,ti="FABIAS Breast cancer(Veer)")
+extractPlot(resBreast2,ti="FABIAS Breast cancer(Veer)")
 
 
 raBreast2 <- extractBic(resBreast2)
@@ -2456,7 +2454,7 @@ X <- as.matrix(XMulti)
 
 resMulti2 <- fabias(X,5,0.6,300)
 
-rMulti2 <- extractPlot(resMulti2,ti="FABIAS Multiple tissues(Su)")
+extractPlot(resMulti2,ti="FABIAS Multiple tissues(Su)")
 
 raMulti2 <- extractBic(resMulti2)
 
@@ -2509,7 +2507,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL2 <- fabias(X,5,0.6,300)
 
-rDLBCL2 <- extractPlot(resDLBCL2,ti="FABIAS Lymphoma(Rosenwald)")
+extractPlot(resDLBCL2,ti="FABIAS Lymphoma(Rosenwald)")
 
 raDLBCL2 <- extractBic(resDLBCL2)
 
@@ -2561,7 +2559,7 @@ Factor Analysis for Bicluster Acquisition: Sparseness Projection (FABIASP) \cite
   \begin{itemize}
   \item{X:} the data matrix.
   \item{p:} number of hidden factors = number of biclusters; default = 5.
-  \item{alpha:} sparseness loadings (0.1 - 1.0); default = 0.1.
+  \item{alpha:} sparseness loadings (0 - 1.0); default = 0.1.
   \item{cyc:} number of iterations; default = 500.
   \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
   \item{center:} data centering: 1 (mean), 2
@@ -2747,7 +2745,7 @@ Y <- dat[[2]]
 
 resToy <- fabiasp(X,13,0.6,200)
 
-rToy <- extractPlot(resToy,ti="FABIASP",Y=Y)
+extractPlot(resToy,ti="FABIASP",Y=Y)
 
 #---------------
 # DEMO2
@@ -2770,7 +2768,7 @@ X <- as.matrix(XBreast)
 
 resBreast <- fabiasp(X,5,0.6,200)
 
-rBreast <- extractPlot(resBreast,ti="FABIASP Breast cancer(Veer)")
+extractPlot(resBreast,ti="FABIASP Breast cancer(Veer)")
 
 #sorting of predefined labels
 CBreast%*%rBreast$pmZ
@@ -2798,7 +2796,7 @@ X <- as.matrix(XMulti)
 
 resMulti <- fabiasp(X,5,0.6,200)
 
-rMulti <- extractPlot(resMulti,"ti=FABIASP Multiple tissues(Su)")
+extractPlot(resMulti,"ti=FABIASP Multiple tissues(Su)")
 
 #sorting of predefined labels
 CMulti%*%rMulti$pmZ
@@ -2828,7 +2826,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL <- fabiasp(X,5,0.6,200)
 
-rDLBCL <- extractPlot(resDLBCL,ti="FABIASP Lymphoma(Rosenwald)")
+extractPlot(resDLBCL,ti="FABIASP Lymphoma(Rosenwald)")
 
 #sorting of predefined labels
 CDLBCL%*%rDLBCL$pmZ
@@ -2836,6 +2834,281 @@ CDLBCL%*%rDLBCL$pmZ
 }
 
 \end{Sinput}
+
+
+
+\subsection{spfabia}
+
+Factor Analysis for Bicluster Acquisition: SPARSE FABIA \citep{Hochreiter:10}.
+
+C implementation of \texttt{spfabia}.
+
+\begin{enumerate}
+\item Usage: \verb+ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,+\\
+\hspace*{6em}\verb+ random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0)+
+
+\item Arguments:
+ \begin{itemize}
+  \item{X:} the file name of the sparse matrix in sparse format.
+  \item{p:} number of hidden factors = number of biclusters; default = 5.
+  \item{alpha:} sparseness loadings (0 - 1.0); default = 0.1.
+  \item{cyc:} number of iterations; default = 500.
+  \item{spl:} sparseness prior loadings (0 - 2.0); default = 0 (Laplace).
+  \item{spz:} sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).
+  \item{non\_negative:} Non-negative factors and loadings if non\_negative
+    > 0; default = 0.
+  \item{random:} >0: random initialization of loadings in
+    [0,random], <0: random initialization of loadings in
+    [-random,random]; default = 1.0.
+  \item{write\_file:} >0: results are written to files (L in sparse format),
+  default = 1.
+  \item{norm:} data normalization:  1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.
+  \item{scale:} loading vectors are scaled in each iteration to the given
+    variance. 0.0 indicates non scaling; default = 0.0.
+  \item{lap:} minimal value of the variational parameter, default = 1.
+  \item{nL:} number of biclusters a row element can participate; default
+    = 0 (no limit).
+ \end{itemize}
+
+\item Return values:
+\begin{itemize}
+ \item object of the class \texttt{Factorization}. Containing
+  \texttt{L} (loadings  $\La$),
+  \texttt{Z} (factors $\Z$),
+  \texttt{Psi} (noise variance $\pp$),
+  \texttt{lapla} (variational parameter),
+  \texttt{avini} (the information which the factor
+    $z_{ij}$ contains about $\x_j$ averaged over $j$)
+  \texttt{xavini} (the information which the factor
+    $\tilde\z_j$ contains about $\x_j$ averaged over $j$)
+  \texttt{ini} (for each $j$ the information which the factor
+    $z_{ij}$ contains about $\x_j$).
+\end{itemize}
+
+\end{enumerate}
+
+
+  Version of fabia for a sparse data matrix. The data matrix is
+  directly scanned by the C-code and must be in sparse matrix format.
+
+  Sparse matrix format:
+
+  \begin{itemize}
+
+  \item first line: numer of columns (the samples).
+
+  \item second line: number of rows (the features).
+
+  \item following lines: for each sample (column) three lines with
+
+    \begin{enumerate}
+
+    \item number of nonzero row elements
+
+    \item indices of the nonzero row elements
+
+    \item values of the nonzero row elements
+
+    \end{enumerate}
+
+  \end{itemize}
+
+\vspace{0.5cm}
+
+  Biclusters are found by sparse factor analysis where \emph{both} the factors
+  and the loadings are sparse.
+
+  Essentially the model is the sum of
+  outer products of vectors:
+  \begin{align*}
+    \X \ = \ \sum_{i=1}^{p} \la_i \ \z_i^T \ + \ \Up \ ,
+  \end{align*}
+  where the number of summands  $p$
+  is the number of biclusters.
+  The matrix factorization is
+  \begin{align*}
+    \X \ = \ \La \ \Z \ + \ \Up \ .
+  \end{align*}
+
+  Here $\X \in \Rb^{n \times l}$ and $\Up \in \Rb^{n \times l}$,
+  $\la_i  \in \Rb^n$, $\z_i  \in \Rb^l$, $\La \in \Rb^{n \times p}$,
+  $\Z \in \Rb^{p \times l}$.
+
+  If the nonzero components of
+  the sparse vectors are grouped together then the outer product results in
+  a matrix with a nonzero block and zeros elsewhere.
+
+
+  For a single data vector  $\x$ that is
+  \begin{align*}\x \ = \ \sum_{i=1}^{p} \la_i z_i  \ + \
+    \epp \ = \ \La \tilde\z \ + \
+    \epp\end{align*}
+
+  The model assumptions are:
+
+  \emph{Factor Prior is Independent Laplace:}
+  \begin{align*}p(\tilde\z) \ = \ \left( \frac{1}{\sqrt{2}} \right)^p \prod_{i=1}^{p}
+    e^{-\ \sqrt{2} \ |z_i|}\end{align*}
+
+  \emph{Loading Prior is Independent Laplace:}
+   \begin{align*}p(\la_i) \ = \ \left( \frac{1}{\sqrt{2}} \right)^n \prod_{k=1}^{n}
+    e^{-\ \sqrt{2} \ |\lambda_{ki}|}\end{align*}
+
+
+  \emph{Noise: Gaussian independent}
+  \begin{align*}p(\epp) \ = \ \left( \frac{1}{\sqrt{2 \ \pi}} \right)^n
+    \prod_{k=1}^{n}  \frac{1}{\sigma_k}
+     e^{\sum_{k=1}^{n}  \frac{\epsilon_k^2}{\sigma_k^2}} \end{align*}
+
+  \emph{Data Mean:}
+
+    \begin{align*}\E(\x) \ = \ \E(\La \ \tilde\z \ +
+      \ \epp ) \ = \ \La \ \E( \tilde\z) \ +
+      \ \E(\epp) \ = \ \0\end{align*}
+
+
+      \emph{Data Covariance:}
+
+  \begin{align} \nonumber
+    \E(\x \ \x^T) \ &= \
+      \La \E( \tilde\z  \tilde\z^T) \La^T \ + \
+       \La \E( \tilde\z)\E(\epp^T) \ + \
+       \E( \tilde\z)\E(\epp) \La^T \ + \
+       \E(\epp \ \epp^T) \\\nonumber &= \
+      \La \La^T \ + \ \mathrm{diag}(\sigma_k^2)
+\end{align}
+
+      Normalizing the data to variance one for each component gives
+       \begin{align*}\sigma_k^2 \ + \ \left(\la^{k}\right)^T \la^{k} \ =
+     \ 1\end{align*}
+      Here $\la^{k}$ is the $k$-th row of $\La$ (which is a row vector of length $p$).
+      We recommend to \emph{normalize the components to variance one} in order
+      to make the signal and noise comparable across components.
+
+
+      \emph{Estimated Parameters:}
+       $\La$ and $\pp$ ($\sigma_k$)
+
+       \emph{Estimated Latent Variables:}
+        $\Z$
+
+    \emph{Estimated Noise Free Data:}
+        $\La \ \Z$
+
+    \emph{Estimated Biclusters:}
+        $\la_i \ \z_i^T $
+     Larges values give the bicluster (ideal the nonzero values).
+
+
+       The model selection is performed by a variational approach according
+  to \citep{Girolami:01} and \citep{Palmer:06}.
+
+  We included a prior on the parameters and minimize
+  a lower bound on the posterior
+  of the parameters given the data.
+  The update of the loadings includes an additive term which pushes the
+  loadings toward zero (Gaussian prior leads to an multiplicative factor).
+
+  The code is implemented in C.
+
+
+
+\vspace{0.5cm}
+
+\noindent
+EXAMPLE:
+
+\begin{Sinput}
+
+#---------------
+# TEST
+#---------------
+
+samples <- 20
+features <- 200
+sparseness <- 0.9
+write(samples, file = "sparseFarmsTest.txt",ncolumns = features,append = FALSE, sep = " ")
+write(features, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
+for (i in 1:samples)
+{
+  ind <- which(runif(features)>sparseness)-1
+  num <- length(ind)
+  val <- abs(rnorm(num))
+  write(num, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
+  write(ind, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
+  write(val, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
+}
+
+res <- spfabia("sparseFarmsTest",p=3,alpha=0.03,cyc=50,non_negative=1,write_file=0,norm=0)
+
+unlink("sparseFarmsTest.txt")
+
+plot(res,dim=c(1,2))
+plot(res,dim=c(1,3))
+plot(res,dim=c(2,3))
+
+
+
+\end{Sinput}
+
+
+\subsection{readSpfabiaResult}
+
+Factor Analysis for Bicluster Acquisition: Read Results of SpFabia \citep{Hochreiter:10}.
+
+C implementation of \texttt{readSpfabiaResult}.
+
+\begin{enumerate}
+\item Usage: \texttt{readSpfabiaResult(X)}
+
+
+
+\item Arguments:
+ \begin{itemize}
+  \item{X:} the file prefix name of the result files of \texttt{spfabia}.
+ \end{itemize}
+
+\item Return values:
+\begin{itemize}
+ \item object of the class \texttt{Factorization}. Containing
+  \texttt{L} (loadings  $\La$),
+  \texttt{Z} (factors $\Z$),
+  \texttt{Psi} (noise variance $\pp$),
+  \texttt{lapla} (variational parameter),
+  \texttt{avini} (the information which the factor
+    $z_{ij}$ contains about $\x_j$ averaged over $j$)
+  \texttt{xavini} (the information which the factor
+    $\tilde\z_j$ contains about $\x_j$ averaged over $j$)
+  \texttt{ini} (for each $j$ the information which the factor
+    $z_{ij}$ contains about $\x_j$).
+\end{itemize}
+
+\end{enumerate}
+
+  Read the results of spfabia.
+
+  The code is implemented in C.
+
+
+
+
+\vspace{0.5cm}
+
+\noindent
+EXAMPLE:
+
+\begin{Sinput}
+
+#---------------
+# TEST
+#---------------
+
+# no test
+
+
+\end{Sinput}
+
+
 
 
 \subsection{mfsc}
@@ -3018,7 +3291,7 @@ groups <- gclab
 
 resToy4 <- mfsc(X,13,100,0.6,0.6)
 
-rToy4 <- extractPlot(resToy4,ti="MFSC",Y=Y)
+extractPlot(resToy4,ti="MFSC",Y=Y)
 
 raToy4 <- extractBic(resToy4,thresZ=0.01,thresL=0.05)
 
@@ -3067,7 +3340,7 @@ X <- as.matrix(XBreast)
 
 resBreast4 <- mfsc(X,5,100,0.6,0.6)
 
-rBreast4 <- extractPlot(resBreast4,ti="MFSC Breast cancer(Veer)")
+extractPlot(resBreast4,ti="MFSC Breast cancer(Veer)")
 
 
 raBreast4 <- extractBic(resBreast4,thresZ=0.01,thresL=0.05)
@@ -3121,7 +3394,7 @@ X <- as.matrix(XMulti)
 
 resMulti4 <- mfsc(X,5,100,0.6,0.6)
 
-rMulti4 <- extractPlot(resMulti4,ti="MFSC Multiple tissues(Su)")
+extractPlot(resMulti4,ti="MFSC Multiple tissues(Su)")
 
 
 raMulti4 <- extractBic(resMulti4,thresZ=0.01,thresL=0.05)
@@ -3177,7 +3450,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL4 <- mfsc(X,5,100,0.6,0.6)
 
-rDLBCL4 <- extractPlot(resDLBCL4,ti="MFSC Lymphoma(Rosenwald)")
+extractPlot(resDLBCL4,ti="MFSC Lymphoma(Rosenwald)")
 
 raDLBCL4 <- extractBic(resDLBCL4,thresZ=0.01,thresL=0.05)
 
@@ -3325,7 +3598,7 @@ X <- abs(X)
 
 resToy <- nmfdiv(X,13)
 
-rToy <- extractPlot(resToy,ti="NMFDIV",Y=Y)
+extractPlot(resToy,ti="NMFDIV",Y=Y)
 
 
 \end{Sinput}
@@ -3444,7 +3717,7 @@ X <- abs(X)
 
 resToy <- nmfeu(X,13)
 
-rToy <- extractPlot(resToy,ti="NMFEU",Y=Y)
+extractPlot(resToy,ti="NMFEU",Y=Y)
 
 
 
@@ -3597,7 +3870,7 @@ X <- abs(X)
 
 resToy <- nmfsc(X,13,100,0.6,0.6)
 
-rToy <- extractPlot(resToy,ti="NMFSC",Y=Y)
+extractPlot(resToy,ti="NMFSC",Y=Y)
 
 \end{Sinput}
 
@@ -3773,7 +4046,7 @@ ZC <- dat[[3]]
 LC <- dat[[4]]
 
 
-resEx <- fabia(X,p,0.1,400)
+resEx <- fabia(X,p,0.01,400)
 
 
 gclab <- rep.int(0,l)
@@ -3873,7 +4146,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 
 
-resEx <- fabia(X,3,0.1,100)
+resEx <- fabia(X,3,0.01,100)
 
 show(resEx)
 
@@ -3946,7 +4219,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 
 
-resEx <- fabia(X,3,0.1,100)
+resEx <- fabia(X,3,0.01,100)
 
 showSelected(resEx,which=1)
 showSelected(resEx,which=2)
@@ -4017,7 +4290,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 
 
-resEx <- fabia(X,3,0.1,100)
+resEx <- fabia(X,3,0.01,100)
 
 summary(resEx)
 
@@ -4160,7 +4433,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,20)
+resEx <- fabia(X,3,0.01,20)
 
 rEx <- extractBic(resEx)
 
@@ -4181,7 +4454,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200)
+resToy <- fabia(X,13,0.01,200)
 
 rToy <- extractBic(resToy)
 
@@ -4249,16 +4522,6 @@ Plotting of Biclustering Results.
     sorted; default c(1,2,3,4,5,6,7,8).
 \end{itemize}
 
-\item Return Values:
- \begin{itemize}
-  \item{biclust:} clusters of kmeans clustering.
-  \item{pmZ:} permutation matrix of $z$ from kmeans clustering.
-  \item{pmL:} permutation matrix of $L$ from kmeans clustering.
-  \item{nL:} normalized loadings (left matrix).
-  \item{nZ} normalized factors (right matrix).
-  \item{Xord:} sorted original matrix according to kmeans on $Z$ and
-  kmeans on  $L$.
-\end{itemize}
 
 \item The method produces following plots depending what plots are chosen
    by the "which" variable:
@@ -4335,9 +4598,9 @@ Y <- dat[[2]]
 
 
 
-resEx <- fabia(X,3,0.3,20)
+resEx <- fabia(X,3,0.01,20)
 
-rEx <- extractPlot(resEx,ti="FABIA",Y=Y)
+extractPlot(resEx,ti="FABIA",Y=Y)
 
 
 
@@ -4353,9 +4616,9 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200)
+resToy <- fabia(X,13,0.01,200)
 
-rToy <- extractPlot(resToy,ti="FABIA",Y=Y)
+extractPlot(resToy,ti="FABIA",Y=Y)
 
 #---------------
 # DEMO2
@@ -4379,7 +4642,7 @@ X <- as.matrix(XBreast)
 
 resBreast <- fabia(X,5,0.1,200)
 
-rBreast <- extractPlot(resBreast,ti="FABIA Breast cancer(Veer)")
+extractPlot(resBreast,ti="FABIA Breast cancer(Veer)")
 
 #sorting of predefined labels
 CBreast%*%rBreast$pmZ
@@ -4439,7 +4702,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resEx <- fabia(X,3,0.1,20)
+resEx <- fabia(X,3,0.01,20)
 
 rEx <- extractBic(resEx)
 
@@ -4459,7 +4722,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 
-resToy <- fabia(X,13,0.1,200)
+resToy <- fabia(X,13,0.01,200)
 
 
 

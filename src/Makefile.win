@@ -17,22 +17,22 @@
 include ${R_HOME}/etc${R_ARCH}/Makeconf
 
 
-SRC = fabiac.cpp
+SRC = fabiac.c
 LINKOBJ  = fabia.o
-DLLLIBS = -L../RcppSrc -lRcpp  -L"${R_HOME}/$(IMPDIR)"  -lR 
+DLLLIBS = -L"${R_HOME}/$(IMPDIR)"  -lR 
 BIN  = fabia.dll
-CXXFLAGS = -I../RcppSrc -I"${R_HOME}/include" -Wall -O2
-CXXPICFLAGS =  -shared -s -static-libgcc
+CFLAGS = -I"${R_HOME}/include" -Wall -O3
+CPICFLAGS =  -shared -s -static-libgcc
 
 .PHONY: all clean
 
 all: distclean $(BIN) clean
 
 $(BIN): $(LINKOBJ)
-	$(CXX) $(CXXPICFLAGS) $(LINKOBJ) $(DLLLIBS) -o $(BIN) 
+	$(CC) $(CPICFLAGS) $(LINKOBJ) $(DLLLIBS) -o $(BIN) 
 
 $(LINKOBJ): $(SRC)
-	$(CXX) -c $(SRC) -o $(LINKOBJ) $(CXXFLAGS)
+	$(CC) -c $(SRC) -o $(LINKOBJ) $(CFLAGS)
 
 clean:
 	${RM} $(LINKOBJ) *.a *.o *.so

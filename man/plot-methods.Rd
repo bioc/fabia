@@ -176,7 +176,7 @@ ZC <- dat[[3]]
 LC <- dat[[4]]
 
 
-resEx <- fabia(X,p,0.1,400)
+resEx <- fabia(X,p,0.01,400)
 
 
 gclab <- rep.int(0,l)

@@ -32,9 +32,9 @@ data(DLBCL_B)
 
 X <- as.matrix(XDLBCL)
 
-resDLBCL1 <- fabia(X,5,0.1,400)
+resDLBCL1 <- fabia(X,5,0.1,400,norm=2)
 
-rDLBCL1 <- extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
+extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
 
 raDLBCL1 <- extractBic(resDLBCL1)
 

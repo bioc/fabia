@@ -18,7 +18,7 @@ setMethod("plot", signature(x="Factorization", y="missing"),
  function(x,
     Rm=NULL,
     Cm=NULL,
-    dim = c(1, 2), # Principal factors to plot.
+    dim = c(1, 2), # Factors to plot.
     zoom = rep(1, 2), # Zoom factor for factor scores and loadings
     col.group = NULL,
     colors = c("orange1", "red", rainbow(length(unique(col.group)), start=2/6, end=4/6)),

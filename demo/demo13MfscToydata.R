@@ -38,7 +38,7 @@ groups <- gclab
 
 resToy4 <- mfsc(X,13,100,0.6,0.6)
 
-rToy4 <- extractPlot(resToy4,ti="MFSC",Y=Y)
+extractPlot(resToy4,ti="MFSC",Y=Y)
 
 raToy4 <- extractBic(resToy4,thresZ=0.01,thresL=0.05)
 

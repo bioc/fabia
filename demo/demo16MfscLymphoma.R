@@ -34,7 +34,7 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL4 <- mfsc(X,5,100,0.6,0.6)
 
-rDLBCL4 <- extractPlot(resDLBCL4,ti="MFSC Lymphoma(Rosenwald)")
+extractPlot(resDLBCL4,ti="MFSC Lymphoma(Rosenwald)")
 
 raDLBCL4 <- extractBic(resDLBCL4,thresZ=0.01,thresL=0.05)
 

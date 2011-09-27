@@ -1,0 +1,2600 @@
+#include <stdlib.h>
+#include <stdio.h>  
+#include <limits.h> 
+#include <math.h>
+#include <Rmath.h>
+#include <R.h>
+#include <Rinternals.h>
+#include <Rdefines.h>
+#include <R_ext/Rdynload.h>
+
+
+SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP eps1S,SEXP splS,SEXP spzS,SEXP scaleS,SEXP lapS,SEXP nLS,SEXP non_negativeS) {
+
+    int i,j,i1,i2,i3;
+
+    double in,s,sgn,t;
+
+
+    if(!isNumeric(xS) || !isMatrix(xS)) {
+	Rprintf("STOP: X not a numeric matrix\n");
+	return NULL;
+    }
+    
+    SEXP dimAttr;
+
+    dimAttr=getAttrib(xS, R_DimSymbol);
+    int n=INTEGER(dimAttr)[0];
+    int nn=INTEGER(dimAttr)[1];
+    
+    double *x=REAL(xS);
+
+    if(!isNumeric(LS) || !isMatrix(LS)) {
+	Rprintf("STOP: L not a numeric matrix\n");
+	return NULL;
+    }
+
+    dimAttr = getAttrib(LS, R_DimSymbol);
+    
+    if (n != ((int) INTEGER(dimAttr)[0]) )
+    {
+	Rprintf("STOP: Dim1 X: %d BUT Dim1 L %d\n",n,((int) INTEGER(dimAttr)[0]));
+	return NULL;
+    }
+
+    int K = INTEGER(dimAttr)[1];
+
+    double **L = R_Calloc(n, double *);
+    L[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	L[i] = L[0]+ i*K;
+	for(j=0; j < K; j++)
+	{
+	    L[i][j] = (double)(REAL(LS)[i+n*j]);
+	}
+    }
+
+    if(!isNumeric(laplaS) || !isMatrix(laplaS)) {
+	Rprintf("STOP: lapla not a numeric matrix\n");
+	return NULL;
+    }
+    
+    dimAttr = getAttrib(laplaS, R_DimSymbol);
+    
+    if (nn !=  ((int) INTEGER(dimAttr)[0]))
+    {
+	Rprintf("STOP: Dim2 X: %d BUT Dim1 lapla %d\n",nn,((int) INTEGER(dimAttr)[0]));
+	return NULL;
+    }
+    
+    if (K != ((int) INTEGER(dimAttr)[1]))
+    {
+	Rprintf("STOP: Dim2 L: %d BUT Dim2 lapla %d\n",K,((int) INTEGER(dimAttr)[1]));
+	return NULL;
+    }
+
+
+    double **lapla = R_Calloc(nn, double *);
+    lapla[0] = R_Calloc((long) nn*K, double);
+    for(i=0; i < nn; i++)
+    {
+	lapla[i] = lapla[0] + i*K;
+	for(j=0; j < K; j++)
+	{
+	    lapla[i][j] = (double)(REAL(LS)[i+nn*j]);
+	}
+    }
+
+
+ 
+    if(!isNumeric(PsiS) || isMatrix(PsiS) || isLogical(PsiS))
+    {
+	Rprintf("STOP: Psi not a numeric vector\n");
+	return NULL;
+    }
+
+    if (n != length(PsiS))
+    {
+	Rprintf("STOP: Dim1 X: %d BUT Dim1 Psi %d\n",n,length(PsiS));
+	return NULL;
+
+    }
+
+    double *Psi = R_Calloc(n, double); 
+
+    for(i=0; i < n; i++)
+    {
+	Psi[i] = (double)(REAL(PsiS)[i]);  
+    }
+
+
+
+    double alpha = (double)(REAL(alphaS)[0]);
+    double eps = (double)(REAL(epsS)[0]);
+    double eps1 = (double)(REAL(eps1S)[0]);
+    double spl = (double)(REAL(splS)[0]);
+    double spz = (double)(REAL(spzS)[0]);
+    double scale = (double)(REAL(scaleS)[0]);
+    double lap = (double)(REAL(lapS)[0]);
+
+
+    int non_negative = (int)(INTEGER(non_negativeS)[0]);
+    int cyc = (int)(INTEGER(cycS)[0]);
+    int nL = (int)(INTEGER(nLS)[0]);
+
+
+    double *XX = R_Calloc(n, double); 
+    double *e_sx_n = R_Calloc(K, double); 
+    double *e_ssxx_n = R_Calloc(K, double); 
+
+
+
+    double **ichol = R_Calloc(K, double *);
+    ichol[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	ichol[i] = ichol[0] + i*K;
+    }
+
+    double **sum2 = R_Calloc(K, double *);
+    sum2[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	sum2[i] = sum2[0]+i*K;
+    }
+
+    double **tLPsiL = R_Calloc(K, double *);
+    tLPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	tLPsiL[i] = tLPsiL[0]+i*K;
+    }
+
+    double **LPsiL = R_Calloc(K, double *);
+    LPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	LPsiL[i] =  LPsiL[0]+i*K;
+    }
+
+    double **LPsi = R_Calloc(n, double *);
+    LPsi[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	LPsi[i] =  LPsi[0]+i*K;
+    }
+
+    double **sum1 = R_Calloc(n, double *);
+    sum1[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	sum1[i] =  sum1[0]+ i*K;
+    }
+
+  
+
+
+    
+    spl = -spl;
+    spz = -spz;
+    in = 1.0/nn;
+
+    if (lap<eps)
+    {
+	lap = eps;
+    }
+
+    for (i1=0;i1<n;i1++)
+    {
+	s = 0.0;
+	for (i2 = 0; i2 < nn; i2++)
+	    s += x[i1+n*i2] * x[i1+n*i2];
+// x[i1][i2]=x[i1+n*i2]
+	XX[i1] = s*in;
+	if (XX[i1]<eps) XX[i1]=eps;
+
+    }
+
+
+
+    for (i=0;i<cyc;i++) {
+
+
+	for (i1 = 0; i1 < K; i1++)
+	{
+	    for (i2=0;i2<n;i2++)
+		LPsi[i2][i1] =  L[i2][i1]/Psi[i2];
+	}
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i3=0;i3<K;i3++)
+	    {
+		s = 0.0;
+		for (i2 = 0; i2 < n; i2++)
+		    s += LPsi[i2][i1]*L[i2][i3];
+		LPsiL[i1][i3] = s;
+	    }
+	}
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2 = 0; i2 < n; i2++)
+		sum1[i2][i1] = 0.0;
+	    for (i2 = 0; i2 < K; i2++)
+		sum2[i1][i2] = (i1==i2 ? eps : 0.0);
+	}
+
+	for (j=0;j<nn;j++)
+	{
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		for (i2=0;i2<K;i2++)
+		{
+		    
+		    if (i1==i2) {
+			tLPsiL[i1][i1] = LPsiL[i1][i1] + lapla[j][i1];
+		    } else {
+			tLPsiL[i1][i2] = LPsiL[i1][i2];
+		    }
+		}
+	    }
+
+
+	    for (i1=0;i1<K;i1++) {
+		for (i2=i1;i2<K;i2++) {
+		    for (s=tLPsiL[i1][i2],i3=i1-1;i3>=0;i3--) s -= tLPsiL[i1][i3]*tLPsiL[i2][i3];
+		    ichol[i1][i2]=ichol[i2][i1]=0.0;
+		    if (i1 == i2) {
+			tLPsiL[i1][i1]=sqrt(s);
+		    } else tLPsiL[i2][i1]=s/tLPsiL[i1][i1];
+		}
+	    }
+
+
+	    for (i1=0;i1<K;i1++) 
+		for (i2=0;i2<=i1;i2++){
+		    s = (i1==i2 ? 1.0 : 0.0);
+		    for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
+		    ichol[i2][i1]= s/tLPsiL[i1][i1];
+		}
+
+
+	    for (i1=K-1;i1>=0;i1--) 
+		for (i2=0;i2<=i1;i2++){
+		    s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		    for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
+		    ichol[i1][i2] = ichol[i2][i1] = s/tLPsiL[i1][i1];
+		}
+
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		t=0.0;
+		for (i2 = 0; i2 < n; i2++){
+		    s=0.0;
+		    for (i3 = 0; i3 < K; i3++)
+			s +=  ichol[i1][i3]*LPsi[i2][i3];
+		    t +=  s*x[i2+j*n];
+// x[i2][j]=x[i2+j*n]
+		}
+		if (non_negative>0)
+		{
+		    if (t<0) t=0.0;
+		}
+		e_sx_n[i1] = t;
+		for (i2 = 0; i2 < n; i2++)
+		    sum1[i2][i1] += x[i2+j*n]*t;
+	    }
+
+
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    s = ichol[i1][i2] + e_sx_n[i1]*e_sx_n[i2];
+		    sum2[i1][i2] += s;
+		    if (i1==i2) e_ssxx_n[i1] = s;
+		}
+	    }
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		s = pow((eps+e_ssxx_n[i1]),spz);
+		if (s<lap)
+		{
+		    lapla[j][i1] = lap;
+		} else {
+		    lapla[j][i1] = s; 
+		}
+	    }
+	}
+
+
+	for (i1=0;i1<K;i1++) {
+	    for (i2=i1;i2<K;i2++) {
+		for (s=sum2[i1][i2],i3=i1-1;i3>=0;i3--) s -= sum2[i1][i3]*sum2[i2][i3];
+		ichol[i1][i2]=ichol[i2][i1]=0.0;
+		if (i1 == i2) {
+		    sum2[i1][i1]=sqrt(s);
+		} else sum2[i2][i1]=s/sum2[i1][i1];
+	    }
+	}
+
+	for (i1=0;i1<K;i1++) 
+	    for (i2=0;i2<=i1;i2++){
+		s = (i1==i2 ? 1.0 : 0.0);
+		for (i3=i1-1;i3>=i2;i3--) s -= sum2[i1][i3]*ichol[i2][i3];
+		ichol[i2][i1]= s/sum2[i1][i1];
+	    }
+
+	for (i1=K-1;i1>=0;i1--) 
+	    for (i2=0;i2<=i1;i2++){
+		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		for (i3=i1+1;i3<K;i3++) s -= sum2[i3][i1]*ichol[i2][i3];
+		ichol[i1][i2] = ichol[i2][i1] = s/sum2[i1][i1];
+	    }
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2 = 0; i2 < n; i2++){
+		s=0.0;
+		for (i3 = 0; i3 < K; i3++)
+		    s +=  sum1[i2][i3]*ichol[i3][i1];
+
+		sgn = (s>0.0) ? 1.0 : ((s == 0.0) ? 0.0 : -1.0);
+		if ((sgn>0)||(non_negative<=0))
+		{
+		    t = fabs(Psi[i2]*alpha*pow((eps1+fabs(s)),spl));
+
+		    if (fabs(s)>t){
+			L[i2][i1] = s - sgn* t;
+		    }
+		    else {
+			L[i2][i1] = 0;
+		    }
+		} else {
+		    L[i2][i1] = 0;
+		}
+	    }
+	}
+    
+
+
+	if ((nL>0)&&(nL<K))
+	{
+
+	    for (i1=0;i1<n;i1++)
+	    {
+		for (i2 = 0; i2 < nL; i2++)
+		{
+		    e_ssxx_n[i2] = -1.0;
+		}
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    s=fabs(L[i1][i2]);
+		    if (s>e_ssxx_n[nL-1])
+		    {
+			i3=nL-1;
+			while ((i3>0)&&(s>e_ssxx_n[i3-1])) {
+			    e_ssxx_n[i3]=e_ssxx_n[i3-1];
+			    i3--;
+			}
+			e_ssxx_n[i3]=s;
+		    }
+		}
+		s=e_ssxx_n[nL-1];
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    if(s>fabs(L[i1][i2]))
+		    {
+			L[i1][i2]=0.0;
+		    }
+		}
+	
+
+	    }
+	}
+
+
+	for (i1=0;i1<n;i1++)
+	{
+	    s = 0.0;
+	    for (i2 = 0; i2 < K; i2++) {
+		s += L[i1][i2]*sum1[i1][i2];
+	    }
+	    Psi[i1] = XX[i1] - in*s;
+	    if (Psi[i1]<eps)
+	    {
+		Psi[i1] = eps;
+	    }
+	}
+
+
+	if (scale>0)
+	{
+	    for (i2 = 0; i2 < K; i2++)
+	    {
+		
+	    
+		s = 0.0;
+		for (i1=0;i1<n;i1++)
+		{
+		    s+=L[i1][i2]*L[i1][i2];
+		}
+		s*=in;
+		s=sqrt(s)+eps1;
+		s=scale/s;
+		for (i1=0;i1<n;i1++)
+		{
+		    L[i1][i2]*=s;
+		}
+		s*=s;
+		s = pow(s,spz);
+		for (j=0;j<nn;j++)
+		{
+		    lapla[j][i2]*=s;
+		}
+	    
+	    }
+	}		
+
+	if (i%20==0) {
+	    Rprintf("Cycle: %d\n", i);
+	    R_CheckUserInterrupt();
+	}
+
+    }
+
+    R_Free (sum1[0]);
+    R_Free (sum1 );
+
+    R_Free (sum2[0]);
+    R_Free (sum2 );
+
+    R_Free (XX );
+    R_Free (e_sx_n );
+    R_Free (e_ssxx_n );
+
+
+    for (i1=0;i1<K;i1++)
+    {
+	for (i2 = 0; i2 < n; i2++)
+	    LPsi[i2][i1] =  L[i2][i1]/Psi[i2];
+    }
+
+
+    for (i1=0;i1<K;i1++)
+    {
+	for (i3=0;i3<K;i3++)
+	{
+	    s = 0.0;
+	    for (i2 = 0; i2 < n; i2++)
+		s += LPsi[i2][i1]*L[i2][i3];
+	    LPsiL[i1][i3] = s;
+	}
+    }
+
+
+
+    SEXP E_SX_n;
+    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
+
+    for (j=0;j<nn;j++)
+    {
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2=0;i2<K;i2++)
+	    {
+		
+		if (i1==i2) {
+		    tLPsiL[i1][i1] = LPsiL[i1][i1] + lapla[j][i1];
+		} else {
+		    tLPsiL[i1][i2] = LPsiL[i1][i2];
+		}
+	    }
+	}
+
+
+	for (i1=0;i1<K;i1++) {
+	    for (i2=i1;i2<K;i2++) {
+		for (s=tLPsiL[i1][i2],i3=i1-1;i3>=0;i3--) s -= tLPsiL[i1][i3]*tLPsiL[i2][i3];
+		ichol[i1][i2]=ichol[i2][i1]=0.0;
+		if (i1 == i2) {
+		    tLPsiL[i1][i1]=sqrt(s);
+		} else tLPsiL[i2][i1]=s/tLPsiL[i1][i1];
+	    }
+	}
+
+	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
+		s = (i1==i2 ? 1.0 : 0.0);
+		for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
+		ichol[i2][i1]= s/tLPsiL[i1][i1];
+	    }
+
+	for (i1=K-1;i1>=0;i1--) 
+	    for (i2=0;i2<=i1;i2++){
+		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
+		ichol[i1][i2] = ichol[i2][i1] = s/tLPsiL[i1][i1];
+	    }
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    t=0.0;
+	    for (i2 = 0; i2 < n; i2++){
+		s=0.0;
+		for (i3 = 0; i3 < K; i3++)
+		    s +=  ichol[i1][i3]*LPsi[i2][i3];
+		t +=  s*x[i2+j*n];
+	    }
+	    if (non_negative>0)
+	    {
+		if (t<0) t=0.0;
+	    }
+	    REAL(E_SX_n)[i1 + K*j] = (double) t;
+	}
+
+
+    }
+
+
+
+    R_Free (ichol[0]);
+    R_Free (ichol );
+
+    R_Free (tLPsiL[0]);
+    R_Free (tLPsiL );
+
+    R_Free (LPsiL[0]);
+    R_Free (LPsiL );
+
+    R_Free (LPsi[0]);
+    R_Free (LPsi);
+
+
+    SEXP L_n;
+    PROTECT(L_n = allocMatrix(REALSXP, n, K));
+
+
+    for(i = 0; i < n; i++)
+	for(j = 0; j < K; j++)
+	    REAL(L_n)[i + n*j] = (double) L[i][j];
+
+
+    R_Free (L[0]);
+    R_Free( L );
+
+
+    SEXP Psi_n;
+    PROTECT(Psi_n = allocVector(REALSXP, n));
+
+    for(i = 0; i < n; i++)
+	REAL(Psi_n)[i] = (double) Psi[i];
+
+    R_Free ( Psi );
+
+    SEXP lapla_n;
+    PROTECT(lapla_n = allocMatrix(REALSXP, nn,K));
+    for(i = 0; i < nn; i++)
+	for(j = 0; j < K; j++)
+	    REAL(lapla_n)[i + nn*j] = (double) lapla[i][j];
+
+
+
+    R_Free (lapla[0]);
+    R_Free( lapla );
+
+
+
+    SEXP namesRET;
+    PROTECT(namesRET = allocVector(STRSXP, 4));
+    SET_STRING_ELT(namesRET, 0, mkChar("L"));
+    SET_STRING_ELT(namesRET, 1, mkChar("E_SX_n"));
+    SET_STRING_ELT(namesRET, 2, mkChar("Psi"));
+    SET_STRING_ELT(namesRET, 3, mkChar("lapla"));
+    
+    SEXP RET;
+    PROTECT(RET = allocVector(VECSXP, 4));
+    SET_VECTOR_ELT(RET, 0, L_n);
+    SET_VECTOR_ELT(RET, 1, E_SX_n);
+    SET_VECTOR_ELT(RET, 2, Psi_n);
+    SET_VECTOR_ELT(RET, 3, lapla_n);
+    setAttrib(RET, R_NamesSymbol, namesRET);
+    UNPROTECT(6);
+    return(RET);
+
+}
+
+
+
+
+
+
+
+SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP spzS,SEXP lapS,SEXP nLS,SEXP non_negativeS) {
+
+    int i,j,i1,i2,i3,zz,ende,h1;
+
+    double in,s,sgn,a,b,c,t,alphap,k2,seps;
+
+
+    if(!isNumeric(xS) || !isMatrix(xS)) {
+	Rprintf("STOP: X not a numeric matrix\n");
+	return NULL;
+    }
+
+    SEXP dimAttr;
+
+    dimAttr=getAttrib(xS, R_DimSymbol);
+    int n=INTEGER(dimAttr)[0];
+    int nn=INTEGER(dimAttr)[1];
+    
+    
+    double *x=REAL(xS);
+
+
+    if(!isNumeric(LS) || !isMatrix(LS)) {
+	Rprintf("STOP: L not a numeric matrix\n");
+	return NULL;
+    }
+
+    dimAttr = getAttrib(LS, R_DimSymbol);
+    
+    if (n != ((int) INTEGER(dimAttr)[0]) )
+    {
+	Rprintf("STOP: Dim1 X: %d BUT Dim1 L %d\n",n,((int) INTEGER(dimAttr)[0]));
+	return NULL;
+    }
+
+    int K = INTEGER(dimAttr)[1];
+
+    double **L = R_Calloc(n, double *);
+    L[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	L[i] =  L[0] + i*K;
+	for(j=0; j < K; j++)
+	{
+	    L[i][j] = (double)(REAL(LS)[i+n*j]);
+	}
+    }
+
+
+    if(!isNumeric(laplaS) || !isMatrix(laplaS)) {
+	Rprintf("STOP: lapla not a numeric matrix\n");
+	return NULL;
+    }
+
+    dimAttr = getAttrib(laplaS, R_DimSymbol);
+    
+    if (nn !=  ((int) INTEGER(dimAttr)[0]))
+    {
+	Rprintf("STOP: Dim2 X: %d BUT Dim1 lapla %d\n",nn,((int) INTEGER(dimAttr)[0]));
+	return NULL;
+    }
+    
+    if (K != ((int) INTEGER(dimAttr)[1]))
+    {
+	Rprintf("STOP: Dim2 L: %d BUT Dim2 lapla %d\n",K,((int) INTEGER(dimAttr)[1]));
+	return NULL;
+    }
+
+
+    double **lapla = R_Calloc(nn, double *);
+    lapla[0] = R_Calloc((long) nn*K, double);
+    for(i=0; i < nn; i++)
+    {
+	lapla[i] = lapla[0] + i*K;
+	for(j=0; j < K; j++)
+	{
+	    lapla[i][j] = (double)(REAL(LS)[i+nn*j]);
+	}
+    }
+
+ 
+ 
+    if(!isNumeric(PsiS) || isMatrix(PsiS) || isLogical(PsiS))
+    {
+	Rprintf("STOP: Psi not a numeric vector\n");
+	return NULL;
+    }
+
+    if (n != length(PsiS))
+    {
+	Rprintf("STOP: Dim1 X: %d BUT Dim1 Psi %d\n",n,length(PsiS));
+	return NULL;
+
+    }
+
+    double *Psi = R_Calloc(n, double); 
+    
+    for(i=0; i < n; i++)
+    {
+	Psi[i] = (double)(REAL(PsiS)[i]);  
+    }
+    
+
+    double alpha = (double)(REAL(alphaS)[0]);
+    double eps = (double)(REAL(epsS)[0]);
+    double spz = (double)(REAL(spzS)[0]);
+    double lap = (double)(REAL(lapS)[0]);
+
+    int non_negative = (int)(INTEGER(non_negativeS)[0]);
+    int cyc = (int)(INTEGER(cycS)[0]);
+    int nL = (int)(INTEGER(nLS)[0]);
+
+    double *XX = R_Calloc(n, double); 
+    double *e_sx_n = R_Calloc(K, double); 
+    double *e_ssxx_n = R_Calloc(K, double); 
+    double *v = R_Calloc(n, double); 
+    double *w = R_Calloc(n, double); 
+    double *r_es_x = R_Calloc(n, double); 
+
+    int *zeros = R_Calloc(n, int); 
+
+
+    double **ichol = R_Calloc(K, double *);
+    ichol[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	ichol[i] =  ichol[0] + i*K;
+    }
+
+    double **sum2 = R_Calloc(K, double *);
+    sum2[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	sum2[i] = sum2[0] + i*K;
+    }
+
+    double **tLPsiL = R_Calloc(K, double *);
+    tLPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	tLPsiL[i] =  tLPsiL[0] + i*K;
+    }
+
+    double **LPsiL = R_Calloc(K, double *);
+    LPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	LPsiL[i] =  LPsiL[0] + i*K;
+    }
+
+    double **LPsi = R_Calloc(n, double *);
+    LPsi[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	LPsi[i] = LPsi[0] + i*K;
+    }
+
+    double **sum1 = R_Calloc(n, double *);
+    sum1[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	sum1[i] = sum1[0] + i*K;
+    }
+
+  
+
+
+
+    seps=10e-10;
+    alpha = sqrt((1.0*n))-(sqrt((1.0*n))-1.0)*alpha;
+    in = 1.0/nn;
+    spz = -spz;
+
+    if (lap<eps)
+    {
+	lap = eps;
+    }
+
+    for (i1=0;i1<n;i1++)
+    {
+	s = 0.0;
+	for (i2 = 0; i2 < nn; i2++)
+	    s += x[i1+n*i2] * x[i1+n*i2];
+	XX[i1] = s*in;
+	if (XX[i1]<eps) XX[i1]=eps;
+
+    }
+
+
+ 
+    for (i=0;i<cyc;i++) {
+
+
+	for (i1 = 0; i1 < K; i1++)
+	{
+	    for (i2=0;i2<n;i2++)
+		LPsi[i2][i1] =  L[i2][i1]/Psi[i2];
+	}
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i3=0;i3<K;i3++)
+	    {
+		s = 0.0;
+		for (i2 = 0; i2 < n; i2++)
+		    s += LPsi[i2][i1]*L[i2][i3];
+		LPsiL[i1][i3] = s;
+	    }
+	}
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2 = 0; i2 < n; i2++)
+		sum1[i2][i1] = 0.0;
+	    for (i2 = 0; i2 < K; i2++)
+		sum2[i1][i2] = (i1==i2 ? eps : 0.0);
+	}
+
+
+	for (j=0;j<nn;j++)
+	{
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		for (i2=0;i2<K;i2++)
+		{
+		    
+		    if (i1==i2) {
+			tLPsiL[i1][i1] = LPsiL[i1][i1] + lapla[j][i1];
+		    } else {
+			tLPsiL[i1][i2] = LPsiL[i1][i2];
+		    }
+		}
+	    }
+
+
+	    for (i1=0;i1<K;i1++) {
+		for (i2=i1;i2<K;i2++) {
+		    for (s=tLPsiL[i1][i2],i3=i1-1;i3>=0;i3--) s -= tLPsiL[i1][i3]*tLPsiL[i2][i3];
+		    ichol[i1][i2]=ichol[i2][i1]=0.0;
+		    if (i1 == i2) {
+			tLPsiL[i1][i1]=sqrt(s);
+		    } else tLPsiL[i2][i1]=s/tLPsiL[i1][i1];
+		}
+	    }
+
+
+	    for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
+		    s = (i1==i2 ? 1.0 : 0.0);
+		    for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
+		    ichol[i2][i1]= s/tLPsiL[i1][i1];
+		}
+
+
+	    for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
+		    s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		    for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
+		    ichol[i1][i2] = ichol[i2][i1] = s/tLPsiL[i1][i1];
+		}
+
+
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		t=0.0;
+		for (i2 = 0; i2 < n; i2++){
+		    s=0.0;
+		    for (i3 = 0; i3 < K; i3++)
+			s +=  ichol[i1][i3]*LPsi[i2][i3];
+		    t +=  s*x[i2+j*n];
+		}
+		if (non_negative>0)
+		{
+		    if (t<0) t=0.0;
+		}
+		e_sx_n[i1] = t;
+		for (i2 = 0; i2 < n; i2++)
+		    sum1[i2][i1] += x[i2+j*n]*t;
+	    }
+
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    s = ichol[i1][i2] + e_sx_n[i1]*e_sx_n[i2];
+		    sum2[i1][i2] += s;
+		    if (i1==i2) e_ssxx_n[i1] = s;
+		}
+	    }
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		s = pow((eps+e_ssxx_n[i1]),spz);
+		if (s<lap)
+		{
+		    lapla[j][i1] = lap;
+		} else {
+		    lapla[j][i1] = s; 
+		}
+	    }
+	}
+
+
+	for (i1=0;i1<K;i1++) {
+	    for (i2=i1;i2<K;i2++) {
+		for (s=sum2[i1][i2],i3=i1-1;i3>=0;i3--) s -= sum2[i1][i3]*sum2[i2][i3];
+		ichol[i1][i2]=ichol[i2][i1]=0.0;
+		if (i1 == i2) {
+		    sum2[i1][i1]=sqrt(s);
+		} else sum2[i2][i1]=s/sum2[i1][i1];
+	    }
+	}
+
+	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
+		s = (i1==i2 ? 1.0 : 0.0);
+		for (i3=i1-1;i3>=i2;i3--) s -= sum2[i1][i3]*ichol[i2][i3];
+		ichol[i2][i1]= s/sum2[i1][i1];
+	    }
+
+	for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
+		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		for (i3=i1+1;i3<K;i3++) s -= sum2[i3][i1]*ichol[i2][i3];
+		ichol[i1][i2] = ichol[i2][i1] = s/sum2[i1][i1];
+	    }
+
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2 = 0; i2 < n; i2++){
+		s=0.0;
+		for (i3 = 0; i3 < K; i3++)
+		    s +=  sum1[i2][i3]*ichol[i3][i1];
+		L[i2][i1] = s;
+	    }
+	}
+	
+	
+
+
+
+
+
+	for (i1=0;i1<n;i1++)
+	{
+	    s = 0.0;
+	    for (i2 = 0; i2 < K; i2++) {
+		s += L[i1][i2]*sum1[i1][i2];
+	    }
+	    Psi[i1] = XX[i1] - in*s;
+	    if (Psi[i1]<eps)
+	    {
+		Psi[i1] = eps;
+	    }
+	}
+
+
+
+//----------
+
+        for (i3 = 0; i3 < K; i3++) {
+
+	    s = 0.0;
+	    for (i1=0;i1<n;i1++)
+	    {
+		r_es_x[i1] = (L[i1][i3]<0.0 ? -1.0 : 1.0);
+		sgn=fabs(L[i1][i3]);
+		w[i1] = sgn;
+		s += sgn;
+	    }
+
+
+	    k2=1.0;
+
+	    zz=0;
+	    s=(alpha-s)/(1.0*n);
+	    for (i1=0;i1<n;i1++)
+	    {
+		sgn = w[i1] + s;
+		if (sgn<=0.0) {
+		    zeros[i1] = 2;
+		    zz++;
+		    v[i1] = 0.0;
+		}
+		else {
+		    zeros[i1] = 0;
+		    v[i1] = sgn;
+		}
+
+	    }
+
+
+	    j=0;
+	    ende=0;
+	    while (ende<1) {
+
+		a=0.0;
+		b=0.0;
+		c=0.0;
+		h1 = n-zz;
+		s=0.0;
+		if (h1>0) s=alpha/(1.0*h1);
+		for (i1=0;i1<n;i1++)
+		{
+		    if (zeros[i1]<1) {
+			sgn = v[i1]-s;
+
+			a+=sgn*sgn;
+			b+=sgn*v[i1];
+			c+=v[i1]*v[i1];
+			w[i1]=sgn;
+		    }
+		}
+		c -= k2;
+		b*=2.0;
+		t=b*b-4.0*a*c;
+		if (t<0.0) t=0.0;
+		if (a<seps) a = seps;
+		alphap = (-b+sqrt(t))/(2.0*a);
+
+		s=0.0;
+		ende=2;
+		for (i1=0;i1<n;i1++)
+		{
+		    if (zeros[i1]<1) {
+			v[i1] += alphap*w[i1];
+			if (v[i1]<=0.0) {
+			    ende = 0;
+			    zeros[i1] = 2;
+			    zz++;
+			    v[i1]=0.0;
+			}
+			else {
+			    s+=v[i1];
+			}
+		    }
+
+		}
+		if (j<2) ende = 0;
+		if (ende<1) {
+		    j++;
+		    h1 = n-zz;
+		    if (h1>0)
+		    {
+			s= (alpha-s)/(1.0*h1);
+			for (i1=0;i1<n;i1++)
+			{
+			    if (zeros[i1]<1) v[i1] += s;
+			}
+
+		    }
+		    else
+		    {
+			ende=2;
+		    }
+		}
+
+	    }
+
+	    for (i1=0;i1<n;i1++)
+	    {
+		if (non_negative<=0)
+		{
+		    L[i1][i3] = r_es_x[i1]*v[i1];
+		} else {
+		    L[i1][i3] = v[i1];
+		}
+//		Rprintf("%d %lf %lf\n",i1,L[i1][i3],r_es_x[i1]*v[i1]);
+	    }
+	}
+
+//----------
+
+
+	if ((nL>0)&&(nL<K))
+	{
+
+	    for (i1=0;i1<n;i1++)
+	    {
+		for (i2 = 0; i2 < nL; i2++)
+		{
+		    e_ssxx_n[i2] = 0.0;
+		}
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    s=fabs(L[i1][i2]);
+		    if (s>e_ssxx_n[nL-1])
+		    {
+			i3=nL-1;
+			while ((i3>0)&&(s>e_ssxx_n[i3-1])) {
+			    e_ssxx_n[i3]=e_ssxx_n[i3-1];
+			    i3--;
+			}
+			e_ssxx_n[i3]=s;
+		    }
+		}
+		s=e_ssxx_n[nL-1];
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    if(s>fabs(L[i1][i2]))
+		    {
+			L[i1][i2]=0.0;
+		    }
+		}
+	
+
+	    }
+	}
+
+
+
+
+
+	if (i%20==0) {
+	    Rprintf("Cycle: %d\n", i);
+	    R_CheckUserInterrupt();
+	}
+    }
+
+
+    R_Free (sum1[0]);
+    R_Free (sum1 );
+
+    R_Free (sum2[0]);
+    R_Free (sum2 );
+
+    R_Free (XX );
+    R_Free (e_sx_n );
+    R_Free (e_ssxx_n );
+    R_Free (v );
+    R_Free (w );
+    R_Free (r_es_x );
+    R_Free (zeros );
+
+    for (i1=0;i1<K;i1++)
+    {
+	for (i2 = 0; i2 < n; i2++)
+	    LPsi[i2][i1] =  L[i2][i1]/Psi[i2];
+    }
+
+
+    for (i1=0;i1<K;i1++)
+    {
+	for (i3=0;i3<K;i3++)
+	{
+	    s = 0.0;
+	    for (i2 = 0; i2 < n; i2++)
+		s += LPsi[i2][i1]*L[i2][i3];
+	    LPsiL[i1][i3] = s;
+	}
+    }
+
+
+
+    SEXP E_SX_n;
+    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
+
+    for (j=0;j<nn;j++)
+    {
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2=0;i2<K;i2++)
+	    {
+		
+		if (i1==i2) {
+		    tLPsiL[i1][i1] = LPsiL[i1][i1] + lapla[j][i1];
+		} else {
+		    tLPsiL[i1][i2] = LPsiL[i1][i2];
+		}
+	    }
+	}
+
+	for (i1=0;i1<K;i1++) {
+	    for (i2=i1;i2<K;i2++) {
+		for (s=tLPsiL[i1][i2],i3=i1-1;i3>=0;i3--) s -= tLPsiL[i1][i3]*tLPsiL[i2][i3];
+		ichol[i1][i2]=ichol[i2][i1]=0.0;
+		if (i1 == i2) {
+		    tLPsiL[i1][i1]=sqrt(s);
+		} else tLPsiL[i2][i1]=s/tLPsiL[i1][i1];
+	    }
+	}
+
+	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
+		s = (i1==i2 ? 1.0 : 0.0);
+		for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
+		ichol[i2][i1]= s/tLPsiL[i1][i1];
+	    }
+
+	for (i1=K-1;i1>=0;i1--) for (i2=0;i2<=i1;i2++){
+		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
+		ichol[i1][i2] = ichol[i2][i1] = s/tLPsiL[i1][i1];
+	    }
+
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    t=0.0;
+	    for (i2 = 0; i2 < n; i2++){
+		s=0.0;
+		for (i3 = 0; i3 < K; i3++)
+		    s +=  ichol[i1][i3]*LPsi[i2][i3];
+		t +=  s*x[i2+j*n];
+	    }
+	    if (non_negative>0)
+	    {
+		if (t<0) t=0.0;
+	    }
+	    REAL(E_SX_n)[i1 + K*j] = (double) t;
+	}
+
+
+    }
+
+
+    R_Free (ichol[0]);
+    R_Free (ichol );
+
+    R_Free (tLPsiL[0]);
+    R_Free (tLPsiL );
+
+    R_Free (LPsiL[0]);
+    R_Free (LPsiL );
+
+    R_Free (LPsi[0]);
+    R_Free (LPsi);
+
+
+
+    SEXP L_n;
+    PROTECT(L_n = allocMatrix(REALSXP, n, K));
+
+
+    for(i = 0; i < n; i++)
+	for(j = 0; j < K; j++)
+	    REAL(L_n)[i + n*j] = (double) L[i][j];
+
+
+    R_Free (L[0]);
+    R_Free( L );
+
+
+    SEXP Psi_n;
+    PROTECT(Psi_n = allocVector(REALSXP, n));
+
+    for(i = 0; i < n; i++)
+	REAL(Psi_n)[i] = (double) Psi[i];
+
+    R_Free ( Psi );
+
+    SEXP lapla_n;
+    PROTECT(lapla_n = allocMatrix(REALSXP, nn,K));
+    for(i = 0; i < nn; i++)
+	for(j = 0; j < K; j++)
+	    REAL(lapla_n)[i + nn*j] = (double) lapla[i][j];
+
+
+
+    R_Free (lapla[0]);
+    R_Free( lapla );
+
+
+
+
+
+
+    SEXP namesRET;
+    PROTECT(namesRET = allocVector(STRSXP, 4));
+    SET_STRING_ELT(namesRET, 0, mkChar("L"));
+    SET_STRING_ELT(namesRET, 1, mkChar("E_SX_n"));
+    SET_STRING_ELT(namesRET, 2, mkChar("Psi"));
+    SET_STRING_ELT(namesRET, 3, mkChar("lapla"));
+    
+    SEXP RET;
+    PROTECT(RET = allocVector(VECSXP, 4));
+    SET_VECTOR_ELT(RET, 0, L_n);
+    SET_VECTOR_ELT(RET, 1, E_SX_n);
+    SET_VECTOR_ELT(RET, 2, Psi_n);
+    SET_VECTOR_ELT(RET, 3, lapla_n);
+    setAttrib(RET, R_NamesSymbol, namesRET);
+    UNPROTECT(6);
+    return(RET);
+
+}
+
+
+
+
+
+SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP epsS,SEXP eps1S,SEXP samplesS) {
+
+
+    FILE *pFile;
+
+
+    char sst[200]; 
+
+
+    int hpp,ig,jg,samp;
+
+    int  i,j,i1,i2,i3,i4,n,nn;
+    
+    double fs;
+
+    double in,s,sgn,t;
+
+
+
+
+    const char *file_name=CHAR(STRING_ELT(file_nameS,0));
+
+  
+    double init_lapla = (double)(REAL(init_laplaS)[0]);
+    double init_psi = (double)(REAL(init_psiS)[0]);
+    double random = (double)(REAL(randomS)[0]);
+    double alpha = (double)(REAL(alphaS)[0]);
+    double eps = (double)(REAL(epsS)[0]);
+    double eps1 = (double)(REAL(eps1S)[0]);
+    double spl = (double)(REAL(splS)[0]);
+    double spz = (double)(REAL(spzS)[0]);
+    double scale = (double)(REAL(scaleS)[0]);
+    double lap = (double)(REAL(lapS)[0]);
+
+
+    int write_file =  (int)(INTEGER(write_fileS)[0]);
+    int non_negative =  (int)(INTEGER(non_negativeS)[0]);
+    int norm =  (int)(INTEGER(normS)[0]);
+    int cyc =  (int)(INTEGER(cycS)[0]);
+    int K =  (int)(INTEGER(KS)[0]);
+    int nL =  (int)(INTEGER(nLS)[0]);
+
+    int *xa;
+    int **xind;
+    double **xval;
+
+    int nsamp = length(samplesS);
+
+    int *samples =  INTEGER(samplesS);
+    if (samples[0]>0) {
+      samp = 0;
+      
+    } else {
+      samp=-1;
+    }
+
+    n=0;
+    nn=0;
+
+    sst[0]=0;
+    strcat(sst,file_name);
+    strcat(sst,".txt");
+
+    pFile = fopen (sst,"r");
+
+    if (!(pFile>0)) {
+	Rprintf("File >%s< not found! Stop.\n", file_name);
+	return NULL;
+    }
+
+    fscanf(pFile,"%d\n",&nn);  
+
+    if (!(nn>0)) {
+      fclose (pFile);
+      Rprintf("Wrong file format (sparse file format required)! Stop.\n");
+      return NULL;
+    }
+
+    fscanf(pFile,"%d\n",&n);  
+
+    if (!(n>0)) {
+      fclose (pFile);
+      Rprintf("Wrong file format (sparse file format required)! Stop.\n");
+      return NULL;
+    }
+
+    if (samp<0) {
+
+      xa = (int *) R_Calloc(nn, int); 
+      xind = (int **) R_Calloc(nn, int *);
+      xind[0] = R_Calloc((long) nn*n, int);
+      for(i=0; i < nn ; i++)
+	{
+	  xind[i] =  xind[0] + i*n;
+	}
+      xval = (double **) R_Calloc(nn, double *);
+      xval[0] = R_Calloc((long) nn*n, double);
+      for(i=0; i < nn; i++)
+	{
+	  xval[i] = xval[0] + i*n;
+	}
+
+    
+      for(i = 0; i < nn; i ++)
+	{
+	  fscanf(pFile,"%d\n",&ig); 
+	  xa[i]=ig;
+	  for(j = 0; j <  ig; j ++) {
+	    fscanf(pFile,"%d",&hpp);
+	    xind[i][j]=hpp;
+	  }
+	  fscanf(pFile,"\n");
+	  for(j = 0; j < ig; j ++) {
+	    fscanf(pFile,"%lf",&fs);
+	    xval[i][j] = fs;
+	  }
+	  fscanf(pFile,"\n");
+	}
+
+    } else {
+      xa = (int *) R_Calloc(nsamp, int); 
+      xind = (int **) R_Calloc(nsamp, int *);
+      xind[0] = R_Calloc((long) nsamp*n, int);
+      for(i=0; i < nsamp ; i++)
+	{
+	  xind[i] =  xind[0] + i*n;
+	}
+      xval = (double **) R_Calloc(nsamp, double *);
+      xval[0] = R_Calloc((long) nsamp*n, double);
+      for(i=0; i < nsamp; i++)
+	{
+	  xval[i] = xval[0] + i*n;
+	}
+
+      for(i = 0; i < nn; i ++)
+	{
+	  if ((samples[samp]-1)>i)
+	    {
+	      fscanf(pFile,"%d\n",&ig);
+	      for(j = 0; j <  ig; j ++) {
+		fscanf(pFile,"%d",&hpp);
+	      }
+	      fscanf(pFile,"\n");
+	      for(j = 0; j < ig; j ++) {
+		fscanf(pFile,"%lf",&fs);
+	      }
+	      fscanf(pFile,"\n");
+	      
+	    } else {
+	    fscanf(pFile,"%d\n",&ig); 
+	    xa[samp]=ig;
+	    for(j = 0; j <  ig; j ++) {
+	      fscanf(pFile,"%d",&hpp);
+	      xind[samp][j]=hpp;
+	    }
+	    fscanf(pFile,"\n");
+	    for(j = 0; j < ig; j ++) {
+	      fscanf(pFile,"%lf",&fs);
+	      xval[samp][j] = fs;
+	    }
+	    fscanf(pFile,"\n");
+	    samp++;
+	    if (samp == nsamp) break;
+	  }
+
+	}
+      if (samp!=nsamp)
+	{
+	  Rprintf("Only %d of %d samples found! Some sample numbers are too large. Continue.\n", samp,nsamp);
+	}
+      nn=samp;
+      Rprintf("Using %d samples!\n",samp);
+    }
+    fclose (pFile);
+
+
+    int *La = R_Calloc(K, int); 
+    int **Lind = R_Calloc(K, int *);
+    Lind[0] = R_Calloc((long) K*n, int);
+    for(i=0; i < K; i++)
+    {
+	Lind[i] = Lind[0] + i*n;
+    }
+    double **Lval = R_Calloc(K, double *);
+    Lval[0] = R_Calloc((long) K*n, double);
+    for(i=0; i < K; i++)
+    {
+	Lval[i] =  Lval[0] + i*n;
+    }
+
+
+
+    if (non_negative>0) {
+
+	for(i = 0; i < K; i ++)
+	{
+	    La[i]=n;
+	    for(j = 0; j < n; j ++) {
+		Lind[i][j]= j;
+//		Lval[i][j] = random*(rand()%100001)/100000.0;
+		Lval[i][j] = random*fabs(norm_rand());
+	    }
+	}
+
+    } else {
+	for(i = 0; i < K; i ++)
+	{
+	    La[i]=n;
+	    for(j = 0; j < n; j ++) {
+		Lind[i][j]= j;
+//		if (rand()%2>0) {
+//		    s = 1.0;
+//		}  else {
+//		    s= -1.0;
+//		}
+//		Lval[i][j] = random*s*(rand()%100001)/100000.0;
+		Lval[i][j] = random*norm_rand();
+	    }
+	}
+
+    }
+
+
+
+    int *LPsia = R_Calloc(K, int); 
+    int **LPsiind = R_Calloc(K, int *);
+    LPsiind[0] = R_Calloc((long) K*n, int);
+    for(i=0; i < K; i++)
+    {
+	LPsiind[i] = LPsiind[0] + i*n;
+    }
+    double **LPsival = R_Calloc(K, double *);
+    LPsival[0] = R_Calloc((long) K*n, double);
+    for(i=0; i < K; i++)
+    {
+	LPsival[i] = LPsival[0] + i*n;
+    }
+
+
+
+
+    double *LLval = R_Calloc(K, double); 
+    int *LLind = R_Calloc(K, int); 
+    int *ig_vec = R_Calloc(K, int); 
+
+    double *Psi = R_Calloc(n, double); 
+    double *XX = R_Calloc(n, double); 
+    double *e_sx_n = R_Calloc(K, double); 
+    double *e_ssxx_n = R_Calloc(K, double); 
+
+
+    double **lapla = R_Calloc(nn, double *);
+    lapla[0] = R_Calloc((long) nn*K, double);
+    for(i=0; i < nn; i++)
+    {
+	lapla[i] = lapla[0] + i*K;
+    }
+
+
+    double **ichol = R_Calloc(K, double *);
+    ichol[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	ichol[i] = ichol[0] + i*K;
+    }
+
+    double **sum2 = R_Calloc(K, double *);
+    sum2[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	sum2[i] =  sum2[0]+ i*K;
+    }
+
+    double **tLPsiL = R_Calloc(K, double *);
+    tLPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	tLPsiL[i] =  tLPsiL[0] + i*K;
+    }
+
+    double **LPsiL = R_Calloc(K, double *);
+    LPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	LPsiL[i] = LPsiL[0] + i*K;
+    }
+
+    double **LPsi = R_Calloc(n, double *);
+    LPsi[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	LPsi[i] = LPsi[0]+i*K;
+    }
+
+    double **sum1 = R_Calloc(n, double *);
+    sum1[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	sum1[i] = sum1[0] + i*K;
+    }
+
+
+
+
+
+    
+    spl = -spl;
+    spz = -spz;
+    in = 1.0/nn;
+
+    if (lap<eps)
+    {
+	lap = eps;
+    }
+
+ 
+    for (i1=0;i1<n;i1++)
+	XX[i1] = 0.0;
+    
+    for (i2 = 0; i2 < nn; i2++) {
+	for (ig=0; ig< xa[i2];ig++) {
+	    s=xval[i2][ig];
+	    XX[xind[i2][ig]] += s*s;
+	}
+    }
+  
+
+    for (i1=0;i1<n;i1++) {
+	s = XX[i1] * in;
+	if (s<eps) s=eps;
+	Psi[i1] = sqrt(s);
+	if (norm>0) {
+	 XX[i1] = 1.0;
+	} else {
+	 XX[i1] = s;
+	}
+    }
+
+
+    if (norm>0) {
+	
+	for (i2 = 0; i2 < nn; i2++) {
+	    for (ig=0; ig< xa[i2];ig++) {
+		xval[i2][ig]/=Psi[xind[i2][ig]];
+	    }
+	}
+    }
+
+
+    for (i1=0;i1<n;i1++) {
+	
+	if (norm>0) {
+	    Psi[i1]= init_psi;
+	} else {
+	    Psi[i1]= init_psi*XX[i1];
+	}
+
+    }
+
+    for (i1=0;i1<K;i1++) {
+	for (j=0;j<nn;j++)
+	    lapla[j][i1] = init_lapla;
+    }
+
+
+
+
+ 
+    for (i=0;i<cyc;i++) {
+
+
+	for (i2 = 0; i2 < K; i2++) {
+	    LPsia[i2]=La[i2];
+	    for (ig=0; ig< La[i2];ig++) {
+		LPsiind[i2][ig] = Lind[i2][ig];
+		LPsival[i2][ig] = Lval[i2][ig]/Psi[Lind[i2][ig]];
+	    }
+	}
+
+
+
+ 
+
+	for (i2=0;i2<K;i2++)
+	{
+	    for (i3=0;i3<K;i3++)
+	    {
+		s = 0.0; 
+		ig = 0; 
+		jg = 0;
+		while ((ig < La[i3]) && (jg < LPsia[i2])) {
+		    if (Lind[i3][ig] == LPsiind[i2][jg]) {
+			s += Lval[i3][ig] * LPsival[i2][jg]; 
+			ig++;
+			jg++;
+		    } else {
+			if (Lind[i3][ig] < LPsiind[i2][jg]) {
+			    ig++; 
+			} else {
+			    if (Lind[i3][ig] > LPsiind[i2][jg]) {
+				jg++;
+			    }
+			}
+		    }
+		}
+		LPsiL[i2][i3] = s;
+	    }
+	}
+
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2 = 0; i2 < n; i2++)
+		sum1[i2][i1] = 0.0;
+ 	    for (i2 = 0; i2 < K; i2++)
+		sum2[i1][i2] = (i1==i2 ? eps : 0.0);
+	}
+
+
+
+
+	for (j=0;j<nn;j++)
+	{
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		for (i2=0;i2<K;i2++)
+		{
+		    
+		    if (i1==i2) {
+			tLPsiL[i1][i1] = LPsiL[i1][i1] + lapla[j][i1];
+		    } else {
+			tLPsiL[i1][i2] = LPsiL[i1][i2];
+		    }
+		}
+	    }
+
+
+ 
+	    for (i1=0;i1<K;i1++) {
+		for (i2=i1;i2<K;i2++) {
+		    for (s=tLPsiL[i1][i2],i3=i1-1;i3>=0;i3--) s -= tLPsiL[i1][i3]*tLPsiL[i2][i3];
+		    ichol[i1][i2]=ichol[i2][i1]=0.0;
+		    if (i1 == i2) {
+			tLPsiL[i1][i1]=sqrt(s);
+		    } else tLPsiL[i2][i1]=s/tLPsiL[i1][i1];
+		}
+	    }
+
+
+
+	    for (i1=0;i1<K;i1++) 
+		for (i2=0;i2<=i1;i2++){
+		    s = (i1==i2 ? 1.0 : 0.0);
+		    for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
+		    ichol[i2][i1]= s/tLPsiL[i1][i1];
+		}
+
+
+
+	    for (i1=K-1;i1>=0;i1--) 
+		for (i2=0;i2<=i1;i2++){
+		    s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		    for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
+		    ichol[i1][i2] = ichol[i2][i1] = s/tLPsiL[i1][i1];
+		}
+
+
+ 
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		
+		t=0.0;
+		for (i3 = 0; i3 < K; i3++)
+		{
+		    s=0.0;
+		    ig = 0; 
+		    jg = 0;
+		    while ((ig < xa[j]) && (jg < LPsia[i3])) {
+			if (xind[j][ig] == LPsiind[i3][jg]) {
+			    s += xval[j][ig] * LPsival[i3][jg]; 
+			    ig++;
+			    jg++;
+			} else {
+			    if (xind[j][ig] < LPsiind[i3][jg]) {
+				ig++; 
+			    } else {
+				if (xind[j][ig] > LPsiind[i3][jg]) {
+				    jg++;
+				}
+			    }
+			}
+		    }
+		    
+		    t += s*ichol[i1][i3];
+		}
+		if (non_negative>0)
+		{
+		    if (t<0) t=0.0;
+		}
+		e_sx_n[i1] = t;
+		for (ig=0; ig< xa[j];ig++) {
+		    sum1[xind[j][ig]][i1] += xval[j][ig]*t;
+		}
+	    }
+
+
+
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		for (i2 = 0; i2 < K; i2++)
+		{
+		    s = ichol[i1][i2] + e_sx_n[i1]*e_sx_n[i2];
+		    sum2[i1][i2] += s;
+		    if (i1==i2) e_ssxx_n[i1] = s;
+		}
+	    }
+
+
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		s = pow((eps+e_ssxx_n[i1]),spz);
+		if (s<lap)
+		{
+		    lapla[j][i1] = lap;
+		} else {
+		    lapla[j][i1] = s; 
+		}
+	    }
+	}
+
+
+
+
+	for (i1=0;i1<K;i1++) {
+	    for (i2=i1;i2<K;i2++) {
+		for (s=sum2[i1][i2],i3=i1-1;i3>=0;i3--) s -= sum2[i1][i3]*sum2[i2][i3];
+		ichol[i1][i2]=ichol[i2][i1]=0.0;
+		if (i1 == i2) {
+		    sum2[i1][i1]=sqrt(s);
+		} else sum2[i2][i1]=s/sum2[i1][i1];
+	    }
+	}
+
+
+	for (i1=0;i1<K;i1++) 
+	    for (i2=0;i2<=i1;i2++){
+		s = (i1==i2 ? 1.0 : 0.0);
+		for (i3=i1-1;i3>=i2;i3--) s -= sum2[i1][i3]*ichol[i2][i3];
+		ichol[i2][i1]= s/sum2[i1][i1];
+	    }
+
+	for (i1=K-1;i1>=0;i1--) 
+	    for (i2=0;i2<=i1;i2++){
+		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		for (i3=i1+1;i3<K;i3++) s -= sum2[i3][i1]*ichol[i2][i3];
+		ichol[i1][i2] = ichol[i2][i1] = s/sum2[i1][i1];
+	    }
+
+
+ 	if ((nL<=0)||(nL>=K))
+	{
+	    for (i1=0;i1<K;i1++)
+	    {
+		ig=0;
+		for (i2 = 0; i2 < n; i2++){
+		    s=0.0;
+		    for (i3 = 0; i3 < K; i3++)
+			s +=  sum1[i2][i3]*ichol[i3][i1];
+		    
+		    sgn = (s>0.0) ? 1.0 : ((s == 0.0) ? 0.0 : -1.0);
+
+		    if ((sgn>0)||(random<0))
+		    {
+			t = fabs(Psi[i2]*alpha*pow((eps1+fabs(s)),spl));
+		    
+			if (fabs(s)>t){
+			    Lind[i1][ig] = i2;
+			    Lval[i1][ig] = s - sgn* t;
+			    ig++;
+			}
+		    }
+		}
+		La[i1] = ig;
+	    }
+	    
+
+	} else {
+
+
+	    for (i1=0;i1<K;i1++)
+	    {
+		ig_vec[i1]=0;
+	    }
+    
+	    for (i2 = 0; i2 < n; i2++){
+		i4=0;
+		for (i1=0;i1<K;i1++)
+		{
+		    s=0.0;
+		    for (i3 = 0; i3 < K; i3++)
+			s +=  sum1[i2][i3]*ichol[i3][i1];
+		    
+		    sgn = (s>0.0) ? 1.0 : ((s == 0.0) ? 0.0 : -1.0);
+
+		    if ((sgn>0)||(non_negative<=0))
+		    {
+			t = fabs(Psi[i2]*alpha*pow((eps1+fabs(s)),spl));
+			
+			if (fabs(s)>t){
+			    LLind[i4] = i1;
+			    LLval[i4] = s - sgn* t;
+			    i4++;
+			}
+		    }
+		}
+	
+		if (i4>nL-1)
+		{
+		    for (i3 = 0; i3 < nL; i3++)
+		    {
+			e_ssxx_n[i3] = -1.0;
+		    }
+		    for (i3 = 0; i3 < i4; i3++)
+		    {
+			s=fabs(LLval[i3]);
+			if (s>e_ssxx_n[nL-1])
+			{
+			    jg=nL-1;
+			    while ((jg>0)&&(s>e_ssxx_n[jg-1])) {
+				e_ssxx_n[jg]=e_ssxx_n[jg-1];
+				jg--;
+			    }
+			    e_ssxx_n[jg]=s;
+			}
+		    }
+		    s=e_ssxx_n[nL-1];
+		    
+		    for (i3 = 0; i3 < i4; i3++)
+		    {
+			if (s<=fabs(LLval[i3]))
+			{
+			    Lind[LLind[i3]][ig_vec[i1]] = i2;
+			    Lval[LLind[i3]][ig_vec[i1]] = LLval[i3];
+			    ig_vec[LLind[i3]]++;
+		    
+			}
+		    }
+		    
+		} else {
+		    for (i3 = 0; i3 < i4; i3++)
+		    {
+			Lind[LLind[i3]][ig_vec[i1]] = i2;
+			Lval[LLind[i3]][ig_vec[i1]] = LLval[i3];
+			ig_vec[LLind[i3]]++;
+		    }
+		    
+		}
+
+	
+	    }
+    
+    
+	    for (i1=0;i1<K;i1++)
+	    {
+		La[i1] = ig_vec[i1];
+	    }
+
+
+	}
+
+
+
+
+  	for (i1=0;i1<n;i1++)
+	    Psi[i1] = 0.0;
+	
+	for (i2 = 0; i2 < K; i2++) {
+	    for (ig=0; ig< La[i2];ig++) {
+		Psi[Lind[i2][ig]]+= Lval[i2][ig]*sum1[Lind[i2][ig]][i2];
+	    }
+	}
+
+
+	for (i1=0;i1<n;i1++)
+	{
+	    
+	    Psi[i1] = XX[i1] - in*Psi[i1];
+	    if (Psi[i1]<eps)
+	    {
+		Psi[i1] = eps;
+	    }
+	    
+	}
+
+
+
+ 	if (scale>0)
+	{
+	    for (i2 = 0; i2 < K; i2++)
+	    {
+		
+		
+		s = 0.0;
+		
+		for (ig=0; ig< La[i2];ig++) {
+		    s += Lval[i2][ig]*Lval[i2][ig];
+		}
+		
+		s*=in;
+		s=sqrt(s)+eps1;
+		s=scale/s;
+		for (ig=0; ig< La[i2];ig++) {
+		    Lval[i2][ig] *=s;
+		}
+		s*=s;
+		s = pow(s,spz);
+		for (j=0;j<nn;j++)
+		{
+		    lapla[j][i2]*=s;
+		}
+		
+	    }
+	}		
+
+
+
+
+//	if (i%20==0) {
+	    Rprintf("Cycle: %d\n", i);
+	    R_CheckUserInterrupt();
+//	}
+
+    }
+
+
+    R_Free (sum1[0]);
+    R_Free (sum1 );
+
+    R_Free (sum2[0]);
+    R_Free (sum2 );
+
+    R_Free (e_sx_n );
+
+    R_Free (e_ssxx_n );
+
+
+
+    R_Free (LLval );
+
+    R_Free (LLind );
+
+    R_Free (ig_vec );
+
+
+    R_Free (XX );
+    
+
+    for (i2 = 0; i2 < K; i2++) {
+	LPsia[i2]=La[i2];
+	for (ig=0; ig< La[i2];ig++) {
+	    LPsiind[i2][ig] = Lind[i2][ig];
+	    LPsival[i2][ig] = Lval[i2][ig]/Psi[Lind[i2][ig]];
+	}
+    }
+
+
+
+    for (i2=0;i2<K;i2++)
+    {
+	for (i3=0;i3<K;i3++)
+	{
+	    s = 0.0; 
+	    ig = 0; 
+	    jg = 0;
+	    while ((ig < La[i3]) && (jg < LPsia[i2])) {
+		if (Lind[i3][ig] == LPsiind[i2][jg]) {
+		    s += Lval[i3][ig] * LPsival[i2][jg]; 
+		    ig++;
+		    jg++;
+		} else {
+		    if (Lind[i3][ig] < LPsiind[i2][jg]) {
+			ig++; 
+		    } else {
+			if (Lind[i3][ig] > LPsiind[i2][jg]) {
+			    jg++;
+			}
+		    }
+		}
+	    }
+	    LPsiL[i2][i3] = s;
+	}
+    }
+
+
+    SEXP E_SX_n;
+    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
+    double *E_SX_nP = REAL(E_SX_n);
+
+
+
+    for (j=0;j<nn;j++)
+    {
+
+	for (i1=0;i1<K;i1++)
+	{
+	    for (i2=0;i2<K;i2++)
+	    {
+		
+		if (i1==i2) {
+		    tLPsiL[i1][i1] = LPsiL[i1][i1] + lapla[j][i1];
+		} else {
+		    tLPsiL[i1][i2] = LPsiL[i1][i2];
+		}
+	    }
+	}
+
+
+	for (i1=0;i1<K;i1++) {
+	    for (i2=i1;i2<K;i2++) {
+		for (s=tLPsiL[i1][i2],i3=i1-1;i3>=0;i3--) s -= tLPsiL[i1][i3]*tLPsiL[i2][i3];
+		ichol[i1][i2]=ichol[i2][i1]=0.0;
+		if (i1 == i2) {
+		    tLPsiL[i1][i1]=sqrt(s);
+		} else tLPsiL[i2][i1]=s/tLPsiL[i1][i1];
+	    }
+	}
+
+	for (i1=0;i1<K;i1++) for (i2=0;i2<=i1;i2++){
+		s = (i1==i2 ? 1.0 : 0.0);
+		for (i3=i1-1;i3>=i2;i3--) s -= tLPsiL[i1][i3]*ichol[i2][i3];
+		ichol[i2][i1]= s/tLPsiL[i1][i1];
+	    }
+
+	for (i1=K-1;i1>=0;i1--) 
+	    for (i2=0;i2<=i1;i2++){
+		s = (i1<i2 ? 0.0 : ichol[i2][i1]);
+		for (i3=i1+1;i3<K;i3++) s -= tLPsiL[i3][i1]*ichol[i2][i3];
+		ichol[i1][i2] = ichol[i2][i1] = s/tLPsiL[i1][i1];
+	    }
+
+
+
+	for (i1=0;i1<K;i1++)
+	{
+	    
+	    t=0.0;
+	    for (i3 = 0; i3 < K; i3++)
+	    {
+		s=0.0;
+		ig = 0; 
+		jg = 0;
+		while ((ig < xa[j]) && (jg < LPsia[i3])) {
+		    if (xind[j][ig] == LPsiind[i3][jg]) {
+			s += xval[j][ig] * LPsival[i3][jg]; 
+			ig++;
+			jg++;
+		    } else {
+			if (xind[j][ig] < LPsiind[i3][jg]) {
+			    ig++; 
+			} else {
+			    if (xind[j][ig] > LPsiind[i3][jg]) {
+				jg++;
+			    }
+			}
+		    }
+		}
+		
+		t += s*ichol[i1][i3];
+	    }
+	    if (non_negative>0)
+	    {
+		if (t<0) t=0.0;
+	    }
+	    REAL(E_SX_n)[i1 + K*j] = (double) t;
+	}
+
+
+    }
+
+
+    R_Free (xa );
+    R_Free (xind[0]);
+    R_Free (xind );
+    R_Free (xval[0]);
+    R_Free (xval );
+
+ 
+    R_Free (LPsia );
+    R_Free (LPsiind[0]);
+    R_Free (LPsiind );
+    R_Free (LPsival[0]);
+    R_Free (LPsival );
+
+
+    R_Free (ichol[0]);
+    R_Free (ichol);
+
+    R_Free (tLPsiL[0]);
+    R_Free (tLPsiL );
+
+    R_Free (LPsiL[0]);
+    R_Free (LPsiL);
+ 
+    R_Free (LPsi[0]);
+    R_Free (LPsi );
+
+    if (write_file>0)
+    {
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_L.txt");
+	pFile = fopen (sst,"w");
+	fprintf(pFile,"%d\n",K); 
+	fprintf(pFile,"%d\n",n); 
+
+	for(i = 0; i < K; i ++) {
+
+	    fprintf(pFile,"%d\n",La[i]); 
+	    for(j = 0; j < La[i]; j ++)
+		fprintf(pFile,"%d ",Lind[i][j]);
+	    fprintf(pFile,"\n");
+	    for(j = 0; j < La[i]; j ++)
+		fprintf(pFile,"%.8f ",Lval[i][j]);
+	    fprintf(pFile,"\n");
+	}
+	fclose (pFile);
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_Z_full.txt");
+	pFile = fopen (sst,"w");
+	for(i = 0; i < K; i ++) {
+	    for(j = 0; j < nn; j ++)
+		fprintf(pFile,"%.8f ",E_SX_nP[i+K*j]);
+	    fprintf(pFile,"\n");
+	}
+	fclose (pFile);
+
+	{
+	    int ind[nn];
+	    double val[nn];
+	    sst[0]=0;
+	    strcat(sst,file_name);
+	    strcat(sst,"_res_Z.txt");
+	    pFile = fopen (sst,"w");
+	    fprintf(pFile,"%d\n",K); 
+	    fprintf(pFile,"%d\n",nn);
+	    for(i = 0; i < K; i ++) {
+		ig=0;
+		for(j = 0; j < nn; j ++) {
+		    s= E_SX_nP[i+K*j];
+		    if (fabs(s)>0.00001){
+			ind[ig] = j;
+			val[ig] = s;
+			ig++;
+		    }
+		}
+		fprintf(pFile,"%d\n",ig); 
+		for(j = 0; j < ig; j ++)
+		    fprintf(pFile,"%d ",ind[j]);
+		fprintf(pFile,"\n");
+		for(j = 0; j < ig; j ++)
+		    fprintf(pFile,"%.8f ",val[j]);
+		fprintf(pFile,"\n");
+	    }
+	    fclose (pFile);
+	}
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_Psi.txt");
+	pFile = fopen (sst,"w");
+	for(j = 0; j < nn; j ++)
+	    fprintf(pFile,"%.8f ",Psi[j]);
+	fprintf(pFile,"\n");
+	fclose (pFile);
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_lapla.txt");
+	pFile = fopen (sst,"w");
+	for(i = 0; i < K; i ++) {
+	    for(j = 0; j < nn; j ++)
+		fprintf(pFile,"%.8f ",lapla[j][i]);
+	    fprintf(pFile,"\n");
+	}
+	fclose (pFile);
+
+
+    }
+
+ 
+    SEXP L_n;
+    PROTECT(L_n = allocMatrix(REALSXP, n, K));
+
+    for (i1=0;i1<K;i1++)
+    {
+	for (i2 = 0; i2 < n; i2++)
+	    REAL(L_n)[i2 + n*i1] = 0.0;
+    }
+    for (i2 = 0; i2 < K; i2++) {
+	for (ig=0; ig< La[i2];ig++) {
+	     REAL(L_n)[Lind[i2][ig]+n*i2]= Lval[i2][ig];
+	}
+    }
+
+    R_Free (La );
+    R_Free (Lind[0]);
+    R_Free (Lind );
+    R_Free (Lval[0]);
+    R_Free (Lval );
+
+
+
+
+    SEXP Psi_n;
+    PROTECT(Psi_n = allocVector(REALSXP, n));
+
+
+    for(i = 0; i < n; i++)
+	REAL(Psi_n)[i] = (double) Psi[i];
+
+    R_Free (Psi );
+
+
+
+    SEXP lapla_n;
+    PROTECT(lapla_n = allocMatrix(REALSXP, nn,K));
+
+    for(i = 0; i < nn; i++)
+	for(j = 0; j < K; j++)
+	    REAL(lapla_n)[i + nn*j] = (double) lapla[i][j];
+
+
+
+    R_Free (lapla[0]);
+    R_Free (lapla );
+
+
+    SEXP namesRET;
+    PROTECT(namesRET = allocVector(STRSXP, 4));
+    SET_STRING_ELT(namesRET, 0, mkChar("L"));
+    SET_STRING_ELT(namesRET, 1, mkChar("E_SX_n"));
+    SET_STRING_ELT(namesRET, 2, mkChar("Psi"));
+    SET_STRING_ELT(namesRET, 3, mkChar("lapla"));
+    
+    SEXP RET;
+    PROTECT(RET = allocVector(VECSXP, 4));
+    SET_VECTOR_ELT(RET, 0, L_n);
+    SET_VECTOR_ELT(RET, 1, E_SX_n);
+    SET_VECTOR_ELT(RET, 2, Psi_n);
+    SET_VECTOR_ELT(RET, 3, lapla_n);
+    setAttrib(RET, R_NamesSymbol, namesRET);
+    UNPROTECT(6);
+    return(RET);
+
+}
+
+
+SEXP readSpfabicResult(SEXP file_nameS) {
+
+
+    FILE *pFile;
+
+
+    char sst[200]; 
+
+
+    int  i,j,K,n,nn,ini,i1,i2,ig;
+    
+    double inf;
+
+
+
+    const char *file_name=CHAR(STRING_ELT(file_nameS,0));
+
+
+
+    sst[0]=0;
+    strcat(sst,file_name);
+    strcat(sst,"_res_L.txt");
+    pFile = fopen (sst,"r");
+
+     if (!(pFile>0)) {
+       fclose (pFile);
+       Rprintf("File >%s_res_L.txt< not found! Stop.\n", file_name);
+       return NULL;
+    }
+
+    fscanf(pFile,"%d\n",&K); 
+    if (!(K>0)) {
+       fclose (pFile);
+       Rprintf("Wrong file format  >%s_res_L.txt< (K) (sparse file format required)! Stop.\n", file_name);
+       return NULL;
+    }
+
+
+    fscanf(pFile,"%d\n",&n); 
+     if (!(n>0)) {
+       fclose (pFile);
+       Rprintf("Wrong file format  >%s_res_L.txt< (n) (sparse file format required)! Stop.\n", file_name);
+       return NULL;
+    }
+   
+    int *La = R_Calloc(K, int); 
+    int **Lind = R_Calloc(K, int *);
+    Lind[0] = R_Calloc((long) K*n, int);
+    for(i=0; i < K; i++)
+    {
+	Lind[i] = Lind[0] + i*n;
+    }
+    double **Lval = R_Calloc(K, double *);
+    Lval[0] = R_Calloc((long) K*n, double);
+    for(i=0; i < K; i++)
+    {
+	Lval[i] = Lval[0] + i*n;
+    }
+
+    for(i = 0; i < K; i ++) {
+	
+	fscanf(pFile,"%d\n",&ini);
+	La[i]=ini;
+	for(j = 0; j < La[i]; j ++)
+	  {
+	    fscanf(pFile,"%d ",&ini);
+	    Lind[i][j] = ini;
+	  }
+	fscanf(pFile,"\n");
+	for(j = 0; j < La[i]; j ++)
+	  {
+	    fscanf(pFile,"%lf ",&inf);
+	    Lval[i][j] = inf;
+	  }
+	fscanf(pFile,"\n");
+    }
+    fclose (pFile);
+    
+    SEXP L_n;
+    PROTECT(L_n = allocMatrix(REALSXP, n, K));
+
+    for (i1=0;i1<K;i1++)
+    {
+	for (i2 = 0; i2 < n; i2++)
+	    REAL(L_n)[i2 + n*i1] = 0.0;
+    }
+    for (i2 = 0; i2 < K; i2++) {
+	for (ig=0; ig< La[i2];ig++) {
+	     REAL(L_n)[Lind[i2][ig]+n*i2]= Lval[i2][ig];
+	}
+    }
+
+
+    R_Free (La );
+    R_Free (Lind[0]);
+    R_Free (Lind );
+    R_Free (Lval[0]);
+    R_Free (Lval );
+
+    
+
+    sst[0]=0;
+    strcat(sst,file_name);
+    strcat(sst,"_res_Z.txt");
+    pFile = fopen (sst,"r");
+    fscanf(pFile,"%d\n",&ini); 
+    if (ini!=K) {
+      fclose (pFile);
+      Rprintf("K in >%s_res_Z.txt< is %d whereas K in >%s_res_L.txt< is %d! Stop.\n", file_name,ini,file_name,K);
+      return NULL;
+    }
+    fscanf(pFile,"%d\n",&nn);
+    if (!(nn>0)) {
+      fclose (pFile);
+      Rprintf("Wrong file format  >%s_res_Z.txt< (sparse file format required)! Stop.\n", file_name);
+      return NULL;
+    }
+    fclose (pFile);
+
+
+
+    SEXP E_SX_n;
+    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
+
+
+    sst[0]=0;
+    strcat(sst,file_name);
+    strcat(sst,"_res_Z_full.txt");
+    pFile = fopen (sst,"r");
+    for(i = 0; i < K; i ++) {
+	for(j = 0; j < nn; j ++)
+	{
+	    fscanf(pFile,"%lf ",&inf);
+	    REAL(E_SX_n)[i+K*j] = (double) inf;
+	}
+	fscanf(pFile,"\n");
+    }
+    fclose (pFile);
+    
+
+
+    SEXP Psi_n;
+    PROTECT(Psi_n = allocVector(REALSXP, n));
+
+    sst[0]=0;
+    strcat(sst,file_name);
+    strcat(sst,"_res_Psi.txt");
+    pFile = fopen (sst,"r");
+    for(j = 0; j < nn; j ++)
+    {
+	fscanf(pFile,"%lf ",&inf);
+	REAL(Psi_n)[j] = (double) inf;
+    }
+    fclose (pFile);
+    
+
+    SEXP lapla_n;
+    PROTECT(lapla_n = allocMatrix(REALSXP, nn,K));
+
+    sst[0]=0;
+    strcat(sst,file_name);
+    strcat(sst,"_res_lapla.txt");
+    pFile = fopen (sst,"r");
+    for(i = 0; i < K; i ++) {
+	for(j = 0; j < nn; j ++)
+	{
+	    fscanf(pFile,"%lf ",&inf);
+	    REAL(lapla_n)[i*nn + j] = (double) inf;
+	}
+	fscanf(pFile,"\n");
+    }
+    fclose (pFile);
+    
+
+
+
+
+
+    SEXP namesRET;
+    PROTECT(namesRET = allocVector(STRSXP, 4));
+    SET_STRING_ELT(namesRET, 0, mkChar("L"));
+    SET_STRING_ELT(namesRET, 1, mkChar("E_SX_n"));
+    SET_STRING_ELT(namesRET, 2, mkChar("Psi"));
+    SET_STRING_ELT(namesRET, 3, mkChar("lapla"));
+    
+    SEXP RET;
+    PROTECT(RET = allocVector(VECSXP, 4));
+    SET_VECTOR_ELT(RET, 0, L_n);
+    SET_VECTOR_ELT(RET, 1, E_SX_n);
+    SET_VECTOR_ELT(RET, 2, Psi_n);
+    SET_VECTOR_ELT(RET, 3, lapla_n);
+    setAttrib(RET, R_NamesSymbol, namesRET);
+    UNPROTECT(6);
+    return(RET);
+
+}
+
+
+
+ R_CallMethodDef callMethods[]  = {
+       {"fabic", (DL_FUNC) &fabic, 14},
+       {"fabics", (DL_FUNC) &fabics, 11},
+       {"spfabic", (DL_FUNC) &spfabic, 18},
+       {"readSpfabicResult", (DL_FUNC) &readSpfabicResult, 1},
+       {NULL, NULL, 0}
+     };
+
+
+
+ void  R_init_myLib(DllInfo *info)
+     {
+	 R_registerRoutines(info, NULL, callMethods, NULL, NULL);
+     }
+
+
+int main() {
+
+  return(1);
+}
+
+

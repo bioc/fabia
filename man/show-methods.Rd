@@ -72,7 +72,7 @@ dat <- makeFabiaDataBlocks(n = 100,l= 50,p = 3,f1 = 5,f2 = 5,
 X <- dat[[1]]
 
 
-resEx <- fabia(X,3,0.1,100)
+resEx <- fabia(X,3,0.01,100)
 
 show(resEx)
 
