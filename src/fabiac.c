@@ -2377,6 +2377,199 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 }
 
 
+
+SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS) {
+
+
+    FILE *pFile;
+
+
+    char sst[200]; 
+
+
+    int hpp,ig,samp;
+
+    int  i,j,i1,i2,n,nn;
+    
+    double fs;
+
+
+
+
+
+    const char *file_name=CHAR(STRING_ELT(file_nameS,0));
+
+  
+    int *xa;
+    int **xind;
+    double **xval;
+
+    int nsamp = length(samplesS);
+
+    int *samples =  INTEGER(samplesS);
+    if (samples[0]>0) {
+      samp = 0;
+      
+    } else {
+      samp=-1;
+    }
+
+    sst[0]=0;
+    strcat(sst,file_name);
+    strcat(sst,".txt");
+
+    pFile = fopen (sst,"r");
+
+    if (!(pFile>0)) {
+	Rprintf("File >%s< not found! Stop.\n", file_name);
+	return NULL;
+    }
+
+    fscanf(pFile,"%d\n",&nn);  
+
+    if (!(nn>0)) {
+      fclose (pFile);
+      Rprintf("Wrong file format (sparse file format required)! Stop.\n");
+      return NULL;
+    }
+
+    fscanf(pFile,"%d\n",&n);  
+
+    if (!(n>0)) {
+      fclose (pFile);
+      Rprintf("Wrong file format (sparse file format required)! Stop.\n");
+      return NULL;
+    }
+
+    if (samp<0) {
+
+      xa = (int *) R_Calloc(nn, int); 
+      xind = (int **) R_Calloc(nn, int *);
+      xind[0] = R_Calloc((long) nn*n, int);
+      for(i=0; i < nn ; i++)
+	{
+	  xind[i] =  xind[0] + i*n;
+	}
+      xval = (double **) R_Calloc(nn, double *);
+      xval[0] = R_Calloc((long) nn*n, double);
+      for(i=0; i < nn; i++)
+	{
+	  xval[i] = xval[0] + i*n;
+	}
+
+    
+      for(i = 0; i < nn; i ++)
+	{
+	  fscanf(pFile,"%d\n",&ig); 
+	  xa[i]=ig;
+	  for(j = 0; j <  ig; j ++) {
+	    fscanf(pFile,"%d",&hpp);
+	    xind[i][j]=hpp;
+	  }
+	  fscanf(pFile,"\n");
+	  for(j = 0; j < ig; j ++) {
+	    fscanf(pFile,"%lf",&fs);
+	    xval[i][j] = fs;
+	  }
+	  fscanf(pFile,"\n");
+	}
+
+    } else {
+      xa = (int *) R_Calloc(nsamp, int); 
+      xind = (int **) R_Calloc(nsamp, int *);
+      xind[0] = R_Calloc((long) nsamp*n, int);
+      for(i=0; i < nsamp ; i++)
+	{
+	  xind[i] =  xind[0] + i*n;
+	}
+      xval = (double **) R_Calloc(nsamp, double *);
+      xval[0] = R_Calloc((long) nsamp*n, double);
+      for(i=0; i < nsamp; i++)
+	{
+	  xval[i] = xval[0] + i*n;
+	}
+
+      for(i = 0; i < nn; i ++)
+	{
+	  if ((samples[samp]-1)>i)
+	    {
+	      fscanf(pFile,"%d\n",&ig);
+	      for(j = 0; j <  ig; j ++) {
+		fscanf(pFile,"%d",&hpp);
+	      }
+	      fscanf(pFile,"\n");
+	      for(j = 0; j < ig; j ++) {
+		fscanf(pFile,"%lf",&fs);
+	      }
+	      fscanf(pFile,"\n");
+	      
+	    } else {
+	    fscanf(pFile,"%d\n",&ig); 
+	    xa[samp]=ig;
+	    for(j = 0; j <  ig; j ++) {
+	      fscanf(pFile,"%d",&hpp);
+	      xind[samp][j]=hpp;
+	    }
+	    fscanf(pFile,"\n");
+	    for(j = 0; j < ig; j ++) {
+	      fscanf(pFile,"%lf",&fs);
+	      xval[samp][j] = fs;
+	    }
+	    fscanf(pFile,"\n");
+	    samp++;
+	    if (samp == nsamp) break;
+	  }
+
+	}
+      if (samp!=nsamp)
+	{
+	  Rprintf("Only %d of %d samples found! Some sample numbers are too large. Continue.\n", samp,nsamp);
+	}
+      nn=samp;
+      Rprintf("Using %d samples!\n",samp);
+    }
+    fclose (pFile);
+
+
+
+ 
+ 
+    SEXP X_n;
+    PROTECT(X_n = allocMatrix(REALSXP, n, nn));
+
+    for (i1=0;i1<nn;i1++)
+    {
+	for (i2 = 0; i2 < n; i2++)
+	    REAL(X_n)[i2 + n*i1] = 0.0;
+    }
+    for (i2 = 0; i2 < nn; i2++) {
+	for (ig=0; ig< xa[i2];ig++) {
+	     REAL(X_n)[xind[i2][ig]+n*i2]= xval[i2][ig];
+	}
+    }
+
+    R_Free (xa );
+    R_Free (xind[0]);
+    R_Free (xind );
+    R_Free (xval[0]);
+    R_Free (xval );
+
+
+
+    SEXP namesRET;
+    PROTECT(namesRET = allocVector(STRSXP, 1));
+    SET_STRING_ELT(namesRET, 0, mkChar("X"));
+    
+    SEXP RET;
+    PROTECT(RET = allocVector(VECSXP, 1));
+    SET_VECTOR_ELT(RET, 0, X_n);
+    setAttrib(RET, R_NamesSymbol, namesRET);
+    UNPROTECT(3);
+    return(RET);
+
+}
+
+
 SEXP readSpfabicResult(SEXP file_nameS) {
 
 
@@ -2580,6 +2773,7 @@ SEXP readSpfabicResult(SEXP file_nameS) {
        {"fabic", (DL_FUNC) &fabic, 14},
        {"fabics", (DL_FUNC) &fabics, 11},
        {"spfabic", (DL_FUNC) &spfabic, 18},
+       {"readSamplesSpfabic", (DL_FUNC) &readSamplesSpfabic, 2},
        {"readSpfabicResult", (DL_FUNC) &readSpfabicResult, 1},
        {NULL, NULL, 0}
      };

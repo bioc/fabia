@@ -3466,6 +3466,28 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 }
 
+readSamplesSpfabia <- function(X,samples=0){
+
+        if (missing(X)) {
+            stop("Data file name missing. Stopped.")
+        }
+
+
+	samples <- as.integer(sort.int(as.integer(unique(samples))))
+
+	res <- .Call("readSamplesSpfabic",X,samples,PACKAGE="fabia")
+
+        if (is.null(res))
+        {
+            return(X=as.matrix(1))
+
+        }
+
+        return(res$X)
+
+
+}
+
 
 readSpfabiaResult <- function(X){
 	## X - name of the data files

@@ -105,6 +105,7 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
 \code{\link{fabias}},
 \code{\link{fabiap}},
 \code{\link{spfabia}},
+\code{\link{readSamplesSpfabia}},
 \code{\link{readSpfabiaResult}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},

@@ -1,38 +1,43 @@
-\name{readSpfabiaResult}
-\alias{readSpfabiaResult}
-\title{Factor Analysis for Bicluster Acquisition: Read Results of SpFabia}
+\name{readSamplesSpfabia}
+\alias{readSamplesSpfabia}
+\title{Factor Analysis for Bicluster Acquisition: Read Sparse Matrix Samples}
 \description{
 
-  \code{readSpfabiaResult}: C implementation of  \code{readSpfabiaResult}.
+  \code{readSamplesSpfabia}: C implementation of  \code{readSamplesSpfabia}.
 }
 \usage{
 
-readSpfabiaResult(X)
+readSamplesSpfabia(X,samples=0)
 
 }
 \arguments{
-  \item{X}{the file prefix name of the result files of spfabia.}
+  \item{X}{the file name of the sparse matrix in sparse format.}
+  \item{samples}{vector of samples which should be read; default
+    = 0 (all samples)} 
 }
 \details{
 
-  Read the results of spfabia.
+
+  The data matrix is
+  directly scanned by the C-code and must be in sparse matrix format.
+
+  Sparse matrix format:
+  *first line: numer of columns (the samples).
+  *second line: number of rows (the features).
+  *following lines: for each sample (column) three lines with
+
+  I) number of nonzero row elements
+
+  II) indices of the nonzero row elements
+
+  III) values of the nonzero row elements
+
 
   The code is implemented in C.
 
 }
 \value{
-  \item{}{object of the class \code{Factorization}. Containing
-  \code{L} (loadings  \eqn{L}),
-  \code{Z} (factors  \eqn{Z}),
-  \code{Psi} (noise variance \eqn{\sigma}),
-  \code{lapla} (variational parameter),
-  \code{avini} (the information which the factor
-    \eqn{z_{ij}} contains about \eqn{x_j} averaged over \eqn{j})
-  \code{xavini} (the information which the factor
-    \eqn{z_{j}} contains about \eqn{x_j})
-  \code{ini} (for each \eqn{j} the information which the factor
-    \eqn{z_{ij}} contains about \eqn{x_j}).
-  }
+  \code{X} (data of the given samples),
   }
 \seealso{
 \code{\link{fabia}},
@@ -67,6 +72,16 @@ readSpfabiaResult(X)
 \code{\link{fabiaVersion}}
 }
 \author{Sepp Hochreiter}
+\examples{
+
+#---------------
+# TEST
+#---------------
+
+
+
+}
+
 
 \references{
   S. Hochreiter et al.,
