@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)
+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0)
 
 }
 \arguments{
@@ -29,8 +29,10 @@ fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random
   \item{scale}{loading vectors are scaled in each iteration to the given
     variance. 0.0 indicates non scaling; default = 0.0.}
   \item{lap}{minimal value of the variational parameter; default = 1.0.} 
-  \item{nL}{number of biclusters a row element can participate; default
-    = 0 (no limit).} 
+  \item{nL}{maximal number of biclusters at which a row element can participate; default
+    = 0 (no limit)} 
+  \item{lL}{maximal number of row elements per bicluster; default
+    = 0 (no limit)} 
  }
 \details{
 

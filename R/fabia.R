@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
+fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -79,10 +79,16 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
        message("   Constraint variational parameter -- lap: ", lap)
        if ((nL>0)&&(nL<p)) {
-           message("   Number of biclusters per row ------- nL: ", nL)
+           message("   Max. number of biclusters per row -- nL: ", nL)
        } else {
-           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+           message("   Max. number of biclusters per row -- nL: ", nL, " = no limit")
        }
+       if ((lL>0)&&(lL<n)) {
+           message("   Max. number of row elements / biclu. lL: ", lL)
+       } else {
+           message("   Max. number of row elements / biclu. lL: ", lL, " = no limit")
+       }
+
 
 
 
@@ -153,6 +159,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
+	lL <- as.integer(lL)
 	alpha <- as.double(alpha)
 	non_negative <- as.integer(non_negative)
 	p <- as.integer(p)
@@ -162,7 +169,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
 
 
-	res <- .Call("fabic", X,Psi,L,lapla,cyc ,alpha,eps,eps1,spl,spz,scale,lap,nL,non_negative,PACKAGE="fabia")
+	res <- .Call("fabic", X,Psi,L,lapla,cyc ,alpha,eps,eps1,spl,spz,scale,lap,nL,lL,non_negative,PACKAGE="fabia")
 
 
         if (is.null(res))
@@ -258,7 +265,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
 }
 
-fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0){
+fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -339,10 +346,17 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 
        message("   Constraint variational parameter -- lap: ", lap)
        if ((nL>0)&&(nL<p)) {
-           message("   Number of biclusters per row ------- nL: ", nL)
+           message("   Max. number of biclusters per row -- nL: ", nL)
        } else {
-           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+           message("   Max. number of biclusters per row -- nL: ", nL, " = no limit")
        }
+       if ((lL>0)&&(lL<n)) {
+           message("   Max. number of row elements / biclu. lL: ", lL)
+       } else {
+           message("   Max. number of row elements / biclu. lL: ", lL, " = no limit")
+       }
+
+
 
 
 
@@ -418,6 +432,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
+	lL <- as.integer(lL)
 	alpha <- as.double(alpha)
 	non_negative <- as.integer(non_negative)
 	p <- as.integer(p)
@@ -426,7 +441,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 	lap <- as.double(lap)
 
 
-	res <- .Call("fabic", X,Psi,L,lapla,cyc,alpha,eps,eps1,spl,spz,scale,lap,nL,non_negative,PACKAGE="fabia")
+	res <- .Call("fabic", X,Psi,L,lapla,cyc,alpha,eps,eps1,spl,spz,scale,lap,nL,lL,non_negative,PACKAGE="fabia")
 
         if (is.null(res))
         {
@@ -541,7 +556,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 
 }
 
-fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0){
+fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0,lL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness low value because enforced by projFunc
@@ -612,10 +627,16 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,cen
        }
 
        message("   Constraint variational parameter -- lap: ", lap)
+
        if ((nL>0)&&(nL<p)) {
-           message("   Number of biclusters per row ------- nL: ", nL)
+           message("   Max. number of biclusters per row -- nL: ", nL)
        } else {
-           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+           message("   Max. number of biclusters per row -- nL: ", nL, " = no limit")
+       }
+       if ((lL>0)&&(lL<n)) {
+           message("   Max. number of row elements / biclu. lL: ", lL)
+       } else {
+           message("   Max. number of row elements / biclu. lL: ", lL, " = no limit")
        }
 
 
@@ -686,6 +707,7 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,cen
 
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
+	lL <- as.integer(lL)
 	alpha <- as.double(alpha)
 	non_negative <- as.integer(non_negative)
 	p <- as.integer(p)
@@ -693,7 +715,7 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,cen
 	lap <- as.double(lap)
 
 
-	res <- .Call("fabics", X,Psi,L,lapla,cyc ,alpha,eps,spz,lap,nL,non_negative,PACKAGE="fabia")
+	res <- .Call("fabics", X,Psi,L,lapla,cyc ,alpha,eps,spz,lap,nL,lL,non_negative,PACKAGE="fabia")
 
         if (is.null(res))
         {
@@ -3308,7 +3330,7 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
-spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,samples=0){
+spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,samples=0){
 	## X - name of the data file
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -3353,15 +3375,21 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
        message("   Constraint variational parameter -- lap: ", lap)
        if ((nL>0)&&(nL<p)) {
-           message("   Number of biclusters per row ------- nL: ", nL)
+           message("   Max. number of biclusters per row -- nL: ", nL)
        } else {
-           message("   Number of biclusters per row ------- nL: ", nL, " = no limit")
+           message("   Max. number of biclusters per row -- nL: ", nL, " = no limit")
        }
        if (samples[1]==0) {
            message("   Number of Samples ------------- samples: ", samples, " = all samples")
        } else {
            message("   Number of Samples  ------------ samples: ", length(samples))
        }
+       if (lL>0) {
+           message("   Max. number of row elements / biclu. lL: ", lL)
+       } else {
+           message("   Max. number of row elements / biclu. lL: ", lL, " = no limit")
+       }
+
 
 
 
@@ -3376,6 +3404,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 	norm <- as.integer(norm)
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
+	lL <- as.integer(lL)
 	alpha <- as.double(alpha)
 	non_negative <- as.integer(non_negative)
         write_file<- as.integer(write_file)
@@ -3386,7 +3415,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,eps,eps1,samples,PACKAGE="fabia")
+	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,lL,eps,eps1,samples,PACKAGE="fabia")
 
         if (is.null(res))
         {

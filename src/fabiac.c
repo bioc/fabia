@@ -9,7 +9,7 @@
 #include <R_ext/Rdynload.h>
 
 
-SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP eps1S,SEXP splS,SEXP spzS,SEXP scaleS,SEXP lapS,SEXP nLS,SEXP non_negativeS) {
+SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP eps1S,SEXP splS,SEXP spzS,SEXP scaleS,SEXP lapS,SEXP nLS,SEXP lLS,SEXP non_negativeS) {
 
     int i,j,i1,i2,i3;
 
@@ -122,6 +122,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
     int non_negative = (int)(INTEGER(non_negativeS)[0]);
     int cyc = (int)(INTEGER(cycS)[0]);
     int nL = (int)(INTEGER(nLS)[0]);
+    int lL = (int)(INTEGER(lLS)[0]);
 
 
     double *XX = R_Calloc(n, double); 
@@ -401,6 +402,41 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 	    }
 	}
 
+	if ((lL>0)&&(lL<n))
+	{
+
+	  for (i2 = 0; i2 < K; i2++)
+	    {
+		for (i1=0;i1<lL;i1++)
+		{
+		    Psi[i1] = -1.0;
+		}
+		for (i1=0;i1<n;i1++)
+		{
+		    s=fabs(L[i1][i2]);
+		    if (s>Psi[lL-1])
+		    {
+			i3=lL-1;
+			while ((i3>0)&&(s>Psi[i3-1])) {
+			    Psi[i3]=Psi[i3-1];
+			    i3--;
+			}
+			Psi[i3]=s;
+		    }
+		}
+		s=Psi[lL-1];
+		for (i1=0;i1<n;i1++)
+		{
+		    if(s>fabs(L[i1][i2]))
+		    {
+			L[i1][i2]=0.0;
+		    }
+		}
+	
+
+	    }
+	}
+
 
 	for (i1=0;i1<n;i1++)
 	{
@@ -619,7 +655,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
 
 
-SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP spzS,SEXP lapS,SEXP nLS,SEXP non_negativeS) {
+SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP spzS,SEXP lapS,SEXP nLS,SEXP lLS,SEXP non_negativeS) {
 
     int i,j,i1,i2,i3,zz,ende,h1;
 
@@ -730,6 +766,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
     int non_negative = (int)(INTEGER(non_negativeS)[0]);
     int cyc = (int)(INTEGER(cycS)[0]);
     int nL = (int)(INTEGER(nLS)[0]);
+    int lL = (int)(INTEGER(lLS)[0]);
 
     double *XX = R_Calloc(n, double); 
     double *e_sx_n = R_Calloc(K, double); 
@@ -960,25 +997,6 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 	
 	
 
-
-
-
-
-	for (i1=0;i1<n;i1++)
-	{
-	    s = 0.0;
-	    for (i2 = 0; i2 < K; i2++) {
-		s += L[i1][i2]*sum1[i1][i2];
-	    }
-	    Psi[i1] = XX[i1] - in*s;
-	    if (Psi[i1]<eps)
-	    {
-		Psi[i1] = eps;
-	    }
-	}
-
-
-
 //----------
 
         for (i3 = 0; i3 < K; i3++) {
@@ -1127,6 +1145,60 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 		}
 	
 
+	    }
+	}
+
+
+
+
+	if ((lL>0)&&(lL<n))
+	{
+
+	  for (i2 = 0; i2 < K; i2++)
+	    {
+		for (i1=0;i1<lL;i1++)
+		{
+		    Psi[i1] = -1.0;
+		}
+		for (i1=0;i1<n;i1++)
+		{
+		    s=fabs(L[i1][i2]);
+		    if (s>Psi[lL-1])
+		    {
+			i3=lL-1;
+			while ((i3>0)&&(s>Psi[i3-1])) {
+			    Psi[i3]=Psi[i3-1];
+			    i3--;
+			}
+			Psi[i3]=s;
+		    }
+		}
+		s=Psi[lL-1];
+		for (i1=0;i1<n;i1++)
+		{
+		    if(s>fabs(L[i1][i2]))
+		    {
+			L[i1][i2]=0.0;
+		    }
+		}
+	
+
+	    }
+	}
+
+
+
+
+	for (i1=0;i1<n;i1++)
+	{
+	    s = 0.0;
+	    for (i2 = 0; i2 < K; i2++) {
+		s += L[i1][i2]*sum1[i1][i2];
+	    }
+	    Psi[i1] = XX[i1] - in*s;
+	    if (Psi[i1]<eps)
+	    {
+		Psi[i1] = eps;
 	    }
 	}
 
@@ -1312,7 +1384,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
-SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP epsS,SEXP eps1S,SEXP samplesS) {
+SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP lLS,SEXP epsS,SEXP eps1S,SEXP samplesS) {
 
 
     FILE *pFile;
@@ -1353,6 +1425,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     int cyc =  (int)(INTEGER(cycS)[0]);
     int K =  (int)(INTEGER(KS)[0]);
     int nL =  (int)(INTEGER(nLS)[0]);
+    int lL = (int)(INTEGER(lLS)[0]);
 
     int *xa;
     int **xind;
@@ -1985,6 +2058,45 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    }
 
 
+	}
+
+
+
+	if ((lL>0)&&(lL<n))
+	{
+
+	  for (i2 = 0; i2 < K; i2++)
+	    {
+	      if (La[i2]>lL) {
+		for (i1=0;i1<lL;i1++)
+		  {
+		    Psi[i1] = -1.0;
+		  }
+		for (ig=0; ig< La[i2];ig++) {
+		  s=fabs(Lval[i2][ig]);
+		  if (s>Psi[lL-1])
+		    {
+		      i3=lL-1;
+		      while ((i3>0)&&(s>Psi[i3-1])) {
+			Psi[i3]=Psi[i3-1];
+			i3--;
+		      }
+		      Psi[i3]=s;
+		    }
+		}
+		s=Psi[lL-1];
+		i3=0;
+		for (ig=0; ig< La[i2];ig++) {
+		  if(s<fabs(Lval[i2][ig]))
+		    {
+		      Lval[i2][i3]= Lval[i2][ig];
+		      Lind[i2][i3] = Lind[i2][ig];
+		      i3++;
+		    }
+		}
+		La[i2]=i3;
+	      }
+	    }
 	}
 
 
@@ -2770,9 +2882,9 @@ SEXP readSpfabicResult(SEXP file_nameS) {
 
 
  R_CallMethodDef callMethods[]  = {
-       {"fabic", (DL_FUNC) &fabic, 14},
-       {"fabics", (DL_FUNC) &fabics, 11},
-       {"spfabic", (DL_FUNC) &spfabic, 18},
+       {"fabic", (DL_FUNC) &fabic, 15},
+       {"fabics", (DL_FUNC) &fabics, 12},
+       {"spfabic", (DL_FUNC) &spfabic, 19},
        {"readSamplesSpfabic", (DL_FUNC) &readSamplesSpfabic, 2},
        {"readSpfabicResult", (DL_FUNC) &readSpfabicResult, 1},
        {NULL, NULL, 0}

@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0)
+fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0,lL=0)
 
 }
 \arguments{
@@ -24,8 +24,10 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1
     (median), > 2 (mode), 0 (no); default = 2.}
   \item{norm}{data normalization:  1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.}
   \item{lap}{minimal value of the variational parameter; default = 1.0.} 
-  \item{nL}{number of biclusters a row element can participate; default
-    = 0 (no limit).} 
+  \item{nL}{maximal number of biclusters at which a row element can participate; default
+    = 0 (no limit)} 
+  \item{lL}{maximal number of row elements per bicluster; default
+    = 0 (no limit)} 
 }
 \details{
 

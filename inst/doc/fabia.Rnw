@@ -1293,7 +1293,7 @@ C implementation of  \texttt{fabia}.
 
 \begin{enumerate}
 \item Usage: \verb+fabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,random=1.0,+\\
-\hspace*{6em}\verb+   center=2,norm=1,scale=0.0,lap=1.0,nL=0)+
+\hspace*{6em}\verb+   center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0)+
 
 \item Arguments:
  \begin{itemize}
@@ -1311,8 +1311,10 @@ C implementation of  \texttt{fabia}.
   \item{scale:} loading vectors are scaled in each iteration to the given
     variance. 0.0 indicates non scaling; default = 0.0.
   \item{lap:} minimal value of the variational parameter, default = 1.
-  \item{nL:} number of biclusters a row element can participate; default
-    = 0 (no limit)
+  \item{nL:} maximal number of biclusters at which a row element can participate; default
+    = 0 (no limit).
+  \item{lL:} maximal number of row elements per bicluster; default
+    = 0 (no limit).
  \end{itemize}
 
 \item Return values:
@@ -1702,7 +1704,7 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
 \begin{enumerate}
 
 \item Usage: \verb+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,+\\
-\hspace*{6em}\verb+   random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0)+
+\hspace*{6em}\verb+   random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0)+
 
 \item Arguments:
  \begin{itemize}
@@ -1722,8 +1724,10 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
   \item{scale:} loading vectors are scaled in each iteration to the given
     variance. 0.0 indicates non scaling; default = 0.0.
   \item{lap:} minimal value of the variational parameter, default = 1.
-  \item{nL:} number of biclusters a row element can participate; default
-    = 0 (no limit)
+  \item{nL:} maximal number of biclusters at which a row element can participate; default
+    = 0 (no limit).
+  \item{lL:} maximal number of row elements per bicluster; default
+    = 0 (no limit).
 \end{itemize}
 
 \item  Return Values:
@@ -2127,7 +2131,7 @@ C implementation of  \texttt{fabias}.
 \begin{enumerate}
 
 \item Usage: \verb+fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,+\\
-\hspace*{6em}\verb+   center=2,norm=1,lap=1.0,nL=0)+
+\hspace*{6em}\verb+   center=2,norm=1,lap=1.0,nL=0,lL=0)+
 
 
 \item Arguments:
@@ -2143,8 +2147,10 @@ C implementation of  \texttt{fabias}.
     (median), > 2 (mode), 0 (no); default = 2.
   \item{norm:} data normalization: 1 (0.75-0.25 quantile), >1 (var=1), 0 (no); default = 1.
   \item{lap:} minimal value of the variational parameter, default = 1.
-  \item{nL:} number of biclusters a row element can participate; default
-    = 0 (no limit)
+  \item{nL:} maximal number of biclusters at which a row element can participate; default
+    = 0 (no limit).
+  \item{lL:} maximal number of row elements per bicluster; default
+    = 0 (no limit).
  \end{itemize}
 
 \item Return Values:
@@ -2844,8 +2850,8 @@ Factor Analysis for Bicluster Acquisition: SPARSE FABIA \citep{Hochreiter:10}.
 C implementation of \texttt{spfabia}.
 
 \begin{enumerate}
-\item Usage: \verb+ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,+\\
-\hspace*{6em}\verb+ random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0)+
+\item Usage: \verb+ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,+\\
+\hspace*{6em}\verb+ write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,samples=0)+
 
 \item Arguments:
  \begin{itemize}
@@ -2866,8 +2872,12 @@ C implementation of \texttt{spfabia}.
   \item{scale:} loading vectors are scaled in each iteration to the given
     variance. 0.0 indicates non scaling; default = 0.0.
   \item{lap:} minimal value of the variational parameter, default = 1.
-  \item{nL:} number of biclusters a row element can participate; default
+  \item{nL:} maximal number of biclusters at which a row element can participate; default
     = 0 (no limit).
+  \item{lL:} maximal number of row elements per bicluster; default
+    = 0 (no limit).
+  \item{samples:} vector of samples which should be included into the analysis; default
+    = 0 (all samples).
  \end{itemize}
 
 \item Return values:

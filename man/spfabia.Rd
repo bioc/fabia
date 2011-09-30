@@ -7,7 +7,7 @@
 }
 \usage{
 
-spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,samples=0)
+spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,samples=0)
 
 }
 \arguments{
@@ -29,7 +29,9 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
   \item{scale}{loading vectors are scaled in each iteration to the given
     variance. 0.0 indicates non scaling; default = 0.0.}
   \item{lap}{minimal value of the variational parameter; default = 1.0} 
-  \item{nL}{number of biclusters a row element can participate; default
+  \item{nL}{maximal number of biclusters at which a row element can participate; default
+    = 0 (no limit)} 
+  \item{lL}{maximal number of row elements per bicluster; default
     = 0 (no limit)} 
   \item{samples}{vector of samples which should be included into the analysis; default
     = 0 (all samples)} 
