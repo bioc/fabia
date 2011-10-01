@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0)
+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0)
 
 }
 \arguments{
@@ -33,6 +33,8 @@ fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random
     = 0 (no limit)} 
   \item{lL}{maximal number of row elements per bicluster; default
     = 0 (no limit)} 
+  \item{bL}{cycle at which the nL or lL maximum starts; default
+    = 0 (start at the beginning)} 
  }
 \details{
 

@@ -7,7 +7,7 @@
 }
 \usage{
 
-fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0,lL=0)
+fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0,lL=0,bL=0)
 
 }
 \arguments{
@@ -28,6 +28,8 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1
     = 0 (no limit)} 
   \item{lL}{maximal number of row elements per bicluster; default
     = 0 (no limit)} 
+  \item{bL}{cycle at which the nL or lL maximum starts; default
+    = 0 (start at the beginning)} 
 }
 \details{
 

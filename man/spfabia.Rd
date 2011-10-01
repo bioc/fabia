@@ -7,7 +7,7 @@
 }
 \usage{
 
-spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,samples=0)
+spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0)
 
 }
 \arguments{
@@ -35,6 +35,8 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
     = 0 (no limit)} 
   \item{samples}{vector of samples which should be included into the analysis; default
     = 0 (all samples)} 
+  \item{bL}{cycle at which the nL or lL maximum starts; default
+    = 0 (start at the beginning)} 
 }
 \details{
 

@@ -1293,7 +1293,7 @@ C implementation of  \texttt{fabia}.
 
 \begin{enumerate}
 \item Usage: \verb+fabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,random=1.0,+\\
-\hspace*{6em}\verb+   center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0)+
+\hspace*{6em}\verb+   center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0)+
 
 \item Arguments:
  \begin{itemize}
@@ -1315,6 +1315,8 @@ C implementation of  \texttt{fabia}.
     = 0 (no limit).
   \item{lL:} maximal number of row elements per bicluster; default
     = 0 (no limit).
+  \item{bL:} cycle at which the nL or lL maximum starts; default
+    = 0 (start at the beginning).
  \end{itemize}
 
 \item Return values:
@@ -1704,7 +1706,7 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
 \begin{enumerate}
 
 \item Usage: \verb+fabiap(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,+\\
-\hspace*{6em}\verb+   random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0)+
+\hspace*{6em}\verb+ random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0)+
 
 \item Arguments:
  \begin{itemize}
@@ -1728,6 +1730,8 @@ Factor Analysis for Bicluster Acquisition: Post-Projection (FABIAP) \citep{Hochr
     = 0 (no limit).
   \item{lL:} maximal number of row elements per bicluster; default
     = 0 (no limit).
+  \item{bL:} cycle at which the nL or lL maximum starts; default
+    = 0 (start at the beginning).
 \end{itemize}
 
 \item  Return Values:
@@ -2131,7 +2135,7 @@ C implementation of  \texttt{fabias}.
 \begin{enumerate}
 
 \item Usage: \verb+fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,random=1.0,+\\
-\hspace*{6em}\verb+   center=2,norm=1,lap=1.0,nL=0,lL=0)+
+\hspace*{6em}\verb+   center=2,norm=1,lap=1.0,nL=0,lL=0,bL=0)+
 
 
 \item Arguments:
@@ -2151,6 +2155,8 @@ C implementation of  \texttt{fabias}.
     = 0 (no limit).
   \item{lL:} maximal number of row elements per bicluster; default
     = 0 (no limit).
+  \item{bL:} cycle at which the nL or lL maximum starts; default
+    = 0 (start at the beginning).
  \end{itemize}
 
 \item Return Values:
@@ -2851,7 +2857,7 @@ C implementation of \texttt{spfabia}.
 
 \begin{enumerate}
 \item Usage: \verb+ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,+\\
-\hspace*{6em}\verb+ write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,samples=0)+
+\hspace*{6em}\verb+ write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0)+
 
 \item Arguments:
  \begin{itemize}
@@ -2876,6 +2882,8 @@ C implementation of \texttt{spfabia}.
     = 0 (no limit).
   \item{lL:} maximal number of row elements per bicluster; default
     = 0 (no limit).
+  \item{bL:} cycle at which the nL or lL maximum starts; default
+    = 0 (start at the beginning).
   \item{samples:} vector of samples which should be included into the analysis; default
     = 0 (all samples).
  \end{itemize}
