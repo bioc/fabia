@@ -1386,7 +1386,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
-SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP lLS,SEXP bLS,SEXP epsS,SEXP eps1S,SEXP samplesS) {
+SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP lLS,SEXP bLS,SEXP epsS,SEXP eps1S,SEXP samplesS,SEXP initLS) {
 
 
     FILE *pFile;
@@ -1395,7 +1395,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     char sst[200]; 
 
 
-    int hpp,ig,jg,samp;
+    int hpp,ig,jg,samp,inLL;
 
     int  i,j,i1,i2,i3,i4,n,nn;
     
@@ -1442,6 +1442,16 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
       
     } else {
       samp=-1;
+    }
+
+    int ninitL = length(initLS);
+    if (ninitL > K) ninitL = K;
+    int *initL =  INTEGER(initLS);
+    if (initL[0]>0) {
+      inLL = 0;
+      
+    } else {
+      inLL=-1;
     }
 
     n=0;
@@ -1579,37 +1589,97 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
 
-
-    if (non_negative>0) {
-
+    if (inLL < 0) {
+      if (non_negative>0) {
+	
 	for(i = 0; i < K; i ++)
-	{
+	  {
 	    La[i]=n;
 	    for(j = 0; j < n; j ++) {
-		Lind[i][j]= j;
-//		Lval[i][j] = random*(rand()%100001)/100000.0;
-		Lval[i][j] = random*fabs(norm_rand());
+	      Lind[i][j]= j;
+	      // Lval[i][j] = random*(rand()%100001)/100000.0;
+	      Lval[i][j] = random*fabs(norm_rand());
 	    }
-	}
-
-    } else {
+	  }
+	
+      } else {
 	for(i = 0; i < K; i ++)
-	{
+	  {
 	    La[i]=n;
 	    for(j = 0; j < n; j ++) {
-		Lind[i][j]= j;
+	      Lind[i][j]= j;
 //		if (rand()%2>0) {
 //		    s = 1.0;
 //		}  else {
 //		    s= -1.0;
 //		}
 //		Lval[i][j] = random*s*(rand()%100001)/100000.0;
-		Lval[i][j] = random*norm_rand();
+	      Lval[i][j] = random*norm_rand();
 	    }
-	}
+	  }
+
+      }
+      
+    } else {
+
+      if (non_negative>0) {
+	
+	for(i = 0; i < ninitL; i ++)
+	  {
+	    i2= initL[i]-1;
+	    if ((i2>nn)||(i2<0))
+	      {
+		i2=i;
+	      }
+	    La[i]=xa[i2];
+	    for (ig=0; ig< xa[i2];ig++) {
+	      Lval[i][ig]=xval[i2][ig];
+	      Lind[i][ig]=xind[i2][ig];
+	    }
+	  }
+	for(i = ninitL; i < K; i ++)
+	  {
+	    La[i]=n;
+	    for(j = 0; j < n; j ++) {
+	      Lind[i][j]= j;
+	      // Lval[i][j] = random*(rand()%100001)/100000.0;
+	      Lval[i][j] = random*fabs(norm_rand());
+	    }
+	  }
+	
+      } else {
+	for(i = 0; i < ninitL; i ++)
+	  {
+	    i2= initL[i]-1;
+	    if ((i2>nn)||(i2<0))
+	      {
+		i2=i;
+	      }
+	    La[i]=xa[i2];
+	    for (ig=0; ig< xa[i2];ig++) {
+	      Lval[i][ig]=xval[i2][ig];
+	      Lind[i][ig]=xind[i2][ig];
+	    }
+
+	  }
+	for(i = ninitL; i < K; i ++)
+	  {
+	    La[i]=n;
+	    for(j = 0; j < n; j ++) {
+	      Lind[i][j]= j;
+//		if (rand()%2>0) {
+//		    s = 1.0;
+//		}  else {
+//		    s= -1.0;
+//		}
+//		Lval[i][j] = random*s*(rand()%100001)/100000.0;
+	      Lval[i][j] = random*norm_rand();
+	    }
+	  }
+
+      }
 
     }
-
 
 
     int *LPsia = R_Calloc(K, int); 
@@ -2887,7 +2957,7 @@ SEXP readSpfabicResult(SEXP file_nameS) {
  R_CallMethodDef callMethods[]  = {
        {"fabic", (DL_FUNC) &fabic, 16},
        {"fabics", (DL_FUNC) &fabics, 13},
-       {"spfabic", (DL_FUNC) &spfabic, 20},
+       {"spfabic", (DL_FUNC) &spfabic, 21},
        {"readSamplesSpfabic", (DL_FUNC) &readSamplesSpfabic, 2},
        {"readSpfabicResult", (DL_FUNC) &readSpfabicResult, 1},
        {NULL, NULL, 0}

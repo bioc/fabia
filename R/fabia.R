@@ -3363,7 +3363,7 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
-spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0){
+spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0){
 	## X - name of the data file
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -3428,9 +3428,14 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
            message("   Max. number of row elements / biclu. lL: ", lL, " = no limit")
        }
        if (samples[1]==0) {
-           message("   Number of Samples ------------- samples: ", samples, " = all samples")
+           message("   Number of samples ------------- samples: ", samples, " = all samples")
        } else {
-           message("   Number of Samples  ------------ samples: ", length(samples))
+           message("   Number of samples  ------------ samples: ", length(samples))
+       }
+       if (initL[1]==0) {
+           message("   Random initialization of L ------ initL: ", initL)
+       } else {
+           message("   Biclusters init. by samples ----- initL: ", length(initL))
        }
 
 
@@ -3444,6 +3449,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
         init_psi <-  as.double(0.2)
 
 	samples <- as.integer(sort.int(as.integer(unique(samples))))
+	initL <- as.integer(initL)
 	norm <- as.integer(norm)
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
@@ -3459,7 +3465,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,lL,bL,eps,eps1,samples,PACKAGE="fabia")
+	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,lL,bL,eps,eps1,samples,initL,PACKAGE="fabia")
 
         if (is.null(res))
         {
@@ -3534,7 +3540,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples),n=n,p1=p,p2=p,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL),n=n,p1=p,p2=p,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
