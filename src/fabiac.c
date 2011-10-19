@@ -1445,15 +1445,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
       samp=-1;
     }
 
-    int ninitL = length(initLS);
-    if (ninitL > K) ninitL = K;
-    int *initL =  INTEGER(initLS);
-    if (initL[0]>0) {
-      inLL = 0;
-      
-    } else {
-      inLL=-1;
-    }
 
     n=0;
     nn=0;
@@ -1574,6 +1565,15 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
     fclose (pFile);
 
+    int ninitL = length(initLS);
+    if (ninitL > K) ninitL = K;
+    int *initL =  INTEGER(initLS);
+    if ((initL[0]>0)&&(initL[0]<=nn)) {
+      inLL = 0;
+      
+    } else {
+      inLL=-1;
+    }
 
     int *La = R_Calloc(K, int); 
     int **Lind = R_Calloc(K, int *);
@@ -1699,6 +1699,10 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
     for (ite=0;ite<iter;ite++) {
 
+      if (iter>1) {
+	Rprintf("**Iteration: %d\n", (ite+1));
+      }
+
 
     if (inLL < 0) {
       if (non_negative>0) {
@@ -1712,7 +1716,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	      Lval[i][j] = random*fabs(norm_rand());
 	    }
 	  }
-	
       } else {
 	for(i = 0; i < K; i ++)
 	  {
@@ -1795,13 +1798,11 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 
-
-
  
     for (i1=0;i1<n;i1++)
 	XX[i1] = 0.0;
     
-    for (i2 = 0; i2 < nn; i2++) {
+   for (i2 = 0; i2 < nn; i2++) {
 	for (ig=0; ig< xa[i2];ig++) {
 	    s=xval[i2][ig];
 	    XX[xind[i2][ig]] += s*s;
@@ -1821,7 +1822,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
 
-    if (norm>0) {
+   if (norm>0) {
 	
 	for (i2 = 0; i2 < nn; i2++) {
 	    for (ig=0; ig< xa[i2];ig++) {
@@ -1845,8 +1846,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	for (j=0;j<nn;j++)
 	    lapla[j][i1] = init_lapla;
     }
-
-
 
 
  
@@ -2300,8 +2299,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 
-
-    for (j=0;j<nn;j++)
+   for (j=0;j<nn;j++)
     {
 
 	for (i1=0;i1<K;i1++)
@@ -2374,7 +2372,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    {
 		if (t<0) t=0.0;
 	    }
-	    REAL(E_SX_n)[ite*K*nn+i1 + K*j] = (double) t;
+	    REAL(E_SX_n)[(long) (ite*K*nn+i1 + K*j)] = (double) t;
 	}
 
 
@@ -2385,7 +2383,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     if (write_file>0)
     {
 
-    if (iter==1)
+    if (iter == 1)
     {
 
 	sst[0]=0;
@@ -2413,7 +2411,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	pFile = fopen (sst,"w");
 	for(i = 0; i < K; i ++) {
 	    for(j = 0; j < nn; j ++)
-	      fprintf(pFile,"%.8f ",E_SX_nP[ite*K*nn+i+K*j]);
+	      fprintf(pFile,"%.8f ",E_SX_nP[(long) (i+K*j)]);
 	    fprintf(pFile,"\n");
 	}
 	fclose (pFile);
@@ -2430,7 +2428,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    for(i = 0; i < K; i ++) {
 		ig=0;
 		for(j = 0; j < nn; j ++) {
-		  s= E_SX_nP[ite*K*nn+i+K*j];
+		    s= E_SX_nP[(long) (i+K*j)];
 		    if (fabs(s)>0.00001){
 			ind[ig] = j;
 			val[ig] = s;
@@ -2469,14 +2467,15 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	fclose (pFile);
     } else {
 
+
 	iterc[0]=0;
         sprintf(iterc,"%d",(ite+1)); 
 
 	sst[0]=0;
 	strcat(sst,file_name);
-	strcat(sst,"_res_L_");
+	strcat(sst,"_");
 	strcat(sst,iterc);
-	strcat(sst,".txt");
+	strcat(sst,"_res_L.txt");
 	pFile = fopen (sst,"w");
 	fprintf(pFile,"%d\n",K); 
 	fprintf(pFile,"%d\n",n); 
@@ -2493,35 +2492,36 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	}
 	fclose (pFile);
 
+
 	sst[0]=0;
 	strcat(sst,file_name);
-	strcat(sst,"_res_Z_full_");
+	strcat(sst,"_");
 	strcat(sst,iterc);
-	strcat(sst,".txt");
-	strcat(sst,file_name);
+	strcat(sst,"_res_Z_full.txt");
 	pFile = fopen (sst,"w");
 	for(i = 0; i < K; i ++) {
 	    for(j = 0; j < nn; j ++)
-	      fprintf(pFile,"%.8f ",E_SX_nP[ite*K*nn+i+K*j]);
+	      fprintf(pFile,"%.8f ",E_SX_nP[(long) (ite*K*nn+i+K*j)]);
 	    fprintf(pFile,"\n");
 	}
 	fclose (pFile);
+
 
 	{
 	    int ind[nn];
 	    double val[nn];
 	    sst[0]=0;
 	    strcat(sst,file_name);
-	    strcat(sst,"_res_Z_");
+	    strcat(sst,"_");
 	    strcat(sst,iterc);
-	    strcat(sst,".txt");
+	    strcat(sst,"_res_Z.txt");
 	    pFile = fopen (sst,"w");
 	    fprintf(pFile,"%d\n",K); 
 	    fprintf(pFile,"%d\n",nn);
 	    for(i = 0; i < K; i ++) {
-		ig=0;
+	        ig=0;
 		for(j = 0; j < nn; j ++) {
-		  s= E_SX_nP[ite*K*nn+i+K*j];
+		    s= E_SX_nP[(long) (ite*K*nn+i+K*j)];
 		    if (fabs(s)>0.00001){
 			ind[ig] = j;
 			val[ig] = s;
@@ -2539,22 +2539,23 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    fclose (pFile);
 	}
 
-	sst[0]=0;
+ 	sst[0]=0;
 	strcat(sst,file_name);
-	strcat(sst,"_res_Psi_");
+	strcat(sst,"_");
 	strcat(sst,iterc);
-	strcat(sst,".txt");
+	strcat(sst,"_res_Psi.txt");
 	pFile = fopen (sst,"w");
 	for(j = 0; j < nn; j ++)
 	    fprintf(pFile,"%.8f ",Psi[j]);
 	fprintf(pFile,"\n");
 	fclose (pFile);
 
+ 
 	sst[0]=0;
 	strcat(sst,file_name);
-	strcat(sst,"_res_lapla_");
+	strcat(sst,"_");
 	strcat(sst,iterc);
-	strcat(sst,".txt");
+	strcat(sst,"_res_lapla.txt");
 	pFile = fopen (sst,"w");
 	for(i = 0; i < K; i ++) {
 	    for(j = 0; j < nn; j ++)
@@ -2573,30 +2574,23 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     for (i1=0;i1<K;i1++)
     {
 	for (i2 = 0; i2 < n; i2++)
-	  REAL(L_n)[ite*K*n+i2 + n*i1] = 0.0;
+	  REAL(L_n)[(long) (ite*K*n+i2 + n*i1)] = 0.0;
     }
     for (i2 = 0; i2 < K; i2++) {
 	for (ig=0; ig< La[i2];ig++) {
-	  REAL(L_n)[ite*K*n+Lind[i2][ig]+n*i2]= Lval[i2][ig];
+	  REAL(L_n)[(long) (ite*K*n+Lind[i2][ig]+n*i2)]= Lval[i2][ig];
 	}
     }
 
 
-
-
     for(i = 0; i < n; i++)
-	REAL(Psi_n)[ite*n+i] = (double) Psi[i];
-
+      REAL(Psi_n)[(long) (ite*n+i)] = (double) Psi[i];
 
 
     for(i = 0; i < nn; i++)
 	for(j = 0; j < K; j++)
-	  REAL(lapla_n)[ite*K*nn+i + nn*j] = (double) lapla[i][j];
+	  REAL(lapla_n)[(long) (ite*K*nn+i + nn*j)] = (double) lapla[i][j];
 
-
-
-
-		
 
     for (i2 = 0; i2 < n; i2++) {
       LPsiind[0][i2] = 0;
@@ -2604,21 +2598,21 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
     for (i2 = 0; i2 < K; i2++) {
 	for (ig=0; ig< La[i2];ig++) {
-	  if (fabs(Lval[i2][ig])>0.000001) {
+	  if (fabs(Lval[i2][ig])>eps1) {
 	    LPsiind[0][Lind[i2][ig]]=1;
 	  }
 	}
     }
 
     for (i2 = 0; i2 < nn; i2++) {
-      jg=0;
-      for (ig=0; (ig+jg) < xa[i2];ig++) {
+      for (ig=0,jg=0; (ig+jg) < xa[i2];) {
 	if ( LPsiind[0][xind[i2][ig+jg]]==0 )
 	  {
 	    if (jg>0) {
 	      xval[i2][ig] = xval[i2][ig+jg];
 	      xind[i2][ig] = xind[i2][ig+jg];
 	    }
+	    ig++;
 	  } else 
 	  {
 	    jg++;
@@ -2627,7 +2621,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
       xa[i2]-=jg;
     }
   
-
 
 
     } // iter
