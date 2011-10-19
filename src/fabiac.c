@@ -1386,18 +1386,18 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
-SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP lLS,SEXP bLS,SEXP epsS,SEXP eps1S,SEXP samplesS,SEXP initLS) {
+SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP lLS,SEXP bLS,SEXP epsS,SEXP eps1S,SEXP samplesS,SEXP initLS,SEXP iterS) {
 
 
     FILE *pFile;
 
 
     char sst[200]; 
-
+    char iterc [4];
 
     int hpp,ig,jg,samp,inLL;
 
-    int  i,j,i1,i2,i3,i4,n,nn;
+    int  i,j,i1,i2,i3,i4,n,nn,ite;
     
     double fs;
 
@@ -1429,6 +1429,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     int nL =  (int)(INTEGER(nLS)[0]);
     int lL = (int)(INTEGER(lLS)[0]);
     int bL = (int)(INTEGER(bLS)[0]);
+    int iter = (int)(INTEGER(iterS)[0]);
 
     int *xa;
     int **xind;
@@ -1589,6 +1590,116 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
 
+
+
+
+
+    double *LLval = R_Calloc(K, double); 
+    int *LLind = R_Calloc(K, int); 
+    int *ig_vec = R_Calloc(K, int); 
+
+    double *Psi = R_Calloc(n, double); 
+    double *XX = R_Calloc(n, double); 
+    double *e_sx_n = R_Calloc(K, double); 
+    double *e_ssxx_n = R_Calloc(K, double); 
+
+
+
+    int *LPsia = R_Calloc(K, int); 
+    int **LPsiind = R_Calloc(K, int *);
+    LPsiind[0] = R_Calloc((long) K*n, int);
+    for(i=0; i < K; i++)
+    {
+	LPsiind[i] = LPsiind[0] + i*n;
+    }
+
+    double **LPsival = R_Calloc(K, double *);
+    LPsival[0] = R_Calloc((long) K*n, double);
+    for(i=0; i < K; i++)
+    {
+	LPsival[i] = LPsival[0] + i*n;
+    }
+
+    double **lapla = R_Calloc(nn, double *);
+    lapla[0] = R_Calloc((long) nn*K, double);
+    for(i=0; i < nn; i++)
+    {
+	lapla[i] = lapla[0] + i*K;
+    }
+
+
+    double **ichol = R_Calloc(K, double *);
+    ichol[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	ichol[i] = ichol[0] + i*K;
+    }
+
+    double **sum2 = R_Calloc(K, double *);
+    sum2[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	sum2[i] =  sum2[0]+ i*K;
+    }
+
+    double **tLPsiL = R_Calloc(K, double *);
+    tLPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	tLPsiL[i] =  tLPsiL[0] + i*K;
+    }
+
+    double **LPsiL = R_Calloc(K, double *);
+    LPsiL[0] = R_Calloc(K*K, double);
+    for(i=0; i <K ; i++)
+    {
+	LPsiL[i] = LPsiL[0] + i*K;
+    }
+
+    double **LPsi = R_Calloc(n, double *);
+    LPsi[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	LPsi[i] = LPsi[0]+i*K;
+    }
+
+    double **sum1 = R_Calloc(n, double *);
+    sum1[0] = R_Calloc((long) n*K, double);
+    for(i=0; i < n; i++)
+    {
+	sum1[i] = sum1[0] + i*K;
+    }
+
+
+    
+    spl = -spl;
+    spz = -spz;
+    in = 1.0/nn;
+
+    if (lap<eps)
+    {
+	lap = eps;
+    }
+
+    if (iter<1) iter = 1;
+
+    SEXP L_n;
+    PROTECT(L_n = allocMatrix(REALSXP, n, iter*K));
+
+    SEXP Psi_n;
+    PROTECT(Psi_n = allocVector(REALSXP, iter*n));
+
+    SEXP lapla_n;
+    PROTECT(lapla_n = allocMatrix(REALSXP, nn,iter*K));
+
+    SEXP E_SX_n;
+    PROTECT(E_SX_n = allocMatrix(REALSXP, iter*K, nn));
+    double *E_SX_nP = REAL(E_SX_n);
+
+
+    for (ite=0;ite<iter;ite++) {
+
+
     if (inLL < 0) {
       if (non_negative>0) {
 	
@@ -1682,96 +1793,9 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
 
-    int *LPsia = R_Calloc(K, int); 
-    int **LPsiind = R_Calloc(K, int *);
-    LPsiind[0] = R_Calloc((long) K*n, int);
-    for(i=0; i < K; i++)
-    {
-	LPsiind[i] = LPsiind[0] + i*n;
-    }
-    double **LPsival = R_Calloc(K, double *);
-    LPsival[0] = R_Calloc((long) K*n, double);
-    for(i=0; i < K; i++)
-    {
-	LPsival[i] = LPsival[0] + i*n;
-    }
 
 
 
-
-    double *LLval = R_Calloc(K, double); 
-    int *LLind = R_Calloc(K, int); 
-    int *ig_vec = R_Calloc(K, int); 
-
-    double *Psi = R_Calloc(n, double); 
-    double *XX = R_Calloc(n, double); 
-    double *e_sx_n = R_Calloc(K, double); 
-    double *e_ssxx_n = R_Calloc(K, double); 
-
-
-    double **lapla = R_Calloc(nn, double *);
-    lapla[0] = R_Calloc((long) nn*K, double);
-    for(i=0; i < nn; i++)
-    {
-	lapla[i] = lapla[0] + i*K;
-    }
-
-
-    double **ichol = R_Calloc(K, double *);
-    ichol[0] = R_Calloc(K*K, double);
-    for(i=0; i <K ; i++)
-    {
-	ichol[i] = ichol[0] + i*K;
-    }
-
-    double **sum2 = R_Calloc(K, double *);
-    sum2[0] = R_Calloc(K*K, double);
-    for(i=0; i <K ; i++)
-    {
-	sum2[i] =  sum2[0]+ i*K;
-    }
-
-    double **tLPsiL = R_Calloc(K, double *);
-    tLPsiL[0] = R_Calloc(K*K, double);
-    for(i=0; i <K ; i++)
-    {
-	tLPsiL[i] =  tLPsiL[0] + i*K;
-    }
-
-    double **LPsiL = R_Calloc(K, double *);
-    LPsiL[0] = R_Calloc(K*K, double);
-    for(i=0; i <K ; i++)
-    {
-	LPsiL[i] = LPsiL[0] + i*K;
-    }
-
-    double **LPsi = R_Calloc(n, double *);
-    LPsi[0] = R_Calloc((long) n*K, double);
-    for(i=0; i < n; i++)
-    {
-	LPsi[i] = LPsi[0]+i*K;
-    }
-
-    double **sum1 = R_Calloc(n, double *);
-    sum1[0] = R_Calloc((long) n*K, double);
-    for(i=0; i < n; i++)
-    {
-	sum1[i] = sum1[0] + i*K;
-    }
-
-
-
-
-
-    
-    spl = -spl;
-    spz = -spz;
-    in = 1.0/nn;
-
-    if (lap<eps)
-    {
-	lap = eps;
-    }
 
  
     for (i1=0;i1<n;i1++)
@@ -2237,27 +2261,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
 
-    R_Free (sum1[0]);
-    R_Free (sum1 );
-
-    R_Free (sum2[0]);
-    R_Free (sum2 );
-
-    R_Free (e_sx_n );
-
-    R_Free (e_ssxx_n );
-
-
-
-    R_Free (LLval );
-
-    R_Free (LLind );
-
-    R_Free (ig_vec );
-
-
-    R_Free (XX );
-    
 
     for (i2 = 0; i2 < K; i2++) {
 	LPsia[i2]=La[i2];
@@ -2295,10 +2298,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	}
     }
 
-
-    SEXP E_SX_n;
-    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
-    double *E_SX_nP = REAL(E_SX_n);
 
 
 
@@ -2375,40 +2374,18 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    {
 		if (t<0) t=0.0;
 	    }
-	    REAL(E_SX_n)[i1 + K*j] = (double) t;
+	    REAL(E_SX_n)[ite*K*nn+i1 + K*j] = (double) t;
 	}
 
 
     }
 
 
-    R_Free (xa );
-    R_Free (xind[0]);
-    R_Free (xind );
-    R_Free (xval[0]);
-    R_Free (xval );
-
- 
-    R_Free (LPsia );
-    R_Free (LPsiind[0]);
-    R_Free (LPsiind );
-    R_Free (LPsival[0]);
-    R_Free (LPsival );
-
-
-    R_Free (ichol[0]);
-    R_Free (ichol);
-
-    R_Free (tLPsiL[0]);
-    R_Free (tLPsiL );
-
-    R_Free (LPsiL[0]);
-    R_Free (LPsiL);
- 
-    R_Free (LPsi[0]);
-    R_Free (LPsi );
 
     if (write_file>0)
+    {
+
+    if (iter==1)
     {
 
 	sst[0]=0;
@@ -2436,7 +2413,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	pFile = fopen (sst,"w");
 	for(i = 0; i < K; i ++) {
 	    for(j = 0; j < nn; j ++)
-		fprintf(pFile,"%.8f ",E_SX_nP[i+K*j]);
+	      fprintf(pFile,"%.8f ",E_SX_nP[ite*K*nn+i+K*j]);
 	    fprintf(pFile,"\n");
 	}
 	fclose (pFile);
@@ -2453,7 +2430,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    for(i = 0; i < K; i ++) {
 		ig=0;
 		for(j = 0; j < nn; j ++) {
-		    s= E_SX_nP[i+K*j];
+		  s= E_SX_nP[ite*K*nn+i+K*j];
 		    if (fabs(s)>0.00001){
 			ind[ig] = j;
 			val[ig] = s;
@@ -2490,24 +2467,218 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    fprintf(pFile,"\n");
 	}
 	fclose (pFile);
+    } else {
 
+	iterc[0]=0;
+        sprintf(iterc,"%d",(ite+1)); 
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_L_");
+	strcat(sst,iterc);
+	strcat(sst,".txt");
+	pFile = fopen (sst,"w");
+	fprintf(pFile,"%d\n",K); 
+	fprintf(pFile,"%d\n",n); 
+
+	for(i = 0; i < K; i ++) {
+
+	    fprintf(pFile,"%d\n",La[i]); 
+	    for(j = 0; j < La[i]; j ++)
+		fprintf(pFile,"%d ",Lind[i][j]);
+	    fprintf(pFile,"\n");
+	    for(j = 0; j < La[i]; j ++)
+		fprintf(pFile,"%.8f ",Lval[i][j]);
+	    fprintf(pFile,"\n");
+	}
+	fclose (pFile);
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_Z_full_");
+	strcat(sst,iterc);
+	strcat(sst,".txt");
+	strcat(sst,file_name);
+	pFile = fopen (sst,"w");
+	for(i = 0; i < K; i ++) {
+	    for(j = 0; j < nn; j ++)
+	      fprintf(pFile,"%.8f ",E_SX_nP[ite*K*nn+i+K*j]);
+	    fprintf(pFile,"\n");
+	}
+	fclose (pFile);
+
+	{
+	    int ind[nn];
+	    double val[nn];
+	    sst[0]=0;
+	    strcat(sst,file_name);
+	    strcat(sst,"_res_Z_");
+	    strcat(sst,iterc);
+	    strcat(sst,".txt");
+	    pFile = fopen (sst,"w");
+	    fprintf(pFile,"%d\n",K); 
+	    fprintf(pFile,"%d\n",nn);
+	    for(i = 0; i < K; i ++) {
+		ig=0;
+		for(j = 0; j < nn; j ++) {
+		  s= E_SX_nP[ite*K*nn+i+K*j];
+		    if (fabs(s)>0.00001){
+			ind[ig] = j;
+			val[ig] = s;
+			ig++;
+		    }
+		}
+		fprintf(pFile,"%d\n",ig); 
+		for(j = 0; j < ig; j ++)
+		    fprintf(pFile,"%d ",ind[j]);
+		fprintf(pFile,"\n");
+		for(j = 0; j < ig; j ++)
+		    fprintf(pFile,"%.8f ",val[j]);
+		fprintf(pFile,"\n");
+	    }
+	    fclose (pFile);
+	}
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_Psi_");
+	strcat(sst,iterc);
+	strcat(sst,".txt");
+	pFile = fopen (sst,"w");
+	for(j = 0; j < nn; j ++)
+	    fprintf(pFile,"%.8f ",Psi[j]);
+	fprintf(pFile,"\n");
+	fclose (pFile);
+
+	sst[0]=0;
+	strcat(sst,file_name);
+	strcat(sst,"_res_lapla_");
+	strcat(sst,iterc);
+	strcat(sst,".txt");
+	pFile = fopen (sst,"w");
+	for(i = 0; i < K; i ++) {
+	    for(j = 0; j < nn; j ++)
+		fprintf(pFile,"%.8f ",lapla[j][i]);
+	    fprintf(pFile,"\n");
+	}
+	fclose (pFile);
+ 
+
+    }
 
     }
 
  
-    SEXP L_n;
-    PROTECT(L_n = allocMatrix(REALSXP, n, K));
 
     for (i1=0;i1<K;i1++)
     {
 	for (i2 = 0; i2 < n; i2++)
-	    REAL(L_n)[i2 + n*i1] = 0.0;
+	  REAL(L_n)[ite*K*n+i2 + n*i1] = 0.0;
     }
     for (i2 = 0; i2 < K; i2++) {
 	for (ig=0; ig< La[i2];ig++) {
-	     REAL(L_n)[Lind[i2][ig]+n*i2]= Lval[i2][ig];
+	  REAL(L_n)[ite*K*n+Lind[i2][ig]+n*i2]= Lval[i2][ig];
 	}
     }
+
+
+
+
+    for(i = 0; i < n; i++)
+	REAL(Psi_n)[ite*n+i] = (double) Psi[i];
+
+
+
+    for(i = 0; i < nn; i++)
+	for(j = 0; j < K; j++)
+	  REAL(lapla_n)[ite*K*nn+i + nn*j] = (double) lapla[i][j];
+
+
+
+
+		
+
+    for (i2 = 0; i2 < n; i2++) {
+      LPsiind[0][i2] = 0;
+    }
+
+    for (i2 = 0; i2 < K; i2++) {
+	for (ig=0; ig< La[i2];ig++) {
+	  if (fabs(Lval[i2][ig])>0.000001) {
+	    LPsiind[0][Lind[i2][ig]]=1;
+	  }
+	}
+    }
+
+    for (i2 = 0; i2 < nn; i2++) {
+      jg=0;
+      for (ig=0; (ig+jg) < xa[i2];ig++) {
+	if ( LPsiind[0][xind[i2][ig+jg]]==0 )
+	  {
+	    if (jg>0) {
+	      xval[i2][ig] = xval[i2][ig+jg];
+	      xind[i2][ig] = xind[i2][ig+jg];
+	    }
+	  } else 
+	  {
+	    jg++;
+	  }
+      }
+      xa[i2]-=jg;
+    }
+  
+
+
+
+    } // iter
+
+
+    R_Free (xa );
+    R_Free (xind[0]);
+    R_Free (xind );
+    R_Free (xval[0]);
+    R_Free (xval );
+
+ 
+    R_Free (sum1[0]);
+    R_Free (sum1 );
+
+    R_Free (sum2[0]);
+    R_Free (sum2 );
+
+    R_Free (e_sx_n );
+
+    R_Free (e_ssxx_n );
+
+
+
+    R_Free (LLval );
+
+    R_Free (LLind );
+
+    R_Free (ig_vec );
+
+
+    R_Free (XX );
+    
+    R_Free (LPsia );
+    R_Free (LPsiind[0]);
+    R_Free (LPsiind );
+    R_Free (LPsival[0]);
+    R_Free (LPsival );
+
+
+    R_Free (ichol[0]);
+    R_Free (ichol);
+
+    R_Free (tLPsiL[0]);
+    R_Free (tLPsiL );
+
+    R_Free (LPsiL[0]);
+    R_Free (LPsiL);
+ 
+    R_Free (LPsi[0]);
+    R_Free (LPsi );
 
     R_Free (La );
     R_Free (Lind[0]);
@@ -2518,23 +2689,10 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 
-    SEXP Psi_n;
-    PROTECT(Psi_n = allocVector(REALSXP, n));
-
-
-    for(i = 0; i < n; i++)
-	REAL(Psi_n)[i] = (double) Psi[i];
 
     R_Free (Psi );
 
 
-
-    SEXP lapla_n;
-    PROTECT(lapla_n = allocMatrix(REALSXP, nn,K));
-
-    for(i = 0; i < nn; i++)
-	for(j = 0; j < K; j++)
-	    REAL(lapla_n)[i + nn*j] = (double) lapla[i][j];
 
 
 
@@ -2957,7 +3115,7 @@ SEXP readSpfabicResult(SEXP file_nameS) {
  R_CallMethodDef callMethods[]  = {
        {"fabic", (DL_FUNC) &fabic, 16},
        {"fabics", (DL_FUNC) &fabics, 13},
-       {"spfabic", (DL_FUNC) &spfabic, 21},
+       {"spfabic", (DL_FUNC) &spfabic, 22},
        {"readSamplesSpfabic", (DL_FUNC) &readSamplesSpfabic, 2},
        {"readSpfabicResult", (DL_FUNC) &readSpfabicResult, 1},
        {NULL, NULL, 0}

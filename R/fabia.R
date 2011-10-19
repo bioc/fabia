@@ -3363,7 +3363,7 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
-spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0){
+spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1){
 	## X - name of the data file
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -3437,6 +3437,8 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
        } else {
            message("   Biclusters init. by samples ----- initL: ", length(initL))
        }
+           message("   Iterations ------------------------iter: ",iter)
+
 
 
 
@@ -3450,6 +3452,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 	samples <- as.integer(sort.int(as.integer(unique(samples))))
 	initL <- as.integer(initL)
+	iter <- as.integer(iter)
 	norm <- as.integer(norm)
 	cyc <- as.integer(cyc)
 	nL <- as.integer(nL)
@@ -3465,7 +3468,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,lL,bL,eps,eps1,samples,initL,PACKAGE="fabia")
+	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,lL,bL,eps,eps1,samples,initL,iter,PACKAGE="fabia")
 
         if (is.null(res))
         {
@@ -3474,6 +3477,8 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
         l=ncol(res$E_SX_n)
         n=nrow(res$L)
+
+        pi=p*iter
 
         eps <- as.double(1e-3)
 	nvect <- as.vector(rep(1,n))
@@ -3502,36 +3507,40 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
         }
 
 
-        ini <- matrix(0,l,(p+1))
-        avini <- as.vector(rep(0.0,(p+1)))
+        ini <- matrix(0,l,(pi+1))
+        avini <- as.vector(rep(0.0,(pi+1)))
         xavini <- as.vector(rep(0.0,(l+1)))
 
-        idp <- diag(p)
-        ppL <- crossprod(noL,(1/(res$Psi+epsn))*noL)
+        idp <- diag(pi)
+        ppL <- matrix(0,pi,pi)
 
+        for (ite in 0:(iter-1))
+        {
+            ppL[((ite*p)+1):((ite+1)*p),((ite*p)+1):((ite+1)*p)] <- crossprod(noL[,((ite*p)+1):((ite+1)*p)],(1/(res$Psi[((ite*n)+1):((ite+1)*n)]+epsn))*noL[,((ite*p)+1):((ite+1)*p)])
+        }
 
         for (j in 1:l){
             mat <- idp + ppL/res$lapla[j,]
-            ini[j,1:p] <- log(diag(mat))
+            ini[j,1:pi] <- log(diag(mat))
             s <- log(det(mat))
-            ini[j,p+1] <- s
+            ini[j,pi+1] <- s
             xavini[j] <- s
         }
-        for (i in 1:p){
+        for (i in 1:pi){
             avini[i] <- sum(ini[,i])
         }
 
-        ss <- sum(ini[,p+1])
+        ss <- sum(ini[,pi+1])
         xavini[l+1] <- ss
-        avini[p+1] <- ss
+        avini[pi+1] <- ss
 
 
 
-        if ((avini[p+1]>1e-8)&&(p>1)) {
+        if ((avini[pi+1]>1e-8)&&(pi>1)) {
 
-            soo <- sort(avini[1:p], decreasing = TRUE,index.return=TRUE)
+            soo <- sort(avini[1:pi], decreasing = TRUE,index.return=TRUE)
 
-            avini[1:p] <- avini[soo$ix]
+            avini[1:pi] <- avini[soo$ix]
             noL <- noL[,soo$ix]
             nZ <- nZ[soo$ix,]
 
@@ -3539,8 +3548,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-
-        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL),n=n,p1=p,p2=p,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL,iter),n=n,p1=pi,p2=pi,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }

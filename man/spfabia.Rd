@@ -7,7 +7,7 @@
 }
 \usage{
 
-spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0)
+spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1)
 
 }
 \arguments{
@@ -39,6 +39,8 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
     = 0 (all samples)} 
   \item{initL}{vector of indices of the selected samples which are used to initialize L; default
     = 0 (random initialization).} 
+  \item{iter}{number of iterations; default
+    = 1.} 
 }
 \details{
 
