@@ -1672,7 +1672,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
 
-    nquant = floor(quant*n);
+    nquant = (int) floor(quant*n);
     spl = -spl;
     spz = -spz;
     in = 1.0/nn;
