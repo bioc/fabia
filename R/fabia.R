@@ -3363,7 +3363,7 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
-spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001){
+spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0){
 	## X - name of the data file
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -3441,6 +3441,8 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
         if (iter>1) {
            message("   Quantile of largest L removed --- quant: ",quant)
         }
+           message("   Lower column sum bound --------- lowerB: ",lowerB)
+           message("   Upper column sum bound --------- upperB: ",upperB)
 
 
 
@@ -3461,6 +3463,8 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 	lL <- as.integer(lL)
 	bL <- as.integer(bL)
 	quant <- as.double(quant)
+	lowerB <- as.double(lowerB)
+	upperB <- as.double(upperB)
 	alpha <- as.double(alpha)
 	non_negative <- as.integer(non_negative)
         write_file<- as.integer(write_file)
@@ -3471,7 +3475,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,lL,bL,eps,eps1,samples,initL,iter,quant,PACKAGE="fabia")
+	res <- .Call("spfabic",X,p,alpha,cyc,spl,spz,non_negative,random,write_file,init_psi,init_lapla,norm,scale,lap,nL,lL,bL,eps,eps1,samples,initL,iter,quant,lowerB,upperB,PACKAGE="fabia")
 
         if (is.null(res))
         {
@@ -3551,12 +3555,12 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL,iter,quant),n=n,p1=pi,p2=pi,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL,iter,quant,lowerB,upperB),n=n,p1=pi,p2=pi,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
 
-readSamplesSpfabia <- function(X,samples=0){
+readSamplesSpfabia <- function(X,samples=0,lowerB=0.0,upperB=1000.0){
 
         if (missing(X)) {
             stop("Data file name missing. Stopped.")
@@ -3564,8 +3568,10 @@ readSamplesSpfabia <- function(X,samples=0){
 
 
 	samples <- as.integer(sort.int(as.integer(unique(samples))))
+	lowerB <- as.double(lowerB)
+	upperB <- as.double(upperB)
 
-	res <- .Call("readSamplesSpfabic",X,samples,PACKAGE="fabia")
+	res <- .Call("readSamplesSpfabic",X,samples,lowerB,upperB,PACKAGE="fabia")
 
         if (is.null(res))
         {

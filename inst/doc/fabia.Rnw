@@ -2898,6 +2898,10 @@ C implementation of \texttt{spfabia}.
     = 1.
   \item{quant:} qunatile of largest L values to remove in each iteration; default
     = 0.001.
+  \item{lowerB:} lower bound for filtering the inputs columns, the
+    minimal column sum; default = 0.0.
+  \item{upperB:} upper bound for filtering the inputs columns, the
+    maximal column sum; default = 1000.0.
  \end{itemize}
 
 \item Return values:
@@ -3080,6 +3084,58 @@ plot(res,dim=c(2,3))
 
 
 \end{Sinput}
+
+\subsection{readSamplesSpfabia}
+
+Factor Analysis for Bicluster Acquisition: Read Samples of SpFabia \citep{Hochreiter:10}.
+
+C implementation of \texttt{readSamplesSpfabia}.
+
+\begin{enumerate}
+\item Usage: \texttt{readSamplesSpfabia(X,samples=0,lowerB=0.0,upperB=1000.0)}
+
+
+\item Arguments:
+ \begin{itemize}
+  \item{X:} the file name of the sparse matrix in sparse format.
+  \item{samples:} vector of samples which should be read; default
+    = 0 (all samples)
+  \item{lowerB:} lower bound for filtering the inputs columns, the
+    minimal column sum; default = 0.0.
+  \item{upperB:} upper bound for filtering the inputs columns, the
+    maximal column sum; default = 1000.0.
+ \end{itemize}
+
+ \item Return values:
+\begin{itemize}
+  \item   \texttt{X} (data of the given samples)
+ \end{itemize}
+
+ \end{enumerate}
+
+  Read the samples to analyze results of spfabia.
+
+  The code is implemented in C.
+
+
+
+
+\vspace{0.5cm}
+
+\noindent
+EXAMPLE:
+
+\begin{Sinput}
+
+#---------------
+# TEST
+#---------------
+
+# no test
+
+
+\end{Sinput}
+
 
 
 \subsection{readSpfabiaResult}

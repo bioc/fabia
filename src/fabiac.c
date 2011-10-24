@@ -1386,7 +1386,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
-SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP lLS,SEXP bLS,SEXP epsS,SEXP eps1S,SEXP samplesS,SEXP initLS,SEXP iterS,SEXP quantS) {
+SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP spzS, SEXP non_negativeS,SEXP randomS, SEXP write_fileS, SEXP init_psiS, SEXP init_laplaS, SEXP normS,SEXP scaleS,SEXP lapS,SEXP nLS, SEXP lLS,SEXP bLS,SEXP epsS,SEXP eps1S,SEXP samplesS,SEXP initLS,SEXP iterS,SEXP quantS,SEXP lowerBS, SEXP upperBS) {
 
 
     FILE *pFile;
@@ -1420,6 +1420,8 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     double scale = (double)(REAL(scaleS)[0]);
     double lap = (double)(REAL(lapS)[0]);
     double quant = (double)(REAL(quantS)[0]);
+    double lowerB = (double)(REAL(lowerBS)[0]);
+    double upperB = (double)(REAL(upperBS)[0]);
 
 
     int write_file =  (int)(INTEGER(write_fileS)[0]);
@@ -1698,7 +1700,50 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     double *E_SX_nP = REAL(E_SX_n);
 
 
-    for (ite=0;ite<iter;ite++) {
+ 
+    for (i1=0;i1<n;i1++)
+      {
+	XX[i1] = 0.0;
+      }	
+    
+   for (i2 = 0; i2 < nn; i2++) {
+	for (ig=0; ig< xa[i2];ig++) {
+	    XX[xind[i2][ig]] += xval[i2][ig];
+	}
+    }
+
+
+      for (i2 = 0; i2 < n; i2++) {
+	if ((XX[i2]>lowerB)&&(XX[i2]<upperB)) {
+	  LPsiind[0][i2] = 0;
+	} else {
+	  LPsiind[0][i2] = 1;
+	}
+      }
+
+
+      for (i2 = 0; i2 < nn; i2++) {
+	for (ig=0,jg=0; (ig+jg) < xa[i2];) {
+	  if ( LPsiind[0][xind[i2][ig+jg]]==0 )
+	    {
+	      if (jg>0) {
+		xval[i2][ig] = xval[i2][ig+jg];
+		xind[i2][ig] = xind[i2][ig+jg];
+	      }
+	      ig++;
+	    } else 
+	    {
+	      jg++;
+	    }
+	}
+	xa[i2]-=jg;
+      }
+
+
+
+
+
+   for (ite=0;ite<iter;ite++) {
 
       if (iter>1) {
 	Rprintf("**Iteration: %d\n", (ite+1));
@@ -1800,8 +1845,13 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
  
+  
+
+ 
     for (i1=0;i1<n;i1++)
+      {
 	XX[i1] = 0.0;
+      }	
     
    for (i2 = 0; i2 < nn; i2++) {
 	for (ig=0; ig< xa[i2];ig++) {
@@ -1810,6 +1860,9 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	}
     }
   
+
+
+
 
     for (i1=0;i1<n;i1++) {
 	s = XX[i1] * in;
@@ -2728,7 +2781,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 
-SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS) {
+SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS) {
 
 
     FILE *pFile;
@@ -2737,7 +2790,7 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS) {
     char sst[200]; 
 
 
-    int hpp,ig,samp;
+    int hpp,ig,jg,samp;
 
     int  i,j,i1,i2,n,nn;
     
@@ -2753,6 +2806,9 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS) {
     int *xa;
     int **xind;
     double **xval;
+
+    double lowerB = (double)(REAL(lowerBS)[0]);
+    double upperB = (double)(REAL(upperBS)[0]);
 
     int nsamp = length(samplesS);
 
@@ -2880,6 +2936,48 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS) {
     }
     fclose (pFile);
 
+    int *Psi = R_Calloc(n, int); 
+    double *XX = R_Calloc(n, double); 
+
+    for (i1=0;i1<n;i1++)
+      {
+	XX[i1] = 0.0;
+      }	
+    
+   for (i2 = 0; i2 < nn; i2++) {
+	for (ig=0; ig< xa[i2];ig++) {
+	    XX[xind[i2][ig]] += xval[i2][ig];
+	}
+    }
+
+
+      for (i2 = 0; i2 < n; i2++) {
+	if ((XX[i2]>lowerB)&&(XX[i2]<upperB)) {
+	  Psi[i2] = 0;
+	} else {
+	  Psi[i2] = 1;
+	}
+      }
+
+
+      for (i2 = 0; i2 < nn; i2++) {
+	for (ig=0,jg=0; (ig+jg) < xa[i2];) {
+	  if ( Psi[xind[i2][ig+jg]]==0 )
+	    {
+	      if (jg>0) {
+		xval[i2][ig] = xval[i2][ig+jg];
+		xind[i2][ig] = xind[i2][ig+jg];
+	      }
+	      ig++;
+	    } else 
+	    {
+	      jg++;
+	    }
+	}
+	xa[i2]-=jg;
+      }
+
+
 
 
  
@@ -2904,6 +3002,8 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS) {
     R_Free (xval[0]);
     R_Free (xval );
 
+    R_Free (XX);
+    R_Free (Psi);
 
 
     SEXP namesRET;
@@ -3122,8 +3222,8 @@ SEXP readSpfabicResult(SEXP file_nameS) {
  R_CallMethodDef callMethods[]  = {
        {"fabic", (DL_FUNC) &fabic, 16},
        {"fabics", (DL_FUNC) &fabics, 13},
-       {"spfabic", (DL_FUNC) &spfabic, 23},
-       {"readSamplesSpfabic", (DL_FUNC) &readSamplesSpfabic, 2},
+       {"spfabic", (DL_FUNC) &spfabic, 25},
+       {"readSamplesSpfabic", (DL_FUNC) &readSamplesSpfabic, 4},
        {"readSpfabicResult", (DL_FUNC) &readSpfabicResult, 1},
        {NULL, NULL, 0}
      };

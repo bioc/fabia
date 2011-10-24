@@ -7,13 +7,17 @@
 }
 \usage{
 
-readSamplesSpfabia(X,samples=0)
+readSamplesSpfabia(X,samples=0,lowerB=0.0,upperB=1000.0)
 
 }
 \arguments{
   \item{X}{the file name of the sparse matrix in sparse format.}
   \item{samples}{vector of samples which should be read; default
     = 0 (all samples)} 
+  \item{lowerB}{lower bound for filtering the inputs columns, the
+    minimal column sum; default = 0.0.} 
+  \item{upperB}{upper bound for filtering the inputs columns, the
+    maximal column sum; default = 1000.0.} 
 }
 \details{
 
@@ -37,7 +41,7 @@ readSamplesSpfabia(X,samples=0)
 
 }
 \value{
-  \code{X} (data of the given samples),
+  \code{X} (data of the given samples)
   }
 \seealso{
 \code{\link{fabia}},

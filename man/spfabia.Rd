@@ -7,7 +7,7 @@
 }
 \usage{
 
-spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001)
+spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0)
 
 }
 \arguments{
@@ -43,6 +43,10 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
     = 1.} 
   \item{quant}{qunatile of largest L values to remove in each iteration; default
     = 0.001.} 
+  \item{lowerB}{lower bound for filtering the inputs columns, the
+    minimal column sum; default = 0.0.} 
+  \item{upperB}{upper bound for filtering the inputs columns, the
+    maximal column sum; default = 1000.0.} 
 }
 \details{
 
