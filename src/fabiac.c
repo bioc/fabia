@@ -1872,7 +1872,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
     for (i1=0;i1<n;i1++) {
 	s = XX[i1] * in;
-	if (s<eps1) s=eps1;
+	if (s<eps) s=eps;
 	Psi[i1] = sqrt(s);
 	if (norm>0) {
 	 XX[i1] = 1.0;
@@ -1957,7 +1957,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    for (i2 = 0; i2 < n; i2++)
 		sum1[i2][i1] = 0.0;
  	    for (i2 = 0; i2 < K; i2++)
-		sum2[i1][i2] = (i1==i2 ? eps1 : 0.0);
+		sum2[i1][i2] = (i1==i2 ? eps : 0.0);
 	}
 
 
@@ -2066,7 +2066,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 	    for (i1=0;i1<K;i1++)
 	    {
-		s = pow((eps1+e_ssxx_n[i1]),spz);
+		s = pow((eps+e_ssxx_n[i1]),spz);
 		if (s<lap)
 		{
 		    lapla[j][i1] = lap;
@@ -2272,9 +2272,9 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	{
 	    
 	    Psi[i1] = XX[i1] - in*Psi[i1];
-	    if (Psi[i1]<eps1)
+	    if (Psi[i1]<eps)
 	    {
-		Psi[i1] = eps1;
+		Psi[i1] = eps;
 	    }
 	    
 	}
