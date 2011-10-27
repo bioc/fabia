@@ -1673,6 +1673,13 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	sum1[i] = sum1[0] + i*K;
     }
 
+    double **E_SX_tmp = R_Calloc(nn, double *);
+    E_SX_tmp[0] = R_Calloc((long) nn*K*iter, double);
+    for(i=0; i < nn; i++)
+    {
+	E_SX_tmp[i] = E_SX_tmp[0] + i*K*iter;
+    }
+
 
     nquant = (int) floor(quant*n);
     spl = -spl;
@@ -1697,7 +1704,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
     SEXP E_SX_n;
     PROTECT(E_SX_n = allocMatrix(REALSXP, iter*K, nn));
-    double *E_SX_nP = REAL(E_SX_n);
 
 
  
@@ -1866,7 +1872,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
     for (i1=0;i1<n;i1++) {
 	s = XX[i1] * in;
-	if (s<eps) s=eps;
+	if (s<eps1) s=eps1;
 	Psi[i1] = sqrt(s);
 	if (norm>0) {
 	 XX[i1] = 1.0;
@@ -1951,7 +1957,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    for (i2 = 0; i2 < n; i2++)
 		sum1[i2][i1] = 0.0;
  	    for (i2 = 0; i2 < K; i2++)
-		sum2[i1][i2] = (i1==i2 ? eps : 0.0);
+		sum2[i1][i2] = (i1==i2 ? eps1 : 0.0);
 	}
 
 
@@ -2060,7 +2066,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 	    for (i1=0;i1<K;i1++)
 	    {
-		s = pow((eps+e_ssxx_n[i1]),spz);
+		s = pow((eps1+e_ssxx_n[i1]),spz);
 		if (s<lap)
 		{
 		    lapla[j][i1] = lap;
@@ -2266,9 +2272,9 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	{
 	    
 	    Psi[i1] = XX[i1] - in*Psi[i1];
-	    if (Psi[i1]<eps)
+	    if (Psi[i1]<eps1)
 	    {
-		Psi[i1] = eps;
+		Psi[i1] = eps1;
 	    }
 	    
 	}
@@ -2426,7 +2432,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    {
 		if (t<0) t=0.0;
 	    }
-	    REAL(E_SX_n)[(long) (ite*K*nn+i1 + K*j)] = (double) t;
+	    E_SX_tmp[j][ite*K+i1] = (double) t;
 	}
 
 
@@ -2465,7 +2471,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	pFile = fopen (sst,"w");
 	for(i = 0; i < K; i ++) {
 	    for(j = 0; j < nn; j ++)
-	      fprintf(pFile,"%.8f ",E_SX_nP[(long) (i+K*j)]);
+	      fprintf(pFile,"%.8f ",E_SX_tmp[j][i]);
 	    fprintf(pFile,"\n");
 	}
 	fclose (pFile);
@@ -2482,7 +2488,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    for(i = 0; i < K; i ++) {
 		ig=0;
 		for(j = 0; j < nn; j ++) {
-		    s= E_SX_nP[(long) (i+K*j)];
+		    s= E_SX_tmp[j][i];
 		    if (fabs(s)>0.00001){
 			ind[ig] = j;
 			val[ig] = s;
@@ -2555,7 +2561,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	pFile = fopen (sst,"w");
 	for(i = 0; i < K; i ++) {
 	    for(j = 0; j < nn; j ++)
-	      fprintf(pFile,"%.8f ",E_SX_nP[(long) (ite*K*nn+i+K*j)]);
+	      fprintf(pFile,"%.8f ", E_SX_tmp[j][ite*K+i]);
 	    fprintf(pFile,"\n");
 	}
 	fclose (pFile);
@@ -2575,7 +2581,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    for(i = 0; i < K; i ++) {
 	        ig=0;
 		for(j = 0; j < nn; j ++) {
-		    s= E_SX_nP[(long) (ite*K*nn+i+K*j)];
+		    s= E_SX_tmp[j][ite*K+i];
 		    if (fabs(s)>0.00001){
 			ind[ig] = j;
 			val[ig] = s;
@@ -2693,12 +2699,21 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     } // iter
 
 
+    for(j = 0; j < nn; j++)
+      for(i = 0; i < K*iter; i++) {
+	REAL(E_SX_n)[(long) (i + iter*K*j)] = E_SX_tmp[j][i];
+      }
+
+
+
     R_Free (xa );
     R_Free (xind[0]);
     R_Free (xind );
     R_Free (xval[0]);
     R_Free (xval );
 
+    R_Free (E_SX_tmp[0]);
+    R_Free (E_SX_tmp);
  
     R_Free (sum1[0]);
     R_Free (sum1 );
@@ -2910,21 +2925,21 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
 	      fscanf(pFile,"\n");
 	      
 	    } else {
-	    fscanf(pFile,"%d\n",&ig); 
-	    xa[samp]=ig;
-	    for(j = 0; j <  ig; j ++) {
-	      fscanf(pFile,"%d",&hpp);
-	      xind[samp][j]=hpp;
+	      fscanf(pFile,"%d\n",&ig); 
+	      xa[samp]=ig;
+	      for(j = 0; j <  ig; j ++) {
+	        fscanf(pFile,"%d",&hpp);
+	        xind[samp][j]=hpp;
+	      }
+	      fscanf(pFile,"\n");
+	      for(j = 0; j < ig; j ++) {
+	        fscanf(pFile,"%lf",&fs);
+	        xval[samp][j] = fs;
+	      }
+	      fscanf(pFile,"\n");
+	      samp++;
+	      if (samp == nsamp) break;
 	    }
-	    fscanf(pFile,"\n");
-	    for(j = 0; j < ig; j ++) {
-	      fscanf(pFile,"%lf",&fs);
-	      xval[samp][j] = fs;
-	    }
-	    fscanf(pFile,"\n");
-	    samp++;
-	    if (samp == nsamp) break;
-	  }
 
 	}
       if (samp!=nsamp)
