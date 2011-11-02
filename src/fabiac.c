@@ -1756,104 +1756,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
       }
 
 
-    if (inLL < 0) {
-      if (non_negative>0) {
-	
-	for(i = 0; i < K; i ++)
-	  {
-	    La[i]=n;
-	    for(j = 0; j < n; j ++) {
-	      Lind[i][j]= j;
-	      // Lval[i][j] = random*(rand()%100001)/100000.0;
-	      Lval[i][j] = random*fabs(norm_rand());
-	    }
-	  }
-      } else {
-	for(i = 0; i < K; i ++)
-	  {
-	    La[i]=n;
-	    for(j = 0; j < n; j ++) {
-	      Lind[i][j]= j;
-//		if (rand()%2>0) {
-//		    s = 1.0;
-//		}  else {
-//		    s= -1.0;
-//		}
-//		Lval[i][j] = random*s*(rand()%100001)/100000.0;
-	      Lval[i][j] = random*norm_rand();
-	    }
-	  }
-
-      }
-      
-    } else {
-
-      if (non_negative>0) {
-	
-	for(i = 0; i < ninitL; i ++)
-	  {
-	    i2= initL[i]-1;
-	    if ((i2>nn)||(i2<0))
-	      {
-		i2=i;
-	      }
-	    La[i]=xa[i2];
-	    for (ig=0; ig< xa[i2];ig++) {
-	      Lval[i][ig]=xval[i2][ig];
-	      Lind[i][ig]=xind[i2][ig];
-	    }
-	  }
-	for(i = ninitL; i < K; i ++)
-	  {
-	    La[i]=n;
-	    for(j = 0; j < n; j ++) {
-	      Lind[i][j]= j;
-	      // Lval[i][j] = random*(rand()%100001)/100000.0;
-	      Lval[i][j] = random*fabs(norm_rand());
-	    }
-	  }
-	
-      } else {
-	for(i = 0; i < ninitL; i ++)
-	  {
-	    i2= initL[i]-1;
-	    if ((i2>nn)||(i2<0))
-	      {
-		i2=i;
-	      }
-	    La[i]=xa[i2];
-	    for (ig=0; ig< xa[i2];ig++) {
-	      Lval[i][ig]=xval[i2][ig];
-	      Lind[i][ig]=xind[i2][ig];
-	    }
-
-	  }
-	for(i = ninitL; i < K; i ++)
-	  {
-	    La[i]=n;
-	    for(j = 0; j < n; j ++) {
-	      Lind[i][j]= j;
-//		if (rand()%2>0) {
-//		    s = 1.0;
-//		}  else {
-//		    s= -1.0;
-//		}
-//		Lval[i][j] = random*s*(rand()%100001)/100000.0;
-	      Lval[i][j] = random*norm_rand();
-	    }
-	  }
-
-      }
-
-    }
-
-
-
-
- 
   
-
- 
     for (i1=0;i1<n;i1++)
       {
 	XX[i1] = 0.0;
@@ -1870,6 +1773,110 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 
+
+   if (inLL < 0) {
+     if (non_negative>0) {
+       
+       for(i = 0; i < K; i ++)
+	 {
+	   for(i1=0,j = 0; j < n; j ++) {
+	     if (XX[j]>eps) {
+	       
+	       Lind[i][i1]= j;
+	       // Lval[i][j] = random*(rand()%100001)/100000.0;
+	       Lval[i][i1] = random*fabs(norm_rand());
+	       i1++;
+	     }
+	   }
+	   La[i]=i1;
+	   
+	 }
+     } else {
+       for(i = 0; i < K; i ++)
+	 {
+	   for(i1=0,j = 0; j < n; j ++) {
+	     if (XX[j]>eps) {
+	       Lind[i][i1]= j;
+//		if (rand()%2>0) {
+//		    s = 1.0;
+//		}  else {
+//		    s= -1.0;
+//		}
+//		Lval[i][j] = random*s*(rand()%100001)/100000.0;
+	       Lval[i][i1] = random*norm_rand();
+	       i1++;
+	     }
+	   }
+	   La[i]=i1;
+	   
+	 }
+     }
+   } else {
+     
+     if (non_negative>0) {
+       
+       for(i = 0; i < ninitL; i ++)
+	 {
+	   i2= initL[i]-1;
+	   if ((i2>nn)||(i2<0))
+	     {
+	       i2=i;
+	     }
+	   La[i]=xa[i2];
+	   for (ig=0; ig< xa[i2];ig++) {
+	     Lval[i][ig]=xval[i2][ig];
+	     Lind[i][ig]=xind[i2][ig];
+	   }
+	 }
+       for(i = ninitL; i < K; i ++)
+	 {
+	   La[i]=n;
+	   for(j = 0; j < n; j ++) {
+	     Lind[i][j]= j;
+	     // Lval[i][j] = random*(rand()%100001)/100000.0;
+	     Lval[i][j] = random*fabs(norm_rand());
+	   }
+	 }
+       
+     } else {
+       for(i = 0; i < ninitL; i ++)
+	 {
+	   i2= initL[i]-1;
+	   if ((i2>nn)||(i2<0))
+	     {
+	       i2=i;
+	     }
+	   La[i]=xa[i2];
+	   for (ig=0; ig< xa[i2];ig++) {
+	     Lval[i][ig]=xval[i2][ig];
+	     Lind[i][ig]=xind[i2][ig];
+	   }
+	   
+	 }
+       for(i = ninitL; i < K; i ++)
+	 {
+	   La[i]=n;
+	   for(j = 0; j < n; j ++) {
+	     Lind[i][j]= j;
+	     //		if (rand()%2>0) {
+	     //		    s = 1.0;
+	     //		}  else {
+	     //		    s= -1.0;
+	     //		}
+	     //		Lval[i][j] = random*s*(rand()%100001)/100000.0;
+	     Lval[i][j] = random*norm_rand();
+	   }
+	  }
+       
+     }
+     
+   }
+   
+
+
+
+ 
+  
     for (i1=0;i1<n;i1++) {
 	s = XX[i1] * in;
 	if (s<eps) s=eps;
@@ -1880,6 +1887,8 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	 XX[i1] = s;
 	}
     }
+
+
 
 
    if (norm>0) {
