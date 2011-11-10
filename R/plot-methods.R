@@ -59,9 +59,21 @@ setMethod("plot", signature(x="Factorization", y="missing"),
         stop("At least two biclusters are needed for a 2dim plot. Stopped.")
     }
 
-    if (dev.interactive()) {
-      x11()
-    }
+  if (dev.interactive()) {
+
+      if(capabilities("aqua")){
+          quartz()
+      }
+      else{
+          if(capabilities("X11")){
+              x11()
+          }
+          else{
+              stop("No graphical device available for plotting. Stopped.")
+          }
+      }
+
+  }
 
   n <- nrow(LI)
   l <- ncol(ZI)
