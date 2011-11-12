@@ -61,18 +61,7 @@ setMethod("plot", signature(x="Factorization", y="missing"),
 
   if (dev.interactive()) {
 
-      if(capabilities("aqua")){
-          quartz()
-      }
-      else{
-          if(capabilities("X11")){
-              x11()
-          }
-          else{
-              stop("No graphical device available for plotting. Stopped.")
-          }
-      }
-
+      dev.new()
   }
 
   n <- nrow(LI)
