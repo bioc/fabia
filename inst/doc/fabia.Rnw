@@ -3,7 +3,7 @@
 %\VignetteDepends{fabia}
 %\VignettePackage{fabia}
 %\VignetteKeywords{fabia, fabiaData, biclustering, factor analysis, sparse coding, non-negative matrix factorization, latent variables, Laplace distribution, EM algorithm, multivariate analysis}
-%setwd("c:/sepp/work/fabia/fabia_151/fabia/inst/doc")
+%setwd("c:/sepp/work/fabia/fabia_210/fabia/inst/doc")
 %Sweave("fabia.Rnw")
 %tools::texi2dvi("fabia.tex",pdf=TRUE)
 %Stangle("fabia.Rnw")
@@ -4959,7 +4959,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 matrixImagePlot(Y)
-x11()
+dev.new()
 matrixImagePlot(X)
 
 \end{Sinput}
@@ -5074,7 +5074,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 matrixImagePlot(Y)
-x11()
+dev.new()
 matrixImagePlot(X)
 
 \end{Sinput}
@@ -5197,7 +5197,7 @@ Y <- dat[[1]]
 X <- dat[[2]]
 
 matrixImagePlot(Y)
-x11()
+dev.new()
 matrixImagePlot(X)
 
 
@@ -5323,7 +5323,7 @@ Y <- dat[[1]]
 X <- dat[[2]]
 
 matrixImagePlot(Y)
-x11()
+dev.new()
 matrixImagePlot(X)
 
 

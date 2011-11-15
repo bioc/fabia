@@ -129,7 +129,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 matrixImagePlot(Y)
-x11()
+dev.new()
 matrixImagePlot(X)
 
 
@@ -146,7 +146,7 @@ X <- dat[[1]]
 Y <- dat[[2]]
 
 matrixImagePlot(Y)
-x11()
+dev.new()
 matrixImagePlot(X)
 
 }
