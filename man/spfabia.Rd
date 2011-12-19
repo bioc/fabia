@@ -7,7 +7,7 @@
 }
 \usage{
 
-spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0)
+spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE)
 
 }
 \arguments{
@@ -47,6 +47,11 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
     minimal column sum; default = 0.0.} 
   \item{upperB}{upper bound for filtering the inputs columns, the
     maximal column sum; default = 1000.0.} 
+  \item{dorescale}{rescale factors Z to variance 1 and consequently
+    also L; logical; default: FALSE.}
+  \item{doini}{compute the information content of the biclusters and
+    sort the biclusters according to their information content; logical,
+    default: FALSE.}
 }
 \details{
 
@@ -120,6 +125,7 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
 \code{\link{fabiap}},
 \code{\link{spfabia}},
 \code{\link{readSamplesSpfabia}},
+\code{\link{samplesPerFeature}},
 \code{\link{readSpfabiaResult}},
 \code{\link{fabi}},
 \code{\link{fabiasp}},

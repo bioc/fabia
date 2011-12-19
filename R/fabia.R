@@ -1505,6 +1505,14 @@ plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
             stop("The bicluster to plot is missing. Stopped.")
         }
 
+        if (is(r) == "Factorization") {
+            stop("First argument is of the class Factorization but must be the result of thefunction extractBic() (a list). Stopped.")
+        }
+
+
+
+
+
 
         x <- r$X
         if (!is.matrix(x)) {
@@ -2589,8 +2597,6 @@ extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,
 
    devAskNewPage(ask = FALSE)
 
-    return;
-
 }
 
 
@@ -3363,7 +3369,7 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
-spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0){
+spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE){
 	## X - name of the data file
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -3443,7 +3449,16 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
         }
            message("   Lower column sum bound --------- lowerB: ",lowerB)
            message("   Upper column sum bound --------- upperB: ",upperB)
-
+        if (dorescale) {
+           message("   Z and L are rescaled -------- dorescale: TRUE")
+         } else {
+           message("   Z and L are note rescaled --- dorescale: FALSE")
+         }
+        if (doini && dorescale) {
+           message("   Biclusters sorted (information) - doini: TRUE and dorescale: TRUE")
+         } else {
+           message("   Biclusters not sorted (infor.) -- doini: FALSE or dorescale: FALSE")
+         }
 
 
 
@@ -3482,8 +3497,11 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
             return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
         }
 
+
         l=ncol(res$E_SX_n)
         n=nrow(res$L)
+
+        if (dorescale) {
 
         pi=p*iter
 
@@ -3513,6 +3531,13 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
             noL <- t(vz*t(res$L))
         }
 
+        } else {
+            nZ <- res$E_SX_n
+            noL <- res$L
+        }
+
+
+         if (dorescale && doini) {
 
         ini <- matrix(0,l,(pi+1))
         avini <- as.vector(rep(0.0,(pi+1)))
@@ -3552,7 +3577,11 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
             nZ <- nZ[soo$ix,]
 
         }
-
+        } else {
+            ini <- as.matrix(1)
+            avini <- as.vector(1)
+            xavini <- as.vector(1)
+        }
 
 
         return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL,iter,quant,lowerB,upperB),n=n,p1=pi,p2=pi,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
@@ -3580,6 +3609,30 @@ readSamplesSpfabia <- function(X,samples=0,lowerB=0.0,upperB=1000.0){
         }
 
         return(res$X)
+
+
+}
+
+samplesPerFeature <- function(X,samples=0,lowerB=0.0,upperB=1000.0){
+
+        if (missing(X)) {
+            stop("Data file name missing. Stopped.")
+        }
+
+
+	samples <- as.integer(sort.int(as.integer(unique(samples))))
+	lowerB <- as.double(lowerB)
+	upperB <- as.double(upperB)
+
+	res <- .Call("samplesPerFeature",X,samples,lowerB,upperB,PACKAGE="fabia")
+
+        if (is.null(res))
+        {
+            return(list(sL=list(),nsL=0))
+
+        }
+
+        return(res)
 
 
 }
