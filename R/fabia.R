@@ -3452,12 +3452,12 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
         if (dorescale) {
            message("   Z and L are rescaled -------- dorescale: TRUE")
          } else {
-           message("   Z and L are note rescaled --- dorescale: FALSE")
+           message("   Z and L are not rescaled --- dorescale: FALSE")
          }
         if (doini && dorescale) {
-           message("   Biclusters sorted (information) - doini: TRUE and dorescale: TRUE")
+           message("   Biclusters sorted (information) - doini: TRUE")
          } else {
-           message("   Biclusters not sorted (infor.) -- doini: FALSE or dorescale: FALSE")
+           message("   Biclusters not sorted (infor.) -- doini: FALSE")
          }
 
 

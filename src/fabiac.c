@@ -1575,7 +1575,11 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
       inLL = 0;
       
     } else {
-      inLL=-1;
+      if (initL[0]==-2) {
+	inLL=-2;
+      } else {
+	inLL=-1;
+      }
     }
 
     int *La = R_Calloc(K, int); 
@@ -1769,14 +1773,16 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	}
     }
   
-    t = 0.0;
-    for (i1=0;i1<n;i1++)
-      {
-	if (XX[i1] > t) {
-	  t=XX[i1];
-	}
-      }	
-    t=sqrt(t);
+    if (inLL==-2) {
+      t = 0.0;
+      for (i1=0;i1<n;i1++)
+	{
+	  if (XX[i1] > t) {
+	    t=XX[i1];
+	  }
+	}	
+      t=sqrt(t)+eps;
+    }
 
 
 
@@ -1792,7 +1798,11 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	       
 	       Lind[i][i1]= j;
 	       // Lval[i][j] = random*(rand()%100001)/100000.0;
-	       Lval[i][i1] = (sqrt(XX[j])/t)*random*fabs(norm_rand());
+	       if (inLL==-2) {
+		 Lval[i][i1] = (sqrt(XX[j])/t)*random*fabs(norm_rand());
+	       } else {
+		 Lval[i][i1] = random*fabs(norm_rand());
+	       }
 	       i1++;
 	     }
 	   }
@@ -1811,7 +1821,11 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 //		    s= -1.0;
 //		}
 //		Lval[i][j] = random*s*(rand()%100001)/100000.0;
-	       Lval[i][i1] = (sqrt(XX[j])/t)*random*norm_rand();
+	       if (inLL==-2) {
+		 Lval[i][i1] = (sqrt(XX[j])/t)*random*norm_rand();
+	       } else {
+		 Lval[i][i1] = random*norm_rand();
+	       }
 	       i1++;
 	     }
 	   }
