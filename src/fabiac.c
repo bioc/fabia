@@ -482,11 +482,13 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 	}		
 
 	if (i%20==0) {
-	    Rprintf("Cycle: %d\n", i);
+	    Rprintf("Cycle: %d\r", i);
 	    R_CheckUserInterrupt();
 	}
 
     }
+    
+    Rprintf("Cycle: %d\n", (cyc-1));
 
     R_Free (sum1[0]);
     R_Free (sum1 );
@@ -1209,11 +1211,12 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 	if (i%20==0) {
-	    Rprintf("Cycle: %d\n", i);
+	    Rprintf("Cycle: %d\r", i);
 	    R_CheckUserInterrupt();
 	}
     }
 
+    Rprintf("Cycle: %d\n", (cyc-1));
 
     R_Free (sum1[0]);
     R_Free (sum1 );
@@ -1755,9 +1758,6 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
    for (ite=0;ite<iter;ite++) {
 
-      if (iter>1) {
-	Rprintf("**Iteration: %d\n", (ite+1));
-      }
 
 
   
@@ -2344,12 +2344,22 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 //	if (i%20==0) {
-	    Rprintf("Cycle: %d\n", i);
-	    R_CheckUserInterrupt();
+	if (iter>1) {
+	  Rprintf("Iteration: %d || Cycle: %d\r", (ite+1), i);
+	  R_CheckUserInterrupt();
+	} else {
+	  Rprintf("Cycle: %d\r", i);
+	  R_CheckUserInterrupt();
+	}
 //	}
 
     }
 
+    if (iter>1) {
+      Rprintf("Iteration: %d || Cycle: %d\n", (ite+1), (cyc-1));
+    } else {
+      Rprintf("Cycle: %d\n", (cyc-1));
+    }
 
 
     for (i2 = 0; i2 < K; i2++) {

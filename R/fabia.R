@@ -3369,7 +3369,7 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
-spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE){
+spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE,eps=1e-3,eps1=1e-10){
 	## X - name of the data file
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -3452,7 +3452,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
         if (dorescale) {
            message("   Z and L are rescaled -------- dorescale: TRUE")
          } else {
-           message("   Z and L are not rescaled --- dorescale: FALSE")
+           message("   Z and L are not rescaled ---- dorescale: FALSE")
          }
         if (doini && dorescale) {
            message("   Biclusters sorted (information) - doini: TRUE")
@@ -3464,10 +3464,10 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
 
 
-        eps <- as.double(1e-3)
-        eps1 <- as.double(1e-10)
+        eps <- as.double(eps)
+        eps1 <- as.double(eps1)
         init_lapla <-  as.double(1.0)
-        init_psi <-  as.double(0.2)
+        init_psi <-  as.double(0.1)
 
 	samples <- as.integer(sort.int(as.integer(unique(samples))))
 	initL <- as.integer(initL)

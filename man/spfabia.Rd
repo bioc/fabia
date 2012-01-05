@@ -7,7 +7,7 @@
 }
 \usage{
 
-spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE)
+spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE,eps=1e-3,eps1=1e-10)
 
 }
 \arguments{
@@ -52,6 +52,9 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
   \item{doini}{compute the information content of the biclusters and
     sort the biclusters according to their information content; logical,
     default: FALSE.}
+  \item{eps}{lower bound for variational parameter lapla; default: 1e-3.}
+  \item{eps1}{lower bound for divisions to avoid division by zero;
+    default: 1e-10.}
 }
 \details{
 
