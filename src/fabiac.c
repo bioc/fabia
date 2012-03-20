@@ -1404,7 +1404,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     
     double fs;
 
-    double in,s,sgn,t;
+    double in,s,sgn,t=0.0;
 
 
 

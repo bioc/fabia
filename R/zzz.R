@@ -1,7 +1,8 @@
 # Init file for package fabia
 .onLoad <- function(lib, pkg)
 {
-    library.dynam("fabia", pkg, lib)
+
+      library.dynam("fabia", pkg, lib)
 
     if ((.Platform$OS.type == "windows") && (.Platform$GUI ==
         "Rgui") && interactive()) {
