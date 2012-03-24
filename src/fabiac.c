@@ -18,7 +18,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
     if(!isNumeric(xS) || !isMatrix(xS)) {
 	Rprintf("STOP: X not a numeric matrix\n");
-	return NULL;
+	return R_NilValue;
     }
     
     SEXP dimAttr;
@@ -31,7 +31,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
     if(!isNumeric(LS) || !isMatrix(LS)) {
 	Rprintf("STOP: L not a numeric matrix\n");
-	return NULL;
+	return R_NilValue;
     }
 
     dimAttr = getAttrib(LS, R_DimSymbol);
@@ -39,7 +39,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
     if (n != ((int) INTEGER(dimAttr)[0]) )
     {
 	Rprintf("STOP: Dim1 X: %d BUT Dim1 L %d\n",n,((int) INTEGER(dimAttr)[0]));
-	return NULL;
+	return R_NilValue;
     }
 
     int K = INTEGER(dimAttr)[1];
@@ -57,7 +57,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
     if(!isNumeric(laplaS) || !isMatrix(laplaS)) {
 	Rprintf("STOP: lapla not a numeric matrix\n");
-	return NULL;
+	return R_NilValue;
     }
     
     dimAttr = getAttrib(laplaS, R_DimSymbol);
@@ -65,13 +65,13 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
     if (nn !=  ((int) INTEGER(dimAttr)[0]))
     {
 	Rprintf("STOP: Dim2 X: %d BUT Dim1 lapla %d\n",nn,((int) INTEGER(dimAttr)[0]));
-	return NULL;
+	return R_NilValue;
     }
     
     if (K != ((int) INTEGER(dimAttr)[1]))
     {
 	Rprintf("STOP: Dim2 L: %d BUT Dim2 lapla %d\n",K,((int) INTEGER(dimAttr)[1]));
-	return NULL;
+	return R_NilValue;
     }
 
 
@@ -91,13 +91,13 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
     if(!isNumeric(PsiS) || isMatrix(PsiS) || isLogical(PsiS))
     {
 	Rprintf("STOP: Psi not a numeric vector\n");
-	return NULL;
+	return R_NilValue;
     }
 
     if (n != length(PsiS))
     {
 	Rprintf("STOP: Dim1 X: %d BUT Dim1 Psi %d\n",n,length(PsiS));
-	return NULL;
+	return R_NilValue;
 
     }
 
@@ -667,7 +667,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
     if(!isNumeric(xS) || !isMatrix(xS)) {
 	Rprintf("STOP: X not a numeric matrix\n");
-	return NULL;
+	return R_NilValue;
     }
 
     SEXP dimAttr;
@@ -682,7 +682,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
     if(!isNumeric(LS) || !isMatrix(LS)) {
 	Rprintf("STOP: L not a numeric matrix\n");
-	return NULL;
+	return R_NilValue;
     }
 
     dimAttr = getAttrib(LS, R_DimSymbol);
@@ -690,7 +690,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
     if (n != ((int) INTEGER(dimAttr)[0]) )
     {
 	Rprintf("STOP: Dim1 X: %d BUT Dim1 L %d\n",n,((int) INTEGER(dimAttr)[0]));
-	return NULL;
+	return R_NilValue;
     }
 
     int K = INTEGER(dimAttr)[1];
@@ -709,7 +709,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
     if(!isNumeric(laplaS) || !isMatrix(laplaS)) {
 	Rprintf("STOP: lapla not a numeric matrix\n");
-	return NULL;
+	return R_NilValue;
     }
 
     dimAttr = getAttrib(laplaS, R_DimSymbol);
@@ -717,13 +717,13 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
     if (nn !=  ((int) INTEGER(dimAttr)[0]))
     {
 	Rprintf("STOP: Dim2 X: %d BUT Dim1 lapla %d\n",nn,((int) INTEGER(dimAttr)[0]));
-	return NULL;
+	return R_NilValue;
     }
     
     if (K != ((int) INTEGER(dimAttr)[1]))
     {
 	Rprintf("STOP: Dim2 L: %d BUT Dim2 lapla %d\n",K,((int) INTEGER(dimAttr)[1]));
-	return NULL;
+	return R_NilValue;
     }
 
 
@@ -743,13 +743,13 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
     if(!isNumeric(PsiS) || isMatrix(PsiS) || isLogical(PsiS))
     {
 	Rprintf("STOP: Psi not a numeric vector\n");
-	return NULL;
+	return R_NilValue;
     }
 
     if (n != length(PsiS))
     {
 	Rprintf("STOP: Dim1 X: %d BUT Dim1 Psi %d\n",n,length(PsiS));
-	return NULL;
+	return R_NilValue;
 
     }
 
@@ -1462,8 +1462,8 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     pFile = fopen (sst,"r");
 
     if (!(pFile>0)) {
-	Rprintf("File >%s< not found! Stop.\n", file_name);
-	return NULL;
+	Rprintf("File >%s< not found! Stop.\n", sst);
+	return R_NilValue;
     }
 
     fscanf(pFile,"%d\n",&nn);  
@@ -1471,7 +1471,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     if (!(nn>0)) {
       fclose (pFile);
       Rprintf("Wrong file format (sparse file format required)! Stop.\n");
-      return NULL;
+      return R_NilValue;
     }
 
     fscanf(pFile,"%d\n",&n);  
@@ -1479,7 +1479,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     if (!(n>0)) {
       fclose (pFile);
       Rprintf("Wrong file format (sparse file format required)! Stop.\n");
-      return NULL;
+      return R_NilValue;
     }
 
     if (samp<0) {
@@ -2880,8 +2880,8 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
     pFile = fopen (sst,"r");
 
     if (!(pFile>0)) {
-	Rprintf("File >%s< not found! Stop.\n", file_name);
-	return NULL;
+	Rprintf("File >%s< not found! Stop.\n", sst);
+	return R_NilValue;
     }
 
     fscanf(pFile,"%d\n",&nn);  
@@ -2889,7 +2889,7 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
     if (!(nn>0)) {
       fclose (pFile);
       Rprintf("Wrong file format (sparse file format required)! Stop.\n");
-      return NULL;
+      return R_NilValue;
     }
 
     fscanf(pFile,"%d\n",&n);  
@@ -2897,7 +2897,7 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
     if (!(n>0)) {
       fclose (pFile);
       Rprintf("Wrong file format (sparse file format required)! Stop.\n");
-      return NULL;
+      return R_NilValue;
     }
 
     SEXP xLL,PhiA;
@@ -3114,8 +3114,8 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
     pFile = fopen (sst,"r");
 
     if (!(pFile>0)) {
-	Rprintf("File >%s< not found! Stop.\n", file_name);
-	return NULL;
+	Rprintf("File >%s< not found! Stop.\n", sst);
+	return R_NilValue;
     }
 
     fscanf(pFile,"%d\n",&nn);  
@@ -3123,7 +3123,7 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
     if (!(nn>0)) {
       fclose (pFile);
       Rprintf("Wrong file format (sparse file format required)! Stop.\n");
-      return NULL;
+      return R_NilValue;
     }
 
     fscanf(pFile,"%d\n",&n);  
@@ -3131,7 +3131,7 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
     if (!(n>0)) {
       fclose (pFile);
       Rprintf("Wrong file format (sparse file format required)! Stop.\n");
-      return NULL;
+      return R_NilValue;
     }
 
     if (samp<0) {
@@ -3335,23 +3335,23 @@ SEXP readSpfabicResult(SEXP file_nameS) {
 
      if (!(pFile>0)) {
        fclose (pFile);
-       Rprintf("File >%s_res_L.txt< not found! Stop.\n", file_name);
-       return NULL;
+       Rprintf("File >%s< not found! Stop.\n", sst);
+       return R_NilValue;
     }
 
     fscanf(pFile,"%d\n",&K); 
     if (!(K>0)) {
        fclose (pFile);
-       Rprintf("Wrong file format  >%s_res_L.txt< (K) (sparse file format required)! Stop.\n", file_name);
-       return NULL;
+       Rprintf("Wrong file format  >%s< (K) (sparse file format required)! Stop.\n", sst);
+       return R_NilValue;
     }
 
 
     fscanf(pFile,"%d\n",&n); 
      if (!(n>0)) {
        fclose (pFile);
-       Rprintf("Wrong file format  >%s_res_L.txt< (n) (sparse file format required)! Stop.\n", file_name);
-       return NULL;
+       Rprintf("Wrong file format  >%s< (n) (sparse file format required)! Stop.\n", sst);
+       return R_NilValue;
     }
    
     int *La = R_Calloc(K, int); 
@@ -3417,14 +3417,14 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     fscanf(pFile,"%d\n",&ini); 
     if (ini!=K) {
       fclose (pFile);
-      Rprintf("K in >%s_res_Z.txt< is %d whereas K in >%s_res_L.txt< is %d! Stop.\n", file_name,ini,file_name,K);
-      return NULL;
+      Rprintf("K in >%s< is %d whereas K in >%s_res_L.txt< is %d! Stop.\n", sst,ini,file_name,K);
+      return R_NilValue;
     }
     fscanf(pFile,"%d\n",&nn);
     if (!(nn>0)) {
       fclose (pFile);
-      Rprintf("Wrong file format  >%s_res_Z.txt< (sparse file format required)! Stop.\n", file_name);
-      return NULL;
+      Rprintf("Wrong file format  >%s< (sparse file format required)! Stop.\n", sst);
+      return R_NilValue;
     }
     fclose (pFile);
 
