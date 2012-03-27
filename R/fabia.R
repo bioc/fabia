@@ -3647,6 +3647,12 @@ readSpfabiaResult <- function(X){
 
 	res <- .Call("readSpfabicResult",X,PACKAGE="fabia")
 
+        if (is.null(res))
+        {
+            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+
+        }
+
         l=ncol(res$E_SX_n)
         n=nrow(res$L)
 
