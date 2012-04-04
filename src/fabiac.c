@@ -1486,23 +1486,14 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
       xa = (int *) R_Calloc(nn, int); 
       xind = (int **) R_Calloc(nn, int *);
-      xind[0] = R_Calloc((long) nn*n, int);
-      for(i=0; i < nn ; i++)
-	{
-	  xind[i] =  xind[0] + i*n;
-	}
       xval = (double **) R_Calloc(nn, double *);
-      xval[0] = R_Calloc((long) nn*n, double);
-      for(i=0; i < nn; i++)
-	{
-	  xval[i] = xval[0] + i*n;
-	}
-
     
       for(i = 0; i < nn; i ++)
 	{
 	  fscanf(pFile,"%d\n",&ig); 
 	  xa[i]=ig;
+	  xind[i] = R_Calloc((ig+1), int);
+	  xval[i] = R_Calloc((ig+1), double);
 	  for(j = 0; j <  ig; j ++) {
 	    fscanf(pFile,"%d",&hpp);
 	    xind[i][j]=hpp;
@@ -1518,17 +1509,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     } else {
       xa = (int *) R_Calloc(nsamp, int); 
       xind = (int **) R_Calloc(nsamp, int *);
-      xind[0] = R_Calloc((long) nsamp*n, int);
-      for(i=0; i < nsamp ; i++)
-	{
-	  xind[i] =  xind[0] + i*n;
-	}
       xval = (double **) R_Calloc(nsamp, double *);
-      xval[0] = R_Calloc((long) nsamp*n, double);
-      for(i=0; i < nsamp; i++)
-	{
-	  xval[i] = xval[0] + i*n;
-	}
 
       for(i = 0; i < nn; i ++)
 	{
@@ -1547,6 +1528,8 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    } else {
 	    fscanf(pFile,"%d\n",&ig); 
 	    xa[samp]=ig;
+	    xind[samp] = R_Calloc((ig+1), int);
+	    xval[samp] = R_Calloc((ig+1), double);
 	    for(j = 0; j <  ig; j ++) {
 	      fscanf(pFile,"%d",&hpp);
 	      xind[samp][j]=hpp;
