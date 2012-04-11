@@ -1451,6 +1451,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
       samp=-1;
     }
 
+    GetRNGstate();
 
     n=0;
     nn=0;
@@ -2798,6 +2799,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     R_Free (lapla[0]);
     R_Free (lapla );
 
+    PutRNGstate();
 
     SEXP namesRET;
     PROTECT(namesRET = allocVector(STRSXP, 4));
