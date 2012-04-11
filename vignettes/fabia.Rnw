@@ -2937,19 +2937,20 @@ C implementation of \texttt{spfabia}.
 
   \begin{itemize}
 
-  \item first line: numer of columns (the samples).
+  \item first line: numer of rows (the samples).
 
-  \item second line: number of rows (the features).
+  \item second line: number of columns (the features).
 
-  \item following lines: for each sample (column) three lines with
+  \item following lines: for each sample (row) three lines with
 
     \begin{enumerate}
 
     \item number of nonzero row elements
 
-    \item indices of the nonzero row elements
+    \item indices of the nonzero row elements (ATTENTION: starts with 0!!)
 
-    \item values of the nonzero row elements
+    \item values of the nonzero row elements (ATTENTION: floats with
+  decimal point like 1.0 !!)
 
     \end{enumerate}
 

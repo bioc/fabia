@@ -26,15 +26,16 @@ readSamplesSpfabia(X,samples=0,lowerB=0.0,upperB=1000.0)
   directly scanned by the C-code and must be in sparse matrix format.
 
   Sparse matrix format:
-  *first line: numer of columns (the samples).
-  *second line: number of rows (the features).
-  *following lines: for each sample (column) three lines with
+  *first line: numer of rows (the samples).
+  *second line: number of columns (the features).
+  *following lines: for each sample (row) three lines with
 
   I) number of nonzero row elements
 
-  II) indices of the nonzero row elements
+  II) indices of the nonzero row elements (ATTENTION: starts with 0!!)
 
-  III) values of the nonzero row elements
+  III) values of the nonzero row elements (ATTENTION: floats with
+  decimal point like 1.0 !!)
 
 
   The code is implemented in C.

@@ -63,15 +63,16 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
   directly scanned by the C-code and must be in sparse matrix format.
 
   Sparse matrix format:
-  *first line: numer of columns (the samples).
-  *second line: number of rows (the features).
-  *following lines: for each sample (column) three lines with
+  *first line: numer of rows (the samples).
+  *second line: number of columns (the features).
+  *following lines: for each sample (row) three lines with
 
   I) number of nonzero row elements
 
-  II) indices of the nonzero row elements
+  II) indices of the nonzero row elements (ATTENTION: starts with 0!!)
 
-  III) values of the nonzero row elements
+  III) values of the nonzero row elements (ATTENTION: floats with
+  decimal point like 1.0 !!)
 
   
   Biclusters are found by sparse factor analysis where \emph{both} the factors
@@ -165,21 +166,21 @@ spfabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_fi
 samples <- 20
 features <- 200
 sparseness <- 0.9
-write(samples, file = "sparseFarmsTest.txt",ncolumns = features,append = FALSE, sep = " ")
-write(features, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
+write(samples, file = "sparseFabiaTest.txt",ncolumns = features,append = FALSE, sep = " ")
+write(features, file = "sparseFabiaTest.txt",ncolumns = features,append = TRUE, sep = " ")
 for (i in 1:samples)
 {
   ind <- which(runif(features)>sparseness)-1
   num <- length(ind)
   val <- abs(rnorm(num))
-  write(num, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
-  write(ind, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
-  write(val, file = "sparseFarmsTest.txt",ncolumns = features,append = TRUE, sep = " ")
+  write(num, file = "sparseFabiaTest.txt",ncolumns = features,append = TRUE, sep = " ")
+  write(ind, file = "sparseFabiaTest.txt",ncolumns = features,append = TRUE, sep = " ")
+  write(val, file = "sparseFabiaTest.txt",ncolumns = features,append = TRUE, sep = " ")
 }
 
-res <- spfabia("sparseFarmsTest",p=3,alpha=0.03,cyc=50,non_negative=1,write_file=0,norm=0)
+res <- spfabia("sparseFabiaTest",p=3,alpha=0.03,cyc=50,non_negative=1,write_file=0,norm=0)
 
-unlink("sparseFarmsTest.txt")
+unlink("sparseFabiaTest.txt")
 
 plot(res,dim=c(1,2))
 plot(res,dim=c(1,3))
