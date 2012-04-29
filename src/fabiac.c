@@ -211,12 +211,21 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
 	for (i1=0;i1<K;i1++)
 	{
-	    for (i3=0;i3<K;i3++)
+	  s = 0.0;
+	  for (i2 = 0; i2 < n; i2++)
+	    s += LPsi[i2][i1]*L[i2][i1];
+	  LPsiL[i1][i1] = s;
+
+	}
+
+	for (i1=0;i1<K-1;i1++)
+	{
+	    for (i3=i1+1;i3<K;i3++)
 	    {
 		s = 0.0;
 		for (i2 = 0; i2 < n; i2++)
 		    s += LPsi[i2][i1]*L[i2][i3];
-		LPsiL[i1][i3] = s;
+		LPsiL[i1][i3] = LPsiL[i3][i1] = s;
 	    }
 	}
 
@@ -273,24 +282,32 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 		}
 
 
+	    for (i3 = 0; i3 < K; i3++) {
+	      t=0.0;
+	      for (i2 = 0; i2 < n; i2++){
+		t+= LPsi[i2][i3]*x[i2+j*n];// x[i2][j]=x[i2+j*n]
+	      }
+	      e_ssxx_n[i3]=t;
+	    }
+
+
+
 	    for (i1=0;i1<K;i1++)
 	    {
 		t=0.0;
-		for (i2 = 0; i2 < n; i2++){
-		    s=0.0;
-		    for (i3 = 0; i3 < K; i3++)
-			s +=  ichol[i1][i3]*LPsi[i2][i3];
-		    t +=  s*x[i2+j*n];
-// x[i2][j]=x[i2+j*n]
-		}
-		if (non_negative>0)
+		for (i3 = 0; i3 < K; i3++)
+		  t +=  ichol[i1][i3]*e_ssxx_n[i3];
+		if ((t<eps1) && (non_negative>0))
 		{
-		    if (t<0) t=0.0;
-		}
-		e_sx_n[i1] = t;
-		for (i2 = 0; i2 < n; i2++)
+		    t=0.0;
+		    e_sx_n[i1] = 0.0;
+		} else {
+		  e_sx_n[i1] = t;
+		  for (i2 = 0; i2 < n; i2++)
 		    sum1[i2][i1] += x[i2+j*n]*t;
+		}
 	    }
+
 
 
 
@@ -498,7 +515,6 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
     R_Free (XX );
     R_Free (e_sx_n );
-    R_Free (e_ssxx_n );
 
 
     for (i1=0;i1<K;i1++)
@@ -508,16 +524,26 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
     }
 
 
-    for (i1=0;i1<K;i1++)
-    {
-	for (i3=0;i3<K;i3++)
+	for (i1=0;i1<K;i1++)
 	{
-	    s = 0.0;
-	    for (i2 = 0; i2 < n; i2++)
-		s += LPsi[i2][i1]*L[i2][i3];
-	    LPsiL[i1][i3] = s;
+	  s = 0.0;
+	  for (i2 = 0; i2 < n; i2++)
+	    s += LPsi[i2][i1]*L[i2][i1];
+	  LPsiL[i1][i1] = s;
+
 	}
-    }
+
+	for (i1=0;i1<K-1;i1++)
+	{
+	    for (i3=i1+1;i3<K;i3++)
+	    {
+		s = 0.0;
+		for (i2 = 0; i2 < n; i2++)
+		    s += LPsi[i2][i1]*L[i2][i3];
+		LPsiL[i1][i3] = LPsiL[i3][i1] = s;
+	    }
+	}
+
 
 
 
@@ -565,26 +591,32 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 	    }
 
 
-	for (i1=0;i1<K;i1++)
-	{
-	    t=0.0;
-	    for (i2 = 0; i2 < n; i2++){
-		s=0.0;
-		for (i3 = 0; i3 < K; i3++)
-		    s +=  ichol[i1][i3]*LPsi[i2][i3];
-		t +=  s*x[i2+j*n];
+	    for (i3 = 0; i3 < K; i3++) {
+	      t=0.0;
+	      for (i2 = 0; i2 < n; i2++){
+		t+= LPsi[i2][i3]*x[i2+j*n];// x[i2][j]=x[i2+j*n]
+	      }
+	      e_ssxx_n[i3]=t;
 	    }
-	    if (non_negative>0)
+
+	    for (i1=0;i1<K;i1++)
 	    {
-		if (t<0) t=0.0;
+		t=0.0;
+		for (i3 = 0; i3 < K; i3++)
+		  t +=  ichol[i1][i3]*e_ssxx_n[i3];
+		if ((t<eps1) && (non_negative>0))
+		{
+		    t=0.0;
+		}
+		REAL(E_SX_n)[i1 + K*j] = (double) t;
 	    }
-	    REAL(E_SX_n)[i1 + K*j] = (double) t;
-	}
+
 
 
     }
 
 
+    R_Free (e_ssxx_n );
 
     R_Free (ichol[0]);
     R_Free (ichol );
@@ -662,7 +694,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
     int i,j,i1,i2,i3,zz,ende,h1;
 
-    double in,s,sgn,a,b,c,t,alphap,k2,seps;
+    double in,s,sgn,a,b,c,t,alphap,k2,seps,eps1=1e-10;
 
 
     if(!isNumeric(xS) || !isMatrix(xS)) {
@@ -861,14 +893,24 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 	for (i1=0;i1<K;i1++)
 	{
-	    for (i3=0;i3<K;i3++)
+	  s = 0.0;
+	  for (i2 = 0; i2 < n; i2++)
+	    s += LPsi[i2][i1]*L[i2][i1];
+	  LPsiL[i1][i1] = s;
+
+	}
+
+	for (i1=0;i1<K-1;i1++)
+	{
+	    for (i3=i1+1;i3<K;i3++)
 	    {
 		s = 0.0;
 		for (i2 = 0; i2 < n; i2++)
 		    s += LPsi[i2][i1]*L[i2][i3];
-		LPsiL[i1][i3] = s;
+		LPsiL[i1][i3] = LPsiL[i3][i1] = s;
 	    }
 	}
+
 
 
 	for (i1=0;i1<K;i1++)
@@ -923,22 +965,28 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
+	    for (i3 = 0; i3 < K; i3++) {
+	      t=0.0;
+	      for (i2 = 0; i2 < n; i2++){
+		t+= LPsi[i2][i3]*x[i2+j*n];// x[i2][j]=x[i2+j*n]
+	      }
+	      e_ssxx_n[i3]=t;
+	    }
+
 	    for (i1=0;i1<K;i1++)
 	    {
 		t=0.0;
-		for (i2 = 0; i2 < n; i2++){
-		    s=0.0;
-		    for (i3 = 0; i3 < K; i3++)
-			s +=  ichol[i1][i3]*LPsi[i2][i3];
-		    t +=  s*x[i2+j*n];
-		}
-		if (non_negative>0)
+		for (i3 = 0; i3 < K; i3++)
+		  t +=  ichol[i1][i3]*e_ssxx_n[i3];
+		if ((t<eps1) && (non_negative>0))
 		{
-		    if (t<0) t=0.0;
-		}
-		e_sx_n[i1] = t;
-		for (i2 = 0; i2 < n; i2++)
+		    t=0.0;
+		    e_sx_n[i1] = 0.0;
+		} else {
+		  e_sx_n[i1] = t;
+		  for (i2 = 0; i2 < n; i2++)
 		    sum1[i2][i1] += x[i2+j*n]*t;
+		}
 	    }
 
 
@@ -1226,7 +1274,6 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
     R_Free (XX );
     R_Free (e_sx_n );
-    R_Free (e_ssxx_n );
     R_Free (v );
     R_Free (w );
     R_Free (r_es_x );
@@ -1239,16 +1286,26 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
     }
 
 
-    for (i1=0;i1<K;i1++)
-    {
-	for (i3=0;i3<K;i3++)
+	for (i1=0;i1<K;i1++)
 	{
-	    s = 0.0;
-	    for (i2 = 0; i2 < n; i2++)
-		s += LPsi[i2][i1]*L[i2][i3];
-	    LPsiL[i1][i3] = s;
+	  s = 0.0;
+	  for (i2 = 0; i2 < n; i2++)
+	    s += LPsi[i2][i1]*L[i2][i1];
+	  LPsiL[i1][i1] = s;
+
 	}
-    }
+
+	for (i1=0;i1<K-1;i1++)
+	{
+	    for (i3=i1+1;i3<K;i3++)
+	    {
+		s = 0.0;
+		for (i2 = 0; i2 < n; i2++)
+		    s += LPsi[i2][i1]*L[i2][i3];
+		LPsiL[i1][i3] = LPsiL[i3][i1] = s;
+	    }
+	}
+
 
 
 
@@ -1295,25 +1352,31 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
-	for (i1=0;i1<K;i1++)
-	{
-	    t=0.0;
-	    for (i2 = 0; i2 < n; i2++){
-		s=0.0;
-		for (i3 = 0; i3 < K; i3++)
-		    s +=  ichol[i1][i3]*LPsi[i2][i3];
-		t +=  s*x[i2+j*n];
+
+	    for (i3 = 0; i3 < K; i3++) {
+	      t=0.0;
+	      for (i2 = 0; i2 < n; i2++){
+		t+= LPsi[i2][i3]*x[i2+j*n];// x[i2][j]=x[i2+j*n]
+	      }
+	      e_ssxx_n[i3]=t;
 	    }
-	    if (non_negative>0)
+
+	    for (i1=0;i1<K;i1++)
 	    {
-		if (t<0) t=0.0;
+		t=0.0;
+		for (i3 = 0; i3 < K; i3++)
+		  t +=  ichol[i1][i3]*e_ssxx_n[i3];
+		if ((t<eps1) && (non_negative>0))
+		{
+		    t=0.0;
+		}
+		REAL(E_SX_n)[i1 + K*j] = (double) t;
 	    }
-	    REAL(E_SX_n)[i1 + K*j] = (double) t;
-	}
 
 
     }
 
+    R_Free (e_ssxx_n );
 
     R_Free (ichol[0]);
     R_Free (ichol );
@@ -1938,33 +2001,53 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
  
-
 	for (i2=0;i2<K;i2++)
 	{
-	    for (i3=0;i3<K;i3++)
-	    {
-		s = 0.0; 
-		ig = 0; 
-		jg = 0;
-		while ((ig < La[i3]) && (jg < LPsia[i2])) {
-		    if (Lind[i3][ig] == LPsiind[i2][jg]) {
-			s += Lval[i3][ig] * LPsival[i2][jg]; 
-			ig++;
-			jg++;
-		    } else {
-			if (Lind[i3][ig] < LPsiind[i2][jg]) {
-			    ig++; 
-			} else {
-			    if (Lind[i3][ig] > LPsiind[i2][jg]) {
-				jg++;
-			    }
-			}
-		    }
-		}
-		LPsiL[i2][i3] = s;
-	    }
+	  s = 0.0;  
+	  for (ig=0;ig < La[i2];ig++) {
+	    s += Lval[i2][ig] * LPsival[i2][ig];
+	  }
+	  LPsiL[i2][i2] = s;
 	}
 
+	for (i2=0;i2<K-1;i2++)
+	{
+	    for (i3=i2+1;i3<K;i3++)
+	    {
+	      s = 0.0; 
+	      ig = 0; 
+	      jg = 0;
+	      while ((ig < La[i3]) && (jg < LPsia[i2])) {
+		
+		if (Lind[i3][ig] < LPsiind[i2][jg]) {
+		  ig++; 
+		  while ((ig < La[i3]) && (Lind[i3][ig] < LPsiind[i2][jg])) {
+		    ig++; 
+		  }
+		  if (ig >= La[i3]) break;
+		}
+		
+		if (Lind[i3][ig] > LPsiind[i2][jg]) {
+		  jg++; 
+		  while ((jg < LPsia[i2]) && (Lind[i3][ig] > LPsiind[i2][jg])) {
+		    jg++; 
+		  }
+		  if (jg >= LPsia[i2]) break;
+		}
+
+		if (Lind[i3][ig] == LPsiind[i2][jg]) {
+		  s += Lval[i3][ig] * LPsival[i2][jg]; 
+		  ig++;
+		  jg++;
+		}
+
+	      } 
+
+	      LPsiL[i2][i3] = LPsiL[i3][i2] = s;
+
+	    }
+	}
+	    
 
 
 	for (i1=0;i1<K;i1++)
@@ -2026,41 +2109,55 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
  
+	    for (i3 = 0; i3 < K; i3++)
+	      {
+		s=0.0;
+		ig = 0; 
+		jg = 0;
+		while ((ig < xa[j]) && (jg < LPsia[i3])) {
+
+		  if (xind[j][ig] < LPsiind[i3][jg]) {
+		    ig++;
+		    while ((ig < xa[j]) && (xind[j][ig] < LPsiind[i3][jg])) {
+		      ig++; 
+		    }
+		    if (ig >= xa[j]) break;
+		  }
+		  if (xind[j][ig] > LPsiind[i3][jg]) {
+		    jg++;
+		    while ((jg < LPsia[i3]) && (xind[j][ig] > LPsiind[i3][jg])) {
+		      jg++;
+		    }
+		    if (jg >= LPsia[i3]) break;
+		  }
+		  if (xind[j][ig] == LPsiind[i3][jg]) {
+		    s += xval[j][ig] * LPsival[i3][jg]; 
+		    ig++;
+		    jg++;
+		  } 
+		}
+		e_ssxx_n[i3]= s;
+	      }
+
 
 	    for (i1=0;i1<K;i1++)
 	    {
 		
 		t=0.0;
+
 		for (i3 = 0; i3 < K; i3++)
+		  {
+		    t +=  e_ssxx_n[i3]*ichol[i1][i3];
+		  }
+		if ((t<eps1) && (non_negative>0))
 		{
-		    s=0.0;
-		    ig = 0; 
-		    jg = 0;
-		    while ((ig < xa[j]) && (jg < LPsia[i3])) {
-			if (xind[j][ig] == LPsiind[i3][jg]) {
-			    s += xval[j][ig] * LPsival[i3][jg]; 
-			    ig++;
-			    jg++;
-			} else {
-			    if (xind[j][ig] < LPsiind[i3][jg]) {
-				ig++; 
-			    } else {
-				if (xind[j][ig] > LPsiind[i3][jg]) {
-				    jg++;
-				}
-			    }
-			}
-		    }
-		    
-		    t += s*ichol[i1][i3];
-		}
-		if (non_negative>0)
-		{
-		    if (t<0) t=0.0;
-		}
-		e_sx_n[i1] = t;
-		for (ig=0; ig< xa[j];ig++) {
+		    t=0.0;
+		    e_sx_n[i1] = 0.0;
+		} else {
+		  e_sx_n[i1] = t;
+		  for (ig=0; ig< xa[j];ig++) {
 		    sum1[xind[j][ig]][i1] += xval[j][ig]*t;
+		  }
 		}
 	    }
 
@@ -2356,31 +2453,53 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 
+ 
     for (i2=0;i2<K;i2++)
-    {
-	for (i3=0;i3<K;i3++)
-	{
+      {
+	s = 0.0;  
+	for (ig=0;ig < La[i2];ig++) {
+	  s += Lval[i2][ig] * LPsival[i2][ig];
+	}
+	LPsiL[i2][i2] = s;
+      }
+    
+    for (i2=0;i2<K-1;i2++)
+      {
+	for (i3=i2+1;i3<K;i3++)
+	  {
 	    s = 0.0; 
 	    ig = 0; 
 	    jg = 0;
 	    while ((ig < La[i3]) && (jg < LPsia[i2])) {
-		if (Lind[i3][ig] == LPsiind[i2][jg]) {
-		    s += Lval[i3][ig] * LPsival[i2][jg]; 
-		    ig++;
-		    jg++;
-		} else {
-		    if (Lind[i3][ig] < LPsiind[i2][jg]) {
-			ig++; 
-		    } else {
-			if (Lind[i3][ig] > LPsiind[i2][jg]) {
-			    jg++;
-			}
-		    }
+	      
+	      if (Lind[i3][ig] < LPsiind[i2][jg]) {
+		ig++; 
+		while ((ig < La[i3]) && (Lind[i3][ig] < LPsiind[i2][jg])) {
+		  ig++; 
 		}
-	    }
-	    LPsiL[i2][i3] = s;
-	}
-    }
+		if (ig >= La[i3]) break;
+	      }
+	      
+	      if (Lind[i3][ig] > LPsiind[i2][jg]) {
+		jg++; 
+		while ((jg < LPsia[i2]) && (Lind[i3][ig] > LPsiind[i2][jg])) {
+		  jg++; 
+		}
+		if (jg >= LPsia[i2]) break;
+	      }
+	      
+	      if (Lind[i3][ig] == LPsiind[i2][jg]) {
+		s += Lval[i3][ig] * LPsival[i2][jg]; 
+		ig++;
+		jg++;
+	      }
+	      
+	    } 
+	    
+	    LPsiL[i2][i3] = LPsiL[i3][i2] = s;
+
+	  }
+      }
 
 
 
@@ -2426,37 +2545,51 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
 
+
+	for (i3 = 0; i3 < K; i3++)
+	  {
+	    s=0.0;
+	    ig = 0; 
+	    jg = 0;
+	    while ((ig < xa[j]) && (jg < LPsia[i3])) {
+	      
+	      if (xind[j][ig] < LPsiind[i3][jg]) {
+		ig++;
+		while ((ig < xa[j]) && (xind[j][ig] < LPsiind[i3][jg])) {
+		  ig++; 
+		}
+		if (ig >= xa[j]) break;
+	      }
+	      if (xind[j][ig] > LPsiind[i3][jg]) {
+		jg++;
+		while ((jg < LPsia[i3]) && (xind[j][ig] > LPsiind[i3][jg])) {
+		  jg++;
+		}
+		if (jg >= LPsia[i3]) break;
+	      }
+	      if (xind[j][ig] == LPsiind[i3][jg]) {
+		s += xval[j][ig] * LPsival[i3][jg]; 
+		ig++;
+		jg++;
+	      } 
+	    }
+	    e_ssxx_n[i3]= s;
+	  }
+	
+
 	for (i1=0;i1<K;i1++)
 	{
 	    
 	    t=0.0;
 	    for (i3 = 0; i3 < K; i3++)
 	    {
-		s=0.0;
-		ig = 0; 
-		jg = 0;
-		while ((ig < xa[j]) && (jg < LPsia[i3])) {
-		    if (xind[j][ig] == LPsiind[i3][jg]) {
-			s += xval[j][ig] * LPsival[i3][jg]; 
-			ig++;
-			jg++;
-		    } else {
-			if (xind[j][ig] < LPsiind[i3][jg]) {
-			    ig++; 
-			} else {
-			    if (xind[j][ig] > LPsiind[i3][jg]) {
-				jg++;
-			    }
-			}
-		    }
-		}
-		
-		t += s*ichol[i1][i3];
+		t += e_ssxx_n[i3]*ichol[i1][i3];
 	    }
-	    if (non_negative>0)
-	    {
-		if (t<0) t=0.0;
-	    }
+	    if ((t<eps1) && (non_negative>0))
+	      {
+		t=0.0;
+	      }
+
 	    E_SX_tmp[j][ite*K+i1] = (double) t;
 	}
 
