@@ -1463,7 +1463,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
     int hpp,ig,jg,samp,inLL;
 
-    int  i,j,i1,i2,i3,i4,n,nn,ite,nquant;
+    int  i,j,i1,i2,i3,i4,n,nn,ite,nquant,la1,la2;
     
     double fs;
 
@@ -2017,29 +2017,35 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	      s = 0.0; 
 	      ig = 0; 
 	      jg = 0;
-	      while ((ig < La[i3]) && (jg < LPsia[i2])) {
+	      la1= La[i3];
+	      la2= LPsia[i2];
+	      while ((ig < la1) && (jg < la2)) {
 		
 		if (Lind[i3][ig] < LPsiind[i2][jg]) {
 		  ig++; 
-		  while ((ig < La[i3]) && (Lind[i3][ig] < LPsiind[i2][jg])) {
+		  while ((ig < la1) && (Lind[i3][ig] < LPsiind[i2][jg])) {
 		    ig++; 
 		  }
-		  if (ig >= La[i3]) break;
+		  if (ig >= la1) break;
 		}
 		
 		if (Lind[i3][ig] > LPsiind[i2][jg]) {
 		  jg++; 
-		  while ((jg < LPsia[i2]) && (Lind[i3][ig] > LPsiind[i2][jg])) {
+		  while ((jg < la2) && (Lind[i3][ig] > LPsiind[i2][jg])) {
 		    jg++; 
 		  }
-		  if (jg >= LPsia[i2]) break;
-		}
-
-		if (Lind[i3][ig] == LPsiind[i2][jg]) {
+		  if (jg >= la2) break;
+		  if (Lind[i3][ig] == LPsiind[i2][jg]) {
+		    s += Lval[i3][ig] * LPsival[i2][jg]; 
+		    ig++;
+		    jg++;
+		  }
+		} else {
 		  s += Lval[i3][ig] * LPsival[i2][jg]; 
 		  ig++;
 		  jg++;
 		}
+
 
 	      } 
 
@@ -2063,6 +2069,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 	for (j=0;j<nn;j++)
 	{
+	  la1=xa[j];
 
 	    for (i1=0;i1<K;i1++)
 	    {
@@ -2114,23 +2121,28 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 		s=0.0;
 		ig = 0; 
 		jg = 0;
-		while ((ig < xa[j]) && (jg < LPsia[i3])) {
+		la2= LPsia[i3];
+		while ((ig < la1) && (jg < la2)) {
 
 		  if (xind[j][ig] < LPsiind[i3][jg]) {
 		    ig++;
-		    while ((ig < xa[j]) && (xind[j][ig] < LPsiind[i3][jg])) {
+		    while ((ig < la1) && (xind[j][ig] < LPsiind[i3][jg])) {
 		      ig++; 
 		    }
-		    if (ig >= xa[j]) break;
+		    if (ig >= la1) break;
 		  }
 		  if (xind[j][ig] > LPsiind[i3][jg]) {
 		    jg++;
-		    while ((jg < LPsia[i3]) && (xind[j][ig] > LPsiind[i3][jg])) {
+		    while ((jg < la2) && (xind[j][ig] > LPsiind[i3][jg])) {
 		      jg++;
 		    }
-		    if (jg >= LPsia[i3]) break;
-		  }
-		  if (xind[j][ig] == LPsiind[i3][jg]) {
+		    if (jg >= la2) break;
+		    if (xind[j][ig] == LPsiind[i3][jg]) {
+		      s += xval[j][ig] * LPsival[i3][jg]; 
+		      ig++;
+		      jg++;
+		    } 
+		  } else  {
 		    s += xval[j][ig] * LPsival[i3][jg]; 
 		    ig++;
 		    jg++;
@@ -2463,48 +2475,57 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	LPsiL[i2][i2] = s;
       }
     
-    for (i2=0;i2<K-1;i2++)
-      {
-	for (i3=i2+1;i3<K;i3++)
-	  {
-	    s = 0.0; 
-	    ig = 0; 
-	    jg = 0;
-	    while ((ig < La[i3]) && (jg < LPsia[i2])) {
-	      
-	      if (Lind[i3][ig] < LPsiind[i2][jg]) {
-		ig++; 
-		while ((ig < La[i3]) && (Lind[i3][ig] < LPsiind[i2][jg])) {
+	for (i2=0;i2<K-1;i2++)
+	{
+	    for (i3=i2+1;i3<K;i3++)
+	    {
+	      s = 0.0; 
+	      ig = 0; 
+	      jg = 0;
+	      la1= La[i3];
+	      la2= LPsia[i2];
+	      while ((ig < la1) && (jg < la2)) {
+		
+		if (Lind[i3][ig] < LPsiind[i2][jg]) {
 		  ig++; 
+		  while ((ig < la1) && (Lind[i3][ig] < LPsiind[i2][jg])) {
+		    ig++; 
+		  }
+		  if (ig >= la1) break;
 		}
-		if (ig >= La[i3]) break;
-	      }
-	      
-	      if (Lind[i3][ig] > LPsiind[i2][jg]) {
-		jg++; 
-		while ((jg < LPsia[i2]) && (Lind[i3][ig] > LPsiind[i2][jg])) {
+		
+		if (Lind[i3][ig] > LPsiind[i2][jg]) {
 		  jg++; 
+		  while ((jg < la2) && (Lind[i3][ig] > LPsiind[i2][jg])) {
+		    jg++; 
+		  }
+		  if (jg >= la2) break;
+		  if (Lind[i3][ig] == LPsiind[i2][jg]) {
+		    s += Lval[i3][ig] * LPsival[i2][jg]; 
+		    ig++;
+		    jg++;
+		  }
+		} else {
+		  s += Lval[i3][ig] * LPsival[i2][jg]; 
+		  ig++;
+		  jg++;
 		}
-		if (jg >= LPsia[i2]) break;
-	      }
-	      
-	      if (Lind[i3][ig] == LPsiind[i2][jg]) {
-		s += Lval[i3][ig] * LPsival[i2][jg]; 
-		ig++;
-		jg++;
-	      }
-	      
-	    } 
-	    
-	    LPsiL[i2][i3] = LPsiL[i3][i2] = s;
 
-	  }
-      }
+
+	      } 
+
+	      LPsiL[i2][i3] = LPsiL[i3][i2] = s;
+
+	    }
+	}
+	    
 
 
 
    for (j=0;j<nn;j++)
     {
+
+      la1=xa[j];
 
 	for (i1=0;i1<K;i1++)
 	{
@@ -2551,23 +2572,28 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	    s=0.0;
 	    ig = 0; 
 	    jg = 0;
-	    while ((ig < xa[j]) && (jg < LPsia[i3])) {
+	    la2= LPsia[i3];
+	    while ((ig < la1) && (jg < la2)) {
 	      
 	      if (xind[j][ig] < LPsiind[i3][jg]) {
 		ig++;
-		while ((ig < xa[j]) && (xind[j][ig] < LPsiind[i3][jg])) {
+		while ((ig < la1) && (xind[j][ig] < LPsiind[i3][jg])) {
 		  ig++; 
 		}
-		if (ig >= xa[j]) break;
+		if (ig >= la1) break;
 	      }
 	      if (xind[j][ig] > LPsiind[i3][jg]) {
 		jg++;
-		while ((jg < LPsia[i3]) && (xind[j][ig] > LPsiind[i3][jg])) {
+		while ((jg < la2) && (xind[j][ig] > LPsiind[i3][jg])) {
 		  jg++;
 		}
-		if (jg >= LPsia[i3]) break;
-	      }
-	      if (xind[j][ig] == LPsiind[i3][jg]) {
+		if (jg >= la2) break;
+		if (xind[j][ig] == LPsiind[i3][jg]) {
+		  s += xval[j][ig] * LPsival[i3][jg]; 
+		  ig++;
+		  jg++;
+		} 
+	      } else  {
 		s += xval[j][ig] * LPsival[i3][jg]; 
 		ig++;
 		jg++;
