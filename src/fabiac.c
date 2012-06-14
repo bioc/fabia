@@ -82,7 +82,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 	lapla[i] = lapla[0] + i*K;
 	for(j=0; j < K; j++)
 	{
-	    lapla[i][j] = (double)(REAL(LS)[i+nn*j]);
+	    lapla[i][j] = (double)(REAL(laplaS)[i+nn*j]);
 	}
     }
 
@@ -766,7 +766,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 	lapla[i] = lapla[0] + i*K;
 	for(j=0; j < K; j++)
 	{
-	    lapla[i][j] = (double)(REAL(LS)[i+nn*j]);
+	    lapla[i][j] = (double)(REAL(laplaS)[i+nn*j]);
 	}
     }
 
