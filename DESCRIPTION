@@ -1,7 +1,7 @@
 Package: fabia
 Title: FABIA: Factor Analysis for Bicluster Acquisition
-Version: 2.2.1
-Date: 2012-04-11
+Version: 2.2.2
+Date: 2012-12-31
 Author: Sepp Hochreiter <hochreit@bioinf.jku.at>
 Maintainer: Sepp Hochreiter <hochreit@bioinf.jku.at>
 Depends: R (>= 2.8.0), Biobase
