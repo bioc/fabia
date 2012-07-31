@@ -456,18 +456,33 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 	}
 
 
+	t=0.0;
 	for (i1=0;i1<n;i1++)
 	{
 	    s = 0.0;
 	    for (i2 = 0; i2 < K; i2++) {
 		s += L[i1][i2]*sum1[i1][i2];
 	    }
+	    if (fabs(s)>t) { t = fabs(s); } 
 	    Psi[i1] = XX[i1] - in*s;
 	    if (Psi[i1]<eps)
 	    {
 		Psi[i1] = eps;
 	    }
 	}
+
+	if (t < eps )
+	  {
+	    for (i1=0;i1<n;i1++) {
+	      	Psi[i1] = eps;
+	    }
+
+	    for (j=0;j<nn;j++)
+	      for (i1=0;i1<K;i1++)
+		lapla[j][i1] = eps; 
+
+	    break;
+	  }
 
 
 	if (scale>0)
@@ -505,7 +520,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
     }
     
-    Rprintf("Cycle: %d\n", (cyc-1));
+    Rprintf("Cycle: %d\n", i);
 
     R_Free (sum1[0]);
     R_Free (sum1 );
@@ -515,6 +530,13 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
     R_Free (XX );
     R_Free (e_sx_n );
+
+
+    SEXP E_SX_n;
+    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
+
+    if (t >= eps )
+    {
 
 
     for (i1=0;i1<K;i1++)
@@ -546,9 +568,6 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
 
 
-
-    SEXP E_SX_n;
-    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
 
     for (j=0;j<nn;j++)
     {
@@ -614,6 +633,17 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
 
     }
+    } else
+    {
+      for (j=0;j<nn;j++)
+	for (i1=0;i1<K;i1++)
+	{
+	   REAL(E_SX_n)[i1 + K*j] = (double) 0.0;
+	}
+      
+
+    }
+
 
 
     R_Free (e_ssxx_n );
@@ -1241,18 +1271,34 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
+	t=0.0;
 	for (i1=0;i1<n;i1++)
 	{
 	    s = 0.0;
 	    for (i2 = 0; i2 < K; i2++) {
 		s += L[i1][i2]*sum1[i1][i2];
 	    }
+	    if (fabs(s)>t) { t = fabs(s); } 
 	    Psi[i1] = XX[i1] - in*s;
 	    if (Psi[i1]<eps)
 	    {
 		Psi[i1] = eps;
 	    }
 	}
+
+	if (t < eps )
+	  {
+	    for (i1=0;i1<n;i1++) {
+	      	Psi[i1] = eps;
+	    }
+
+	    for (j=0;j<nn;j++)
+	      for (i1=0;i1<K;i1++)
+		lapla[j][i1] = eps; 
+
+	    break;
+	  }
+
 
 
 
@@ -1264,7 +1310,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 	}
     }
 
-    Rprintf("Cycle: %d\n", (cyc-1));
+    Rprintf("Cycle: %d\n", i);
 
     R_Free (sum1[0]);
     R_Free (sum1 );
@@ -1278,6 +1324,12 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
     R_Free (w );
     R_Free (r_es_x );
     R_Free (zeros );
+
+    SEXP E_SX_n;
+    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
+
+    if (t >= eps )
+    {
 
     for (i1=0;i1<K;i1++)
     {
@@ -1308,9 +1360,6 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
 
 
-
-    SEXP E_SX_n;
-    PROTECT(E_SX_n = allocMatrix(REALSXP, K, nn));
 
     for (j=0;j<nn;j++)
     {
@@ -1373,6 +1422,16 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 		REAL(E_SX_n)[i1 + K*j] = (double) t;
 	    }
 
+
+    }
+    } else
+    {
+      for (j=0;j<nn;j++)
+	for (i1=0;i1<K;i1++)
+	{
+	   REAL(E_SX_n)[i1 + K*j] = (double) 0.0;
+	}
+      
 
     }
 
@@ -2392,17 +2451,31 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	}
 
 
+	t=0.0;
 	for (i1=0;i1<n;i1++)
 	{
-	    
-	    Psi[i1] = XX[i1] - in*Psi[i1];
-	    if (Psi[i1]<eps)
+	  if (fabs(Psi[i1])>t) {
+	    t = fabs(Psi[i1]);
+	  }
+	  Psi[i1] = XX[i1] - in*Psi[i1];
+	  if (Psi[i1]<eps)
 	    {
-		Psi[i1] = eps;
+	      Psi[i1] = eps;
 	    }
 	    
 	}
 
+	if (t<1.0e-12) {
+	  for (i1=0;i1<n;i1++)
+	    Psi[i1] = 1.0e-12;
+	  for (i2 = 0; i2 < K; i2++)
+	    for (j=0;j<nn;j++)
+	      {
+		lapla[j][i2]=1.0e-12;
+	      }
+	  break;
+	}
+    
 
 
  	if (scale>0)
@@ -2449,11 +2522,14 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
     if (iter>1) {
-      Rprintf("Iteration: %d || Cycle: %d\n", (ite+1), (cyc-1));
+      Rprintf("Iteration: %d || Cycle: %d\n", (ite+1), i);
     } else {
-      Rprintf("Cycle: %d\n", (cyc-1));
+      Rprintf("Cycle: %d\n", i);
     }
 
+
+    if (t>1.0e-12)
+      {
 
     for (i2 = 0; i2 < K; i2++) {
 	LPsia[i2]=La[i2];
@@ -2621,6 +2697,13 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
 
     }
+      } else {
+
+      for (j=0;j<nn;j++)
+	for (i1=0;i1<K;i1++)
+	  E_SX_tmp[j][ite*K+i1] = (double) 0.0;
+    }
+
 
 
 
