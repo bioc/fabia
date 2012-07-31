@@ -13,7 +13,7 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
     int i,j,i1,i2,i3;
 
-    double in,s,sgn,t;
+    double in,s,sgn,t=0.0;
 
 
     if(!isNumeric(xS) || !isMatrix(xS)) {
@@ -724,7 +724,7 @@ SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP e
 
     int i,j,i1,i2,i3,zz,ende,h1;
 
-    double in,s,sgn,a,b,c,t,alphap,k2,seps,eps1=1e-10;
+    double in,s,sgn,a,b,c,t=0.0,alphap,k2,seps,eps1=1e-10;
 
 
     if(!isNumeric(xS) || !isMatrix(xS)) {
