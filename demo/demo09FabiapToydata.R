@@ -55,9 +55,9 @@ if ((raToy3$bic[[4]][1]>1) && (raToy3$bic[[4]][2])>1) {
     plotBicluster(raToy3,4)
 }
 
-colnames(resToy3@X) <- clab
+colnames(X(resToy3)) <- clab
 
-rownames(resToy3@X) <- llab
+rownames(X(resToy3)) <- llab
 
 
 plot(resToy3,dim=c(1,2),label.tol=0.1,col.group = groups,lab.size=0.6)

@@ -59,9 +59,9 @@ plotBicluster(raToy1,4)
 
 
 
-colnames(resToy1@X) <- clab
+colnames(X(resToy1)) <- clab
 
-rownames(resToy1@X) <- llab
+rownames(X(resToy1)) <- llab
 
 
 plot(resToy1,dim=c(1,2),label.tol=0.1,col.group = groups,lab.size=0.6)

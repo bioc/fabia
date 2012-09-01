@@ -103,7 +103,6 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1
 \code{\link{nmfdiv}},
 \code{\link{nmfeu}},
 \code{\link{nmfsc}},
-\code{\link{plot}},
 \code{\link{extractPlot}},
 \code{\link{extractBic}},
 \code{\link{plotBicluster}},
@@ -116,9 +115,6 @@ fabias(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1
 \code{\link{makeFabiaDataPos}},
 \code{\link{makeFabiaDataBlocksPos}},
 \code{\link{matrixImagePlot}},
-\code{\link{summary}},
-\code{\link{show}},
-\code{\link{showSelected}},
 \code{\link{fabiaDemo}},
 \code{\link{fabiaVersion}}
 }
@@ -200,9 +196,9 @@ if ((raToy2$bic[[4]][1]>1) && (raToy2$bic[[4]][2])>1) {
     plotBicluster(raToy2,4)
 }
 
-colnames(resToy2@X) <- clab
+colnames(X(resToy2)) <- clab
 
-rownames(resToy2@X) <- llab
+rownames(X(resToy2)) <- llab
 
 
 plot(resToy2,dim=c(1,2),label.tol=0.1,col.group = groups,lab.size=0.6)

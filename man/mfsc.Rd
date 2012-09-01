@@ -92,7 +92,6 @@ mfsc(X,p=5,cyc=100,sL=0.6,sZ=0.6,center=2,norm=1)
 \code{\link{nmfdiv}},
 \code{\link{nmfeu}},
 \code{\link{nmfsc}},
-\code{\link{plot}},
 \code{\link{extractPlot}},
 \code{\link{extractBic}},
 \code{\link{plotBicluster}},
@@ -105,9 +104,6 @@ mfsc(X,p=5,cyc=100,sL=0.6,sZ=0.6,center=2,norm=1)
 \code{\link{makeFabiaDataPos}},
 \code{\link{makeFabiaDataBlocksPos}},
 \code{\link{matrixImagePlot}},
-\code{\link{summary}},
-\code{\link{show}},
-\code{\link{showSelected}},
 \code{\link{fabiaDemo}},
 \code{\link{fabiaVersion}}
 }
@@ -186,9 +182,9 @@ if ((raToy4$bic[[4]][1]>1) && (raToy4$bic[[4]][2])>1) {
     plotBicluster(raToy4,4)
 }
 
-colnames(resToy4@X) <- clab
+colnames(X(resToy4)) <- clab
 
-rownames(resToy4@X) <- llab
+rownames(X(resToy4)) <- llab
 
 
 plot(resToy4,dim=c(1,2),label.tol=0.1,col.group = groups,lab.size=0.6)

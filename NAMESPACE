@@ -45,4 +45,47 @@ exportClasses("Factorization")
 exportMethods("plot",
        "summary",
        "show",
-       "showSelected")
+       "showSelected",
+       "parameters",
+       "n",
+       "p1",
+       "p2",
+       "l",
+       "center",
+       "scaleData",
+       "X",
+       "L",
+       "Z",
+       "M",
+       "LZ",
+       "U",
+       "avini",
+       "xavini",
+       "ini",
+       "Psi",
+       "lapla",
+       "parameters<-",
+       "n<-",
+       "p1<-",
+       "p2<-",
+       "l<-",
+       "center<-",
+       "scaleData<-",
+       "X<-",
+       "L<-",
+       "Z<-",
+       "M<-",
+       "LZ<-",
+       "U<-",
+       "avini<-",
+       "xavini<-",
+       "ini<-",
+       "Psi<-",
+       "lapla<-")
+
+
+
+
+
+
+

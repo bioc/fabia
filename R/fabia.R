@@ -185,7 +185,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
         if (is.null(res))
         {
-            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+            return(new("Factorization", parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
         }
 
 
@@ -271,7 +271,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
 
 
-        return(new('Factorization', parameters=list("fabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,center,lap,nL,lL,bL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+        return(new("Factorization", parameters=list("fabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,center,lap,nL,lL,bL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
@@ -467,7 +467,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 
         if (is.null(res))
         {
-            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+            return(new("Factorization", parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
         }
 
         rL <- res$L
@@ -574,7 +574,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 
 
 
-    return(new('Factorization', parameters=list("fabiap",cyc,alpha,spl,spz,p,sL,sZ,random,scale,norm,center,lap,nL,lL,bL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+    return(new("Factorization", parameters=list("fabiap",cyc,alpha,spl,spz,p,sL,sZ,random,scale,norm,center,lap,nL,lL,bL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 }
 
@@ -752,7 +752,7 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,cen
 
         if (is.null(res))
         {
-            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+            return(new("Factorization", parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
         }
 
        # INI call for biclusters
@@ -834,7 +834,7 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,cen
 
         }
 
-    return(new('Factorization', parameters=list("fabias",cyc,alpha,NULL,spz,p,NULL,NULL,random,scale,norm,center,lap,nL,lL,bL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+    return(new("Factorization", parameters=list("fabias",cyc,alpha,NULL,spz,p,NULL,NULL,random,scale,norm,center,lap,nL,lL,bL,non_negative),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
@@ -1078,7 +1078,7 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0){
 
         }
 
-        return(new('Factorization', parameters=list("fabi",cyc,alpha,spl,spz,p,NULL,NULL,NULL,scale,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
+        return(new("Factorization", parameters=list("fabi",cyc,alpha,spl,spz,p,NULL,NULL,NULL,scale,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
 
 }
 
@@ -1336,7 +1336,7 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0){
         }
 
 
-         return(new('Factorization', parameters=list("fabiasp",cyc,alpha,NULL,spz,p,NULL,NULL,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
+         return(new("Factorization", parameters=list("fabiasp",cyc,alpha,NULL,spz,p,NULL,NULL,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=noL,Z=nZ,M=M,LZ=Lz,U=U,avini=avini,xavini=xavini,ini=ini,Psi=Psi,lapla=lapla))
 
 }
 
@@ -2247,7 +2247,7 @@ for (i in 1:cyc)
 
                 }
 
-                return(new('Factorization', parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+                return(new("Factorization", parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
             }
         }
 
@@ -2329,7 +2329,7 @@ for (i in 1:cyc)
                 }
 
 
-     return(new('Factorization', parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+     return(new("Factorization", parameters=list("mfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,norm,center,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
             }
 
 
@@ -2452,7 +2452,7 @@ extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,
 
 
 
-    X <- as.matrix(fact@X)
+    X <- as.matrix(X(fact))
 
     misX <- FALSE
     if (!is.matrix(X)||(nrow(X)<2)||(ncol(X)<2)) {
@@ -2462,8 +2462,8 @@ extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,
      misX <- TRUE
     }
 
-    noL <- as.matrix(fact@L)
-    nZ <- as.matrix(fact@Z)
+    noL <- as.matrix(L(fact))
+    nZ <- as.matrix(Z(fact))
 
     l=ncol(nZ)
     n=nrow(noL)
@@ -2614,9 +2614,9 @@ extractBic <- function(fact,thresZ=0.5,thresL=NULL)
 
 
 
-    noL <- as.matrix(fact@L)
-    nZ <- as.matrix(fact@Z)
-    X <- as.matrix(fact@X)
+    noL <- as.matrix(L(fact))
+    nZ <- as.matrix(Z(fact))
+    X <- as.matrix(X(fact))
 
     n <- nrow(noL)
 
@@ -2853,7 +2853,7 @@ for (i in 1:cyc)
         rownames(U) <- rowna
         colnames(U) <- colna
 
-  return(new('Factorization', parameters=list("nmfdiv",cyc,NULL,NULL,NULL,p,NULL,NULL,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+  return(new("Factorization", parameters=list("nmfdiv",cyc,NULL,NULL,NULL,p,NULL,NULL,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
 }
 
 
@@ -2970,7 +2970,7 @@ for (i in 1:cyc)
         rownames(U) <- rowna
         colnames(U) <- colna
 
-        return(new('Factorization', parameters=list("nmfeu",cyc,NULL,NULL,NULL,p,NULL,NULL,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+        return(new("Factorization", parameters=list("nmfeu",cyc,NULL,NULL,NULL,p,NULL,NULL,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
 }
 
 
@@ -3202,7 +3202,7 @@ for (i in 1:cyc)
                 rownames(U) <- rowna
                 colnames(U) <- colna
 
-         return(new('Factorization', parameters=list("nmfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+         return(new("Factorization", parameters=list("nmfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
             }
         }
 
@@ -3261,7 +3261,7 @@ for (i in 1:cyc)
                 rownames(U) <- rowna
                 colnames(U) <- colna
 
-              return(new('Factorization', parameters=list("nmfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
+              return(new("Factorization", parameters=list("nmfsc",cyc,NULL,NULL,NULL,p,sL,sZ,NULL,NULL,NULL,NULL,NULL),n=n,p1=p,p2=p,l=l,center=cent,scaleData=scaleData,X=X,L=L,Z=Z,M=M,LZ=LZ,U=U,avini=avini,xavini=xavini,ini=ini,Psi=as.vector(1),lapla=as.matrix(1)))
             }
 
 
@@ -3494,7 +3494,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
         if (is.null(res))
         {
-            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+            return(new("Factorization", parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
         }
 
 
@@ -3584,7 +3584,7 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
         }
 
 
-        return(new('Factorization', parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL,iter,quant,lowerB,upperB),n=n,p1=pi,p2=pi,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+        return(new("Factorization", parameters=list("spfabia",cyc,alpha,spl,spz,p,NULL,NULL,random,scale,norm,NULL,lap,nL,lL,bL,non_negative,write_file,init_lapla,init_psi,samples,initL,iter,quant,lowerB,upperB),n=n,p1=pi,p2=pi,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }
@@ -3649,7 +3649,7 @@ readSpfabiaResult <- function(X){
 
         if (is.null(res))
         {
-            return(new('Factorization', parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
+            return(new("Factorization", parameters=list(),n=1,p1=1,p2=1,l=1,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=as.vector(1),xavini=as.vector(1),ini=as.matrix(1),Psi=as.vector(1),lapla=as.matrix(1)))
 
         }
 
@@ -3723,7 +3723,7 @@ readSpfabiaResult <- function(X){
 
 
 
-        return(new('Factorization', parameters=list(),n=n,p1=p,p2=p,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
+        return(new("Factorization", parameters=list(),n=n,p1=p,p2=p,l=l,center=as.vector(1),scaleData=as.vector(1),X=as.matrix(1),L=noL,Z=nZ,M=as.matrix(1),LZ=as.matrix(1),U=as.matrix(1),avini=avini,xavini=xavini,ini=ini,Psi=res$Psi,lapla=res$lapla))
 
 
 }

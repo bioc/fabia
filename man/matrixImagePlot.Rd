@@ -42,7 +42,6 @@ matrixImagePlot(x,xLabels=NULL, yLabels=NULL, zlim=NULL, title=NULL)
 \code{\link{nmfdiv}},
 \code{\link{nmfeu}},
 \code{\link{nmfsc}},
-\code{\link{plot}},
 \code{\link{extractPlot}},
 \code{\link{extractBic}},
 \code{\link{plotBicluster}},
@@ -55,9 +54,6 @@ matrixImagePlot(x,xLabels=NULL, yLabels=NULL, zlim=NULL, title=NULL)
 \code{\link{makeFabiaDataPos}},
 \code{\link{makeFabiaDataBlocksPos}},
 \code{\link{matrixImagePlot}},
-\code{\link{summary}},
-\code{\link{show}},
-\code{\link{showSelected}},
 \code{\link{fabiaDemo}},
 \code{\link{fabiaVersion}}
 }

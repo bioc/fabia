@@ -92,7 +92,6 @@ fabi(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0)
 \code{\link{nmfdiv}},
 \code{\link{nmfeu}},
 \code{\link{nmfsc}},
-\code{\link{plot}},
 \code{\link{extractPlot}},
 \code{\link{extractBic}},
 \code{\link{plotBicluster}},
@@ -105,9 +104,6 @@ fabi(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0)
 \code{\link{makeFabiaDataPos}},
 \code{\link{makeFabiaDataBlocksPos}},
 \code{\link{matrixImagePlot}},
-\code{\link{summary}},
-\code{\link{show}},
-\code{\link{showSelected}},
 \code{\link{fabiaDemo}},
 \code{\link{fabiaVersion}}
 }

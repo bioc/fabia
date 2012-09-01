@@ -102,7 +102,6 @@ fabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,n
 \code{\link{nmfdiv}},
 \code{\link{nmfeu}},
 \code{\link{nmfsc}},
-\code{\link{plot}},
 \code{\link{extractPlot}},
 \code{\link{extractBic}},
 \code{\link{plotBicluster}},
@@ -115,9 +114,6 @@ fabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,n
 \code{\link{makeFabiaDataPos}},
 \code{\link{makeFabiaDataBlocksPos}},
 \code{\link{matrixImagePlot}},
-\code{\link{summary}},
-\code{\link{show}},
-\code{\link{showSelected}},
 \code{\link{fabiaDemo}},
 \code{\link{fabiaVersion}}
 }
@@ -200,9 +196,9 @@ plotBicluster(raToy1,4)
 
 
 
-colnames(resToy1@X) <- clab
+colnames(X(resToy1)) <- clab
 
-rownames(resToy1@X) <- llab
+rownames(X(resToy1)) <- llab
 
 
 plot(resToy1,dim=c(1,2),label.tol=0.1,col.group = groups,lab.size=0.6)

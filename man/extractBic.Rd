@@ -127,7 +127,6 @@ extractBic(fact,thresZ=0.5,thresL=NULL)
 \code{\link{nmfdiv}},
 \code{\link{nmfeu}},
 \code{\link{nmfsc}},
-\code{\link{plot}},
 \code{\link{extractPlot}},
 \code{\link{extractBic}},
 \code{\link{plotBicluster}},
@@ -140,9 +139,6 @@ extractBic(fact,thresZ=0.5,thresL=NULL)
 \code{\link{makeFabiaDataPos}},
 \code{\link{makeFabiaDataBlocksPos}},
 \code{\link{matrixImagePlot}},
-\code{\link{summary}},
-\code{\link{show}},
-\code{\link{showSelected}},
 \code{\link{fabiaDemo}},
 \code{\link{fabiaVersion}}
 }
@@ -187,7 +183,7 @@ resToy <- fabia(X,13,0.01,200)
 
 rToy <- extractBic(resToy)
 
-resToy@avini
+avini(resToy)
 
 rToy$bic[1,]
 rToy$bic[2,]
@@ -216,7 +212,7 @@ resBreast <- fabia(X,5,0.1,200)
 
 rBreast <- extractBic(resBreast)
 
-resBreast@avini
+avini(resBreast)
 
 rBreast$bic[1,]
 rBreast$bic[2,]
