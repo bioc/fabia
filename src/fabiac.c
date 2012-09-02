@@ -1584,7 +1584,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 
     pFile = fopen (sst,"r");
 
-    if (!(pFile>0)) {
+    if (pFile==NULL) {
 	Rprintf("File >%s< not found! Stop.\n", sst);
 	return R_NilValue;
     }
@@ -3106,7 +3106,7 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
 
     pFile = fopen (sst,"r");
 
-    if (!(pFile>0)) {
+    if (pFile==NULL) {
 	Rprintf("File >%s< not found! Stop.\n", sst);
 	return R_NilValue;
     }
@@ -3340,7 +3340,7 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
 
     pFile = fopen (sst,"r");
 
-    if (!(pFile>0)) {
+    if (pFile==NULL) {
 	Rprintf("File >%s< not found! Stop.\n", sst);
 	return R_NilValue;
     }
@@ -3560,7 +3560,7 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     strcat(sst,"_res_L.txt");
     pFile = fopen (sst,"r");
 
-     if (!(pFile>0)) {
+     if (pFile==NULL) {
        fclose (pFile);
        Rprintf("File >%s< not found! Stop.\n", sst);
        return R_NilValue;
