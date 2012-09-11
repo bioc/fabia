@@ -1506,7 +1506,7 @@ plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
         }
 
         if (is(r) == "Factorization") {
-            stop("First argument is of the class Factorization but must be the result of thefunction extractBic() (a list). Stopped.")
+            stop("First argument is of the class Factorization but must be the result of the function extractBic() (a list). Stopped.")
         }
 
 
@@ -2657,13 +2657,24 @@ extractBic <- function(fact,thresZ=0.5,thresL=NULL)
     }
     colnames(nZ) <- sample_names
 
+#    if (is.null(thresL)) {
+#        mom <- 0
+#        for (i in 1:p) {
+#            tmom <- as.numeric(tcrossprod(noL[,i],nZ[i,]))
+#            mom <- mom + sum(tmom^2)
+#        }
+#        mom <- mom/(length(tmom)*p)
+#
+#        thresL <- sqrt(mom)/thresZ
+#    }
+
     if (is.null(thresL)) {
         mom <- 0
         for (i in 1:p) {
-            tmom <- as.numeric(tcrossprod(noL[,i],nZ[i,]))
-            mom <- mom + sum(tmom^2)
-        }
-        mom <- mom/(length(tmom)*p)
+           mom <- mom + sum(noL[,i]^2)*sum(nZ[i,]^2)
+    }
+#        mom <- mom/(n*l*p)
+            mom <- mom/(as.double(n)*as.double(l)*as.double(p))
 
         thresL <- sqrt(mom)/thresZ
     }
