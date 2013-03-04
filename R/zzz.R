@@ -12,7 +12,7 @@
         }
         else {
             vigMtrx = readRDS(vigFile)
-            vigs = file.path(chartr("\\", "/", .find.package("fabia")), "doc", vigMtrx[,
+            vigs = file.path(chartr("\\", "/", find.package("fabia")), "doc", vigMtrx[,
                 "PDF"])
             names(vigs) = vigMtrx[, "Title"]
             if (!"Vignettes" %in% winMenuNames())
