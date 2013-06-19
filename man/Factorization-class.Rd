@@ -380,7 +380,7 @@
   \item{labels}{character vector to be used for labeling points on the graph;
     if \code{NULL} (default), the row names of \code{x} are used instead.}
   \item{label.tol}{numerical value specifying either the percentile
-    (\code{label.tol<=1})of rows or the number of rows
+    (\code{label.tol<=1}) of rows or the number of rows
     (\code{label.tol>1}) most distant from the plot-center (0,0) that
     are labeled and are plotted as circles with area proportional to the
     marginal means of the original data. Defaults to \code{1}.}

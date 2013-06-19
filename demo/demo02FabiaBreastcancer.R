@@ -31,34 +31,43 @@ X <- as.matrix(XBreast)
 
 resBreast1 <- fabia(X,5,0.1,400)
 
+message("\n\nPlot of:
+  1) data
+  2) reconstructed data
+  3) error (data - rec. data)
+  4) absolute loadings
+  5) absolute factors")
 extractPlot(resBreast1,ti="FABIA Breast cancer(Veer)")
 
 
 raBreast1 <- extractBic(resBreast1)
 
 if ((raBreast1$bic[[1]][1]>1) && (raBreast1$bic[[1]][2])>1) {
+message("\n\nPlot bicluster 1:
+  1) bicluster in whole matrix
+  2) only bicluster")
     plotBicluster(raBreast1,1)
 }
 if ((raBreast1$bic[[2]][1]>1) && (raBreast1$bic[[2]][2])>1) {
+message("\n\nPlot bicluster 2:
+  1) bicluster in whole matrix
+  2) only bicluster")
     plotBicluster(raBreast1,2)
 }
-if ((raBreast1$bic[[3]][1]>1) && (raBreast1$bic[[3]][2])>1) {
-    plotBicluster(raBreast1,3)
-}
-if ((raBreast1$bic[[4]][1]>1) && (raBreast1$bic[[4]][2])>1) {
-    plotBicluster(raBreast1,4)
-}
 
 
+message("\n\nPlot of pairs of biclusters as biplots:
+  1) rectangles are samples
+     color corresponds to previously identified subgroups
+     desired: separation of the subgroups
+  2) circles are genes
+     red circles correspond to most indicative genes")
+message("\n Plot1: Biclusters 1 and 2")
+devAskNewPage(ask = TRUE)
 plot(resBreast1,dim=c(1,2),label.tol=0.03,col.group=CBreast,lab.size=0.6)
+message("\n Plot1: Biclusters 1 and 3")
 plot(resBreast1,dim=c(1,3),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-plot(resBreast1,dim=c(1,4),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-plot(resBreast1,dim=c(1,5),label.tol=0.03,col.group=CBreast,lab.size=0.6)
+message("\n Plot1: Biclusters 2 and 3")
 plot(resBreast1,dim=c(2,3),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-plot(resBreast1,dim=c(2,4),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-plot(resBreast1,dim=c(2,5),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-plot(resBreast1,dim=c(3,4),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-plot(resBreast1,dim=c(3,5),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-plot(resBreast1,dim=c(4,5),label.tol=0.03,col.group=CBreast,lab.size=0.6)
-
+devAskNewPage(ask = FALSE)
 }
