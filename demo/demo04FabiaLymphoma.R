@@ -34,32 +34,42 @@ X <- as.matrix(XDLBCL)
 
 resDLBCL1 <- fabia(X,5,0.1,400,norm=2)
 
+message("\n\nPlot of:
+  1) data
+  2) reconstructed data
+  3) error (data - rec. data)
+  4) absolute loadings
+  5) absolute factors")
 extractPlot(resDLBCL1,ti="FABIA Lymphoma(Rosenwald)")
 
 raDLBCL1 <- extractBic(resDLBCL1)
 
 if ((raDLBCL1$bic[[1]][1]>1) && (raDLBCL1$bic[[1]][2])>1) {
+message("\n\nPlot bicluster 1:
+  1) bicluster in whole matrix
+  2) only bicluster")
     plotBicluster(raDLBCL1,1)
 }
 if ((raDLBCL1$bic[[2]][1]>1) && (raDLBCL1$bic[[2]][2])>1) {
+message("\n\nPlot bicluster 2:
+  1) bicluster in whole matrix
+  2) only bicluster")
     plotBicluster(raDLBCL1,2)
 }
-if ((raDLBCL1$bic[[3]][1]>1) && (raDLBCL1$bic[[3]][2])>1) {
-    plotBicluster(raDLBCL1,3)
-}
-if ((raDLBCL1$bic[[4]][1]>1) && (raDLBCL1$bic[[4]][2])>1) {
-    plotBicluster(raDLBCL1,4)
-}
 
+message("\n\nPlot of pairs of biclusters as biplots:
+  1) rectangles are samples
+     colors correspond to subclasses:
+       oxidative phosphorylation, B-cell response, host response
+     desired: to identify and separate the subclasses
+  2) circles are genes
+     red circles correspond to most indicative genes")
+message("\n Plot1: Biclusters 1 and 2")
+devAskNewPage(ask = TRUE)
 plot(resDLBCL1,dim=c(1,2),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
+message("\n Plot1: Biclusters 1 and 3")
 plot(resDLBCL1,dim=c(1,3),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-plot(resDLBCL1,dim=c(1,4),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-plot(resDLBCL1,dim=c(1,5),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
+message("\n Plot1: Biclusters 2 and 3")
 plot(resDLBCL1,dim=c(2,3),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-plot(resDLBCL1,dim=c(2,4),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-plot(resDLBCL1,dim=c(2,5),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-plot(resDLBCL1,dim=c(3,4),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-plot(resDLBCL1,dim=c(3,5),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-plot(resDLBCL1,dim=c(4,5),label.tol=0.03,col.group=CDLBCL,lab.size=0.6)
-
+devAskNewPage(ask = FALSE)
 }

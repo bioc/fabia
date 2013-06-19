@@ -7,7 +7,7 @@
 }
 \usage{
 
-extractPlot(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6,7,8))
+extractPlot(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6))
 
 }
 \arguments{
@@ -19,8 +19,7 @@ extractPlot(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6,7,8))
   \item{Y}{noise free data matrix.}
   \item{which}{which plot is shown: 1=noise free data (if available),
     2=data, 3=reconstructed data, 4=error, 5=absolute factors,
-    6=absolute loadings, 7=reconstructed matrix sorted,8=original matrix
-    sorted; default c(1,2,3,4,5,6,7,8).}
+    6=absolute loadings; default c(1,2,3,4,5,6).}
 
 }
 \details{
@@ -54,20 +53,7 @@ extractPlot(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6,7,8))
    \dQuote{LZ}: reconstructed data,
    \dQuote{LZ-X}: error,
    \dQuote{abs(Z)}: absolute factors,
-   \dQuote{abs(L)}: absolute loadings,
-   \dQuote{pmL*L*z*pmZ}: reconstructed matrix sorted,
-   \dQuote{pmL*X*pmZ}: original matrix sorted.
-
-   For sorting first \code{kmeans} is performed
-   on the \eqn{p} dimensional space and then the vectors
-   which belong to the same cluster are put together.
-   
-   This sorting is in general not able to 
-   visualize all biclusters as blocks if they overlap.
-
-   The kmeans clusters are given by \code{biclust} with
-   components \code{biclustx} (the clustered observations)
-   and \code{biclusty} (the clustered samples).
+   \dQuote{abs(L)}: absolute loadings.
 
   Implementation in \R.
 }

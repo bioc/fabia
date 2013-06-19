@@ -38,22 +38,29 @@ groups <- gclab
 
 resToy2 <- fabias(X,13,0.6,400)
 
+message("\n\nPlot of:
+  1) noise free data
+  2) data
+  3) reconstructed data
+  4) error (data - rec. data)
+  5) absolute loadings
+  6) absolute factors")
 extractPlot(resToy2,ti="FABIAS",Y=Y)
 
 
 raToy2 <- extractBic(resToy2)
 
 if ((raToy2$bic[[1]][1]>1) && (raToy2$bic[[1]][2])>1) {
+message("\n\nPlot bicluster 1:
+  1) bicluster in whole matrix
+  2) only bicluster")
     plotBicluster(raToy2,1)
 }
 if ((raToy2$bic[[2]][1]>1) && (raToy2$bic[[2]][2])>1) {
+message("\n\nPlot bicluster 2:
+  1) bicluster in whole matrix
+  2) only bicluster")
     plotBicluster(raToy2,2)
-}
-if ((raToy2$bic[[3]][1]>1) && (raToy2$bic[[3]][2])>1) {
-    plotBicluster(raToy2,3)
-}
-if ((raToy2$bic[[4]][1]>1) && (raToy2$bic[[4]][2])>1) {
-    plotBicluster(raToy2,4)
 }
 
 colnames(X(resToy2)) <- clab
@@ -61,7 +68,18 @@ colnames(X(resToy2)) <- clab
 rownames(X(resToy2)) <- llab
 
 
-plot(resToy2,dim=c(1,2),label.tol=0.1,col.group = groups,lab.size=0.6)
-plot(resToy2,dim=c(1,3),label.tol=0.1,col.group = groups,lab.size=0.6)
-plot(resToy2,dim=c(2,3),label.tol=0.1,col.group = groups,lab.size=0.6)
+message("\n\nPlot of pairs of biclusters as biplots:
+  1) rectangles are samples
+     colors correspond to different biclusters membership
+     labeled by: bicluster1_bicluster2_..._sampleID
+  2) circles are genes
+     indicative are large and red
+     labeled by: bicluster1_bicluster2_..._geneID")
+message("\n Plot1: Biclusters 1 and 2")
+devAskNewPage(ask = TRUE)
+plot(resToy2,dim=c(1,2),label.tol=10,col.group = groups,lab.size=0.6)
+message("\n Plot1: Biclusters 1 and 3")
+plot(resToy2,dim=c(1,3),label.tol=10,col.group = groups,lab.size=0.6)
+message("\n Plot1: Biclusters 2 and 3")
+plot(resToy2,dim=c(2,3),label.tol=10,col.group = groups,lab.size=0.6)
 

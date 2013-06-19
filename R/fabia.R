@@ -200,14 +200,14 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
         if(length(ivz)==1) {
             nZ <- ivz*res$E_SX_n
-
             noL <- vz*res$L
-        }
+            res$lapla <- vz^2 * res$lapla
+         }
         else {
             nZ <- ivz*res$E_SX_n
-
             noL <- t(vz*t(res$L))
-        }
+            res$lapla <- sweep(res$lapla, 2, vz^2, "*")
+         }
 
 
         ini <- matrix(0,l,(p+1))
@@ -501,15 +501,14 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 
         if(length(ivz)==1) {
             nZ <- ivz*res$E_SX_n
-
             noL <- vz*res$L
-        }
+            res$lapla <- vz^2 * res$lapla
+         }
         else {
             nZ <- ivz*res$E_SX_n
-
             noL <- t(vz*t(res$L))
-        }
-
+            res$lapla <- sweep(res$lapla, 2, vz^2, "*")
+         }
 
 
 
@@ -765,15 +764,14 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,cen
 
         if(length(ivz)==1) {
             nZ <- ivz*res$E_SX_n
-
             noL <- vz*res$L
-        }
+            res$lapla <- vz^2 * res$lapla
+         }
         else {
             nZ <- ivz*res$E_SX_n
-
             noL <- t(vz*t(res$L))
-        }
-
+            res$lapla <- sweep(res$lapla, 2, vz^2, "*")
+         }
 
 
 
@@ -1011,14 +1009,14 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0){
 
         if(length(ivz)==1) {
             nZ <- ivz*E_SX_n
-
             noL <- vz*L
-        }
+            lapla <- vz^2 * lapla
+         }
         else {
             nZ <- ivz*E_SX_n
-
             noL <- t(vz*t(L))
-        }
+            lapla <- sweep(lapla, 2, vz^2, "*")
+         }
 
 
 
@@ -1263,17 +1261,14 @@ fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0){
 
         if(length(ivz)==1) {
             nZ <- ivz*E_SX_n
-
             noL <- vz*L
-        }
+            lapla <- vz^2 * lapla
+         }
         else {
             nZ <- ivz*E_SX_n
-
             noL <- t(vz*t(L))
-        }
-
-
-
+            lapla <- sweep(lapla, 2, vz^2, "*")
+         }
 
 
 
@@ -2424,7 +2419,7 @@ projFunc <- function(s, k1, k2) {
 
 
 ##########################################################
-extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6,7,8)){
+extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6)){
 
         if (missing(fact)) {
             stop("Object fact of class Factorization is missing. Stopped.")
@@ -2445,7 +2440,7 @@ extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,
 
 
 
-    showf <- c(FALSE, FALSE,FALSE, FALSE,FALSE, FALSE,FALSE, FALSE)
+    showf <- c(FALSE, FALSE,FALSE, FALSE,FALSE, FALSE)
     showf[which] <- TRUE
 
 
@@ -2458,7 +2453,6 @@ extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,
     if (!is.matrix(X)||(nrow(X)<2)||(ncol(X)<2)) {
      showf[2] <- FALSE
      showf[4] <- FALSE
-     showf[8] <- FALSE
      misX <- TRUE
     }
 
@@ -2514,86 +2508,6 @@ extractPlot <- function(fact,thresZ=0.5,ti="FABIA",thresL=NULL,Y=NULL,which=c(1,
     }
 
 
-
-
-    hnzc <- kmeans(t(nZ),p, iter.max = 20, nstart = 10)
-
-    hnzs <- sort(hnzc$cluster,index.return = TRUE)
-
-    if (misX) {
-        xLabels <- as.character(1:l)
-    } else {
-        xLabels <- colnames(X)
-    }
-
-    pmZ <- matrix(0,l,l)
-    for (i in 1:l){
-         pmZ[hnzs$ix[i],i] <- 1
-         tmp <- xLabels[i]
-         xLabels[i] <- xLabels[hnzs$ix[i]]
-         xLabels[hnzs$ix[i]] <- tmp
-    }
-
-
-
-
-    hnLc <- kmeans(noL,p, iter.max = 20, nstart = 10)
-
-    hnLs <- sort(hnLc$cluster,index.return = TRUE)
-
-    biclustx <- list()
-    biclusty <- list()
-    for (i in 1:p){
-
-        biclustx[[i]] <- hnLs$ix[which(hnLs$x==i)]
-        biclusty[[i]] <- hnzs$ix[which(hnzs$x==i)]
-
-    }
-
-    biclust <- cbind(biclustx,biclusty)
-
-    pmL <- matrix(0,n,n)
-    if (misX) {
-        yLabels <- as.character(1:n)
-    } else {
-        yLabels <- rownames(X)
-    }
-    for (i in 1:n){
-         pmL[i,hnLs$ix[i]] <- 1
-         tmp <- yLabels[i]
-         yLabels[i] <- yLabels[hnLs$ix[i]]
-         yLabels[hnLs$ix[i]] <- tmp
-     }
-
-
-    lll <- 12
-
-    yl <- c(1,round(n*(1:lll)/lll))
-
-    yll <- rep("",n)
-
-    yll[yl] <- yLabels[yl]
-
-    reconstr <- pmL%*%noL%*%nZ%*%pmZ
-
-    rownames(reconstr) <- yLabels
-    colnames(reconstr) <- xLabels
-
-    if (showf[7]){
-        matrixImagePlot(reconstr,title=paste(ti,": reconstructed matrix sorted\n",tt,sep=""), yLabels= yll)
-    }
-
-   if (!misX) {
-       reord <- pmL%*%as.matrix(X)%*%pmZ
-       rownames(reord) <- yLabels
-       colnames(reord) <- xLabels
-
-       if (showf[8]){
-           matrixImagePlot(reord,title=paste(ti,": original matrix sorted\n",tt,sep=""), yLabels= yll)
-       }
-   } else {
-       reord <- NULL
-   }
 
    devAskNewPage(ask = FALSE)
 
@@ -3531,16 +3445,16 @@ spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=
 
         ivz <- 1/vz
 
-        if(length(ivz)==1) {
+         if(length(ivz)==1) {
             nZ <- ivz*res$E_SX_n
-
             noL <- vz*res$L
-        }
+            res$lapla <- vz^2 * res$lapla
+         }
         else {
             nZ <- ivz*res$E_SX_n
-
             noL <- t(vz*t(res$L))
-        }
+            res$lapla <- sweep(res$lapla, 2, vz^2, "*")
+         }
 
         } else {
             nZ <- res$E_SX_n
@@ -3684,16 +3598,16 @@ readSpfabiaResult <- function(X){
 
         ivz <- 1/vz
 
-        if(length(ivz)==1) {
+          if(length(ivz)==1) {
             nZ <- ivz*res$E_SX_n
-
             noL <- vz*res$L
-        }
+            res$lapla <- vz^2 * res$lapla
+         }
         else {
             nZ <- ivz*res$E_SX_n
-
             noL <- t(vz*t(res$L))
-        }
+            res$lapla <- sweep(res$lapla, 2, vz^2, "*")
+         }
 
 
         ini <- matrix(0,l,(p+1))
