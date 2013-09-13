@@ -7,13 +7,13 @@
 }
 \usage{
 
-fabiasp(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0)
+fabiasp(X,p=13,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0)
 
 }
 \arguments{
   \item{X}{the data matrix.}
-  \item{p}{number of hidden factors = number of biclusters; default = 5.}
-  \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.1.}
+  \item{p}{number of hidden factors = number of biclusters; default = 13.}
+  \item{alpha}{sparseness loadings (0.1 - 1.0); default = 0.6.}
   \item{cyc}{number of iterations; default = 500.}
   \item{spz}{sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).}
   \item{center}{data centering: 1 (mean), 2

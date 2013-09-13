@@ -7,13 +7,13 @@
 }
 \usage{
 
-fabia(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0)
+fabia(X,p=13,alpha=0.01,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0)
 
 }
 \arguments{
   \item{X}{the data matrix.}
-  \item{p}{number of hidden factors = number of biclusters; default = 5.}
-  \item{alpha}{sparseness loadings (0 - 1.0); default = 0.1.}
+  \item{p}{number of hidden factors = number of biclusters; default = 13.}
+  \item{alpha}{sparseness loadings (0 - 1.0); default = 0.01.}
   \item{cyc}{number of iterations; default = 500.}
   \item{spl}{sparseness prior loadings (0 - 2.0); default = 0 (Laplace).}
   \item{spz}{sparseness factors (0.5 - 2.0); default = 0.5 (Laplace).}
