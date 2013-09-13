@@ -4,7 +4,7 @@
 ###############################################################################
 
 
-fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0){
+fabia <- function(X,p=13,alpha=0.01,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -276,7 +276,7 @@ fabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.
 
 }
 
-fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0){
+fabiap <- function(X,p=13,alpha=0.01,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negative=0,random=1.0,center=2,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness
@@ -577,7 +577,7 @@ fabiap <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,sL=0.6,sZ=0.6,non_negat
 
 }
 
-fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0,lL=0,bL=0){
+fabias <- function(X,p=13,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,center=2,norm=1,lap=1.0,nL=0,lL=0,bL=0){
 	## X - data matrix
 	## cyc - maximum number of cycles
         ## alpha - sparseness low value because enforced by projFunc
@@ -838,7 +838,7 @@ fabias <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,non_negative=0,random=1.0,cen
 }
 
 
-fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0){
+fabi <- function(X,p=13,alpha=0.01,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0){
 
         if (missing(X)) {
             stop("Data matrix X missing. Stopped.")
@@ -985,7 +985,8 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0){
                 L <- L - ddL
                 L[which(abs(L)<abs(ddL))] <- 0
 
-                Psi <- epsn+abs(XX - diag(tcrossprod(L,sum1)/n))
+                Psi <- XX - diag(tcrossprod(L,sum1)/l)
+                Psi[Psi < eps] <- eps
                 if (i %% 20==0) { print(i)}
 	}
 
@@ -1081,7 +1082,7 @@ fabi <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,center=2,norm=1,lap=1.0){
 }
 
 
-fabiasp <- function(X,p=5,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0){
+fabiasp <- function(X,p=13,alpha=0.6,cyc=500,spz=0.5,center=2,norm=1,lap=1.0){
 
 
          if (missing(X)) {
@@ -3294,7 +3295,7 @@ plotEqScale <- function (x, y, ratio = 1, tol = 0.04, uin, ...)
 
 
 
-spfabia <- function(X,p=5,alpha=0.1,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE,eps=1e-3,eps1=1e-10){
+spfabia <- function(X,p=13,alpha=0.01,cyc=500,spl=0,spz=0.5,non_negative=0,random=1.0,write_file=1,norm=1,scale=0.0,lap=1.0,nL=0,lL=0,bL=0,samples=0,initL=0,iter=1,quant=0.001,lowerB=0.0,upperB=1000.0,dorescale=FALSE,doini=FALSE,eps=1e-3,eps1=1e-10){
 	## X - name of the data file
 	## cyc - maximum number of cycles
         ## alpha - sparseness
