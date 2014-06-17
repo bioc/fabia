@@ -11,9 +11,9 @@
 
 SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP eps1S,SEXP splS,SEXP spzS,SEXP scaleS,SEXP lapS,SEXP nLS,SEXP lLS,SEXP bLS,SEXP non_negativeS) {
 
-    int i,j,i1,i2,i3;
+  int i=0,j=0,i1=0,i2=0,i3=0;
 
-    double in,s,sgn,t=0.0;
+    double in=0.0,s=0.0,sgn=0.0,t=0.0;
 
 
     if(!isNumeric(xS) || !isMatrix(xS)) {
@@ -722,9 +722,9 @@ SEXP fabic(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP ep
 
 SEXP fabics(SEXP xS, SEXP PsiS,SEXP LS,SEXP laplaS,SEXP cycS, SEXP alphaS,SEXP epsS,SEXP spzS,SEXP lapS,SEXP nLS,SEXP lLS,SEXP bLS,SEXP non_negativeS) {
 
-    int i,j,i1,i2,i3,zz,ende,h1;
+    int i=0,j=0,i1=0,i2=0,i3=0,zz=0,ende=0,h1=0;
 
-    double in,s,sgn,a,b,c,t=0.0,alphap,k2,seps,eps1=1e-10;
+    double in=0.0,s=0.0,sgn=0.0,a=0.0,b=0.0,c=0.0,t=0.0,alphap=0.0,k2=0.0,seps=0.0,eps1=1e-10;
 
 
     if(!isNumeric(xS) || !isMatrix(xS)) {
@@ -1520,13 +1520,13 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     char sst[200]; 
     char iterc [4];
 
-    int hpp,ig,jg,samp,inLL;
+    int hpp=0,ig=0,jg=0,samp=0,inLL=0,ret=0;
 
-    int  i,j,i1,i2,i3,i4,n,nn,ite,nquant,la1,la2;
+    int  i=0,j=0,i1=0,i2=0,i3=0,i4=0,n=0,nn=0,ite=0,nquant=0,la1=0,la2=0;
     
-    double fs;
+    double fs=0.0;
 
-    double in,s,sgn,t=0.0;
+    double in=0.0,s=0.0,sgn=0.0,t=0.0;
 
 
 
@@ -1589,7 +1589,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	return R_NilValue;
     }
 
-    fscanf(pFile,"%d\n",&nn);  
+    ret=fscanf(pFile,"%d\n",&nn);  
 
     if (!(nn>0)) {
       fclose (pFile);
@@ -1597,7 +1597,7 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
       return R_NilValue;
     }
 
-    fscanf(pFile,"%d\n",&n);  
+    ret=fscanf(pFile,"%d\n",&n);  
 
     if (!(n>0)) {
       fclose (pFile);
@@ -1613,20 +1613,20 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     
       for(i = 0; i < nn; i ++)
 	{
-	  fscanf(pFile,"%d\n",&ig); 
+	  ret=fscanf(pFile,"%d\n",&ig); 
 	  xa[i]=ig;
 	  xind[i] = R_Calloc((ig+1), int);
 	  xval[i] = R_Calloc((ig+1), double);
 	  for(j = 0; j <  ig; j ++) {
-	    fscanf(pFile,"%d",&hpp);
+	    ret=fscanf(pFile,"%d",&hpp);
 	    xind[i][j]=hpp;
 	  }
-	  fscanf(pFile,"\n");
+	  ret=fscanf(pFile,"\n");
 	  for(j = 0; j < ig; j ++) {
-	    fscanf(pFile,"%lf",&fs);
+	    ret=fscanf(pFile,"%lf",&fs);
 	    xval[i][j] = fs;
 	  }
-	  fscanf(pFile,"\n");
+	  ret=fscanf(pFile,"\n");
 	}
 
     } else {
@@ -1638,31 +1638,31 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
 	{
 	  if ((samples[samp]-1)>i)
 	    {
-	      fscanf(pFile,"%d\n",&ig);
+	      ret=fscanf(pFile,"%d\n",&ig);
 	      for(j = 0; j <  ig; j ++) {
-		fscanf(pFile,"%d",&hpp);
+		ret=fscanf(pFile,"%d",&hpp);
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      for(j = 0; j < ig; j ++) {
-		fscanf(pFile,"%lf",&fs);
+		ret=fscanf(pFile,"%lf",&fs);
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      
 	    } else {
-	    fscanf(pFile,"%d\n",&ig); 
+	    ret=fscanf(pFile,"%d\n",&ig); 
 	    xa[samp]=ig;
 	    xind[samp] = R_Calloc((ig+1), int);
 	    xval[samp] = R_Calloc((ig+1), double);
 	    for(j = 0; j <  ig; j ++) {
-	      fscanf(pFile,"%d",&hpp);
+	      ret=fscanf(pFile,"%d",&hpp);
 	      xind[samp][j]=hpp;
 	    }
-	    fscanf(pFile,"\n");
+	    ret=fscanf(pFile,"\n");
 	    for(j = 0; j < ig; j ++) {
-	      fscanf(pFile,"%lf",&fs);
+	      ret=fscanf(pFile,"%lf",&fs);
 	      xval[samp][j] = fs;
 	    }
-	    fscanf(pFile,"\n");
+	    ret=fscanf(pFile,"\n");
 	    samp++;
 	    if (samp == nsamp) break;
 	  }
@@ -3072,13 +3072,13 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
     char sst[200]; 
 
 
-    int hpp,ig,samp;
+    int hpp=0,ig=0,samp=0;
 
 
 
-    int  i,j,i1,i2,n,nn;
+    int  i=0,j=0,i1=0,i2=0,n=0,nn=0,ret=0;
     
-    double fs;
+    double fs=0.0;
 
     const char *file_name=CHAR(STRING_ELT(file_nameS,0));
 
@@ -3111,7 +3111,7 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
 	return R_NilValue;
     }
 
-    fscanf(pFile,"%d\n",&nn);  
+    ret=fscanf(pFile,"%d\n",&nn);  
 
     if (!(nn>0)) {
       fclose (pFile);
@@ -3119,7 +3119,7 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
       return R_NilValue;
     }
 
-    fscanf(pFile,"%d\n",&n);  
+    ret=fscanf(pFile,"%d\n",&n);  
 
     if (!(n>0)) {
       fclose (pFile);
@@ -3155,18 +3155,18 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
     
       for(i = 0; i < nn; i ++)
 	{
-	  fscanf(pFile,"%d\n",&ig); 
+	  ret=fscanf(pFile,"%d\n",&ig); 
 	  xa[i]=ig;
 	  for(j = 0; j <  ig; j ++) {
-	    fscanf(pFile,"%d",&hpp);
+	    ret=fscanf(pFile,"%d",&hpp);
 	    xind[i][j]=hpp;
 	  }
-	  fscanf(pFile,"\n");
+	  ret=fscanf(pFile,"\n");
 	  for(j = 0; j < ig; j ++) {
-	    fscanf(pFile,"%lf",&fs);
+	    ret=fscanf(pFile,"%lf",&fs);
 	    xval[i][j] = fs;
 	  }
-	  fscanf(pFile,"\n");
+	  ret=fscanf(pFile,"\n");
 	}
 
     } else {
@@ -3188,29 +3188,29 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
 	{
 	  if ((samples[samp]-1)>i)
 	    {
-	      fscanf(pFile,"%d\n",&ig);
+	      ret=fscanf(pFile,"%d\n",&ig);
 	      for(j = 0; j <  ig; j ++) {
-		fscanf(pFile,"%d",&hpp);
+		ret=fscanf(pFile,"%d",&hpp);
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      for(j = 0; j < ig; j ++) {
-		fscanf(pFile,"%lf",&fs);
+		ret=fscanf(pFile,"%lf",&fs);
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      
 	    } else {
-	      fscanf(pFile,"%d\n",&ig); 
+	      ret=fscanf(pFile,"%d\n",&ig); 
 	      xa[samp]=ig;
 	      for(j = 0; j <  ig; j ++) {
-	        fscanf(pFile,"%d",&hpp);
+	        ret=fscanf(pFile,"%d",&hpp);
 	        xind[samp][j]=hpp;
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      for(j = 0; j < ig; j ++) {
-	        fscanf(pFile,"%lf",&fs);
+	        ret=fscanf(pFile,"%lf",&fs);
 	        xval[samp][j] = fs;
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      samp++;
 	      if (samp == nsamp) break;
 	    }
@@ -3304,11 +3304,11 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
     char sst[200]; 
 
 
-    int hpp,ig,jg,samp;
+    int hpp=0,ig=0,jg=0,samp=0,ret=0;
 
-    int  i,j,i1,i2,n,nn;
+    int  i=0,j=0,i1=0,i2=0,n=0,nn=0;
     
-    double fs;
+    double fs=0.0;
 
 
 
@@ -3345,7 +3345,7 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
 	return R_NilValue;
     }
 
-    fscanf(pFile,"%d\n",&nn);  
+    ret=fscanf(pFile,"%d\n",&nn);  
 
     if (!(nn>0)) {
       fclose (pFile);
@@ -3353,7 +3353,7 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
       return R_NilValue;
     }
 
-    fscanf(pFile,"%d\n",&n);  
+    ret=fscanf(pFile,"%d\n",&n);  
 
     if (!(n>0)) {
       fclose (pFile);
@@ -3380,18 +3380,18 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
     
       for(i = 0; i < nn; i ++)
 	{
-	  fscanf(pFile,"%d\n",&ig); 
+	  ret=fscanf(pFile,"%d\n",&ig); 
 	  xa[i]=ig;
 	  for(j = 0; j <  ig; j ++) {
-	    fscanf(pFile,"%d",&hpp);
+	    ret=fscanf(pFile,"%d",&hpp);
 	    xind[i][j]=hpp;
 	  }
-	  fscanf(pFile,"\n");
+	  ret=fscanf(pFile,"\n");
 	  for(j = 0; j < ig; j ++) {
-	    fscanf(pFile,"%lf",&fs);
+	    ret=fscanf(pFile,"%lf",&fs);
 	    xval[i][j] = fs;
 	  }
-	  fscanf(pFile,"\n");
+	  ret=fscanf(pFile,"\n");
 	}
 
     } else {
@@ -3413,29 +3413,29 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
 	{
 	  if ((samples[samp]-1)>i)
 	    {
-	      fscanf(pFile,"%d\n",&ig);
+	      ret=fscanf(pFile,"%d\n",&ig);
 	      for(j = 0; j <  ig; j ++) {
-		fscanf(pFile,"%d",&hpp);
+		ret=fscanf(pFile,"%d",&hpp);
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      for(j = 0; j < ig; j ++) {
-		fscanf(pFile,"%lf",&fs);
+		ret=fscanf(pFile,"%lf",&fs);
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      
 	    } else {
-	      fscanf(pFile,"%d\n",&ig); 
+	      ret=fscanf(pFile,"%d\n",&ig); 
 	      xa[samp]=ig;
 	      for(j = 0; j <  ig; j ++) {
-	        fscanf(pFile,"%d",&hpp);
+	        ret=fscanf(pFile,"%d",&hpp);
 	        xind[samp][j]=hpp;
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      for(j = 0; j < ig; j ++) {
-	        fscanf(pFile,"%lf",&fs);
+	        ret=fscanf(pFile,"%lf",&fs);
 	        xval[samp][j] = fs;
 	      }
-	      fscanf(pFile,"\n");
+	      ret=fscanf(pFile,"\n");
 	      samp++;
 	      if (samp == nsamp) break;
 	    }
@@ -3545,9 +3545,9 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     char sst[200]; 
 
 
-    int  i,j,K,n,nn,ini,i1,i2,ig;
+    int  i=0,j=0,K=0,n=0,nn=0,ini=0,i1=0,i2=0,ig=0,ret=0;
     
-    double inf;
+    double inf=0.0;
 
 
 
@@ -3566,7 +3566,7 @@ SEXP readSpfabicResult(SEXP file_nameS) {
        return R_NilValue;
     }
 
-    fscanf(pFile,"%d\n",&K); 
+    ret=fscanf(pFile,"%d\n",&K); 
     if (!(K>0)) {
        fclose (pFile);
        Rprintf("Wrong file format  >%s< (K) (sparse file format required)! Stop.\n", sst);
@@ -3574,7 +3574,7 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     }
 
 
-    fscanf(pFile,"%d\n",&n); 
+    ret=fscanf(pFile,"%d\n",&n); 
      if (!(n>0)) {
        fclose (pFile);
        Rprintf("Wrong file format  >%s< (n) (sparse file format required)! Stop.\n", sst);
@@ -3597,20 +3597,20 @@ SEXP readSpfabicResult(SEXP file_nameS) {
 
     for(i = 0; i < K; i ++) {
 	
-	fscanf(pFile,"%d\n",&ini);
+	ret=fscanf(pFile,"%d\n",&ini);
 	La[i]=ini;
 	for(j = 0; j < La[i]; j ++)
 	  {
-	    fscanf(pFile,"%d ",&ini);
+	    ret=fscanf(pFile,"%d ",&ini);
 	    Lind[i][j] = ini;
 	  }
-	fscanf(pFile,"\n");
+	ret=fscanf(pFile,"\n");
 	for(j = 0; j < La[i]; j ++)
 	  {
-	    fscanf(pFile,"%lf ",&inf);
+	    ret=fscanf(pFile,"%lf ",&inf);
 	    Lval[i][j] = inf;
 	  }
-	fscanf(pFile,"\n");
+	ret=fscanf(pFile,"\n");
     }
     fclose (pFile);
     
@@ -3641,13 +3641,13 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     strcat(sst,file_name);
     strcat(sst,"_res_Z.txt");
     pFile = fopen (sst,"r");
-    fscanf(pFile,"%d\n",&ini); 
+    ret=fscanf(pFile,"%d\n",&ini); 
     if (ini!=K) {
       fclose (pFile);
       Rprintf("K in >%s< is %d whereas K in >%s_res_L.txt< is %d! Stop.\n", sst,ini,file_name,K);
       return R_NilValue;
     }
-    fscanf(pFile,"%d\n",&nn);
+    ret=fscanf(pFile,"%d\n",&nn);
     if (!(nn>0)) {
       fclose (pFile);
       Rprintf("Wrong file format  >%s< (sparse file format required)! Stop.\n", sst);
@@ -3668,10 +3668,10 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     for(i = 0; i < K; i ++) {
 	for(j = 0; j < nn; j ++)
 	{
-	    fscanf(pFile,"%lf ",&inf);
+	    ret=fscanf(pFile,"%lf ",&inf);
 	    REAL(E_SX_n)[i+K*j] = (double) inf;
 	}
-	fscanf(pFile,"\n");
+	ret=fscanf(pFile,"\n");
     }
     fclose (pFile);
     
@@ -3686,7 +3686,7 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     pFile = fopen (sst,"r");
     for(j = 0; j < nn; j ++)
     {
-	fscanf(pFile,"%lf ",&inf);
+	ret=fscanf(pFile,"%lf ",&inf);
 	REAL(Psi_n)[j] = (double) inf;
     }
     fclose (pFile);
@@ -3702,10 +3702,10 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     for(i = 0; i < K; i ++) {
 	for(j = 0; j < nn; j ++)
 	{
-	    fscanf(pFile,"%lf ",&inf);
+	    ret=fscanf(pFile,"%lf ",&inf);
 	    REAL(lapla_n)[i*nn + j] = (double) inf;
 	}
-	fscanf(pFile,"\n");
+	ret=fscanf(pFile,"\n");
     }
     fclose (pFile);
     
