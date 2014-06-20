@@ -1590,6 +1590,10 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
     ret=fscanf(pFile,"%d\n",&nn);  
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
 
     if (!(nn>0)) {
       fclose (pFile);
@@ -1598,6 +1602,10 @@ SEXP spfabic(SEXP file_nameS, SEXP KS, SEXP alphaS, SEXP cycS, SEXP splS,SEXP sp
     }
 
     ret=fscanf(pFile,"%d\n",&n);  
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
 
     if (!(n>0)) {
       fclose (pFile);
@@ -3112,6 +3120,10 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
     }
 
     ret=fscanf(pFile,"%d\n",&nn);  
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
 
     if (!(nn>0)) {
       fclose (pFile);
@@ -3120,6 +3132,10 @@ SEXP samplesPerFeature(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperBS
     }
 
     ret=fscanf(pFile,"%d\n",&n);  
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
 
     if (!(n>0)) {
       fclose (pFile);
@@ -3346,6 +3362,10 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
     }
 
     ret=fscanf(pFile,"%d\n",&nn);  
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
 
     if (!(nn>0)) {
       fclose (pFile);
@@ -3354,6 +3374,10 @@ SEXP readSamplesSpfabic(SEXP file_nameS, SEXP samplesS,SEXP lowerBS, SEXP upperB
     }
 
     ret=fscanf(pFile,"%d\n",&n);  
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
 
     if (!(n>0)) {
       fclose (pFile);
@@ -3567,6 +3591,10 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     }
 
     ret=fscanf(pFile,"%d\n",&K); 
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
     if (!(K>0)) {
        fclose (pFile);
        Rprintf("Wrong file format  >%s< (K) (sparse file format required)! Stop.\n", sst);
@@ -3575,6 +3603,10 @@ SEXP readSpfabicResult(SEXP file_nameS) {
 
 
     ret=fscanf(pFile,"%d\n",&n); 
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
      if (!(n>0)) {
        fclose (pFile);
        Rprintf("Wrong file format  >%s< (n) (sparse file format required)! Stop.\n", sst);
@@ -3642,12 +3674,20 @@ SEXP readSpfabicResult(SEXP file_nameS) {
     strcat(sst,"_res_Z.txt");
     pFile = fopen (sst,"r");
     ret=fscanf(pFile,"%d\n",&ini); 
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
     if (ini!=K) {
       fclose (pFile);
       Rprintf("K in >%s< is %d whereas K in >%s_res_L.txt< is %d! Stop.\n", sst,ini,file_name,K);
       return R_NilValue;
     }
     ret=fscanf(pFile,"%d\n",&nn);
+    if (ret<1) {
+	Rprintf("Wrong file format.\n");
+	return R_NilValue;
+    }
     if (!(nn>0)) {
       fclose (pFile);
       Rprintf("Wrong file format  >%s< (sparse file format required)! Stop.\n", sst);
