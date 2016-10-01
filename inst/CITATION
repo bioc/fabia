@@ -1,10 +1,5 @@
 citHeader("To cite package 'fabia' in publications use:")
 
-desc <- packageDescription("fabia")
-year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", desc$Date)
-vers <- paste("R package version", desc$Version)
-url  <- desc$URL
-
 citEntry(entry="article",
          title="{FABIA}: {F}actor Analysis for Bicluster Acquisition",
          author=personList(as.person("Sepp Hochreiter"),
