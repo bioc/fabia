@@ -1491,9 +1491,9 @@ axis(BELOW<-1, at=1:length(xLabels), labels=xLabels, cex.axis=0.7)
 
 
 plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
-
-
-
+        
+        print("Plots may not be shown correctly in RStudio")
+  
         if (missing(r)) {
             stop("r (= the result of extractBic) is missing. Stopped.")
         }
@@ -1501,14 +1501,9 @@ plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
             stop("The bicluster to plot is missing. Stopped.")
         }
 
-        if (is(r) == "Factorization") {
-            stop("First argument is of the class Factorization but must be the result of the function extractBic() (a list). Stopped.")
+        if (is(r)[1] == "Factorization") {
+          stop("First argument is of the class Factorization but must be the result of the function extractBic() (a list). Stopped.")
         }
-
-
-
-
-
 
         x <- r$X
         if (!is.matrix(x)) {
@@ -1531,7 +1526,6 @@ plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
             stop("Data matrix X too small or missing. Stopped.")
         }
 
-
      devAskNewPage(ask = FALSE)
 
    if (length(which) > 1 && dev.interactive()) {
@@ -1539,10 +1533,7 @@ plotBicluster <- function(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2)){
     }
 
    showf <- c(FALSE, FALSE)
-    showf[which] <- TRUE
-
-
-
+     showf[which] <- TRUE
 
      n <- nrow(x)
 
