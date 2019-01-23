@@ -5,6 +5,7 @@
   \code{fabiaVersion} displays version information about the
   package.
 }
+\value{Displays version information}
 \usage{
 fabiaVersion()
 }

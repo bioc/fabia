@@ -32,6 +32,7 @@ matrixImagePlot(x,xLabels=NULL, yLabels=NULL, zlim=NULL, title=NULL)
   and then has been modified.
 
 }
+\value{Plotting a table of numbers as an image}
 \seealso{
 \code{\link{fabia}},
 \code{\link{fabias}},

@@ -6,11 +6,7 @@
   \code{plotBicluster}: \R implementation of  \code{plotBicluster}.
 }
 \usage{
-
 plotBicluster(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2))
-
-
-
 }
 \arguments{
   \item{r}{the result of extract_bic.}
@@ -36,6 +32,7 @@ plotBicluster(r,p,opp=FALSE,zlim=NULL,title=NULL,which=c(1, 2))
   
    Implementation in \R.
 }
+\value{Plotting of a bicluster}
 \seealso{
 \code{\link{fabia}},
 \code{\link{fabias}},

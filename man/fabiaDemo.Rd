@@ -4,6 +4,7 @@
 \description{
   \code{fabiaDemo} calls the demo codes for fabia. 
 }
+\value{Calls the demo codes for fabia}
 \usage{
 fabiaDemo()
 }

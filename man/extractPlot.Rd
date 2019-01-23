@@ -57,6 +57,7 @@ extractPlot(fact,thresZ=0.5,ti="",thresL=NULL,Y=NULL,which=c(1,2,3,4,5,6))
 
   Implementation in \R.
 }
+\value{Returns corresponding plots}
 \seealso{
 \code{\link{fabia}},
 \code{\link{fabias}},
