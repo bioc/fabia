@@ -2,7 +2,6 @@
 \alias{estimateMode}
 \title{Estimation of the modes of the rows of a matrix}
 \description{
-
   \code{estimateMode}: \R implementation of  \code{estimateMode}.
 }
 \usage{
@@ -20,7 +19,6 @@ estimateMode(X,maxiter=50,tol=0.001,alpha=0.1,a1=4.0,G1=FALSE)
    \code{FALSE}: G2; default = \code{FALSE}.}
 }
 \details{
-
   The mode is estimated by contrast functions G1
   \deqn{(1/a_1) * \ln (\cosh (a1*x))}
   or G2
@@ -28,9 +26,7 @@ estimateMode(X,maxiter=50,tol=0.001,alpha=0.1,a1=4.0,G1=FALSE)
   The estimation is performed by gradient descent initialized by the
   median.
   
-  
   Implementation in \R.
-
 }
 \value{
   \item{u}{the vector of estimated modes.}
@@ -73,11 +69,11 @@ dat <- makeFabiaDataBlocksPos(n = 100,l= 50,p = 10,f1 = 5,f2 = 5,
        of1 = 5,of2 = 10,sd_noise = 2.0,sd_z_noise = 0.2,mean_z = 2.0,
        sd_z = 1.0,sd_l_noise = 0.2,mean_l = 3.0,sd_l = 1.0)
 
-     X <- dat[[1]]
+X <- dat[[1]]
 
-modes <- estimateMode(X)
+# modes <- estimateMode(X)
 
-modes$u - apply(X, 1, median)
+# modes$u - apply(X, 1, median)
 
 
 }
